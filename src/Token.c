@@ -16,8 +16,8 @@ void init_token(Token* token, TokenType type, char* lexeme, char* literal, int l
 	token->type = type;
 	token->lexeme = lexeme?strdup(lexeme):NULL;
 	token->literal = literal?strdup(literal):NULL;
-//	asprintf(&token->lexeme,"%s",lexeme);
-//	asprintf(&token->literal,"%s",literal);
+/*	asprintf(&token->lexeme,"%s",lexeme);
+	asprintf(&token->literal,"%s",literal);*/
 	token->line = line;
 	token->inString = NULL;
 	token->toString = &token_toString;
@@ -58,8 +58,9 @@ void init_tokenArray(TokenArray* tokenArray){
 }
 
 void tokens_add(TokenArray* tokenArray,Token* token){
-//	Token* temp_token;
-//	temp_token = NULL;
+/*	Token* temp_token;
+	temp_token = NULL;*/
+	int i;
 	int init_start=0, init_finish=0;
 	if(!tokenArray->tokens){
 		tokenArray->tokens = malloc(sizeof(Token) * TOKEN_INIT_SIZE);
@@ -71,7 +72,7 @@ void tokens_add(TokenArray* tokenArray,Token* token){
 		init_start = tokenArray->used;
 		init_finish = tokenArray->size = tokenArray->size+TOKEN_INIT_SIZE;
 	}
-	for(int i=init_start;i<init_finish;i++)
+	for(i=init_start;i<init_finish;i++)
 		init_token(&tokenArray->tokens[i],EEOF,NULL,NULL,0);
 
 	tokenArray->tokens[tokenArray->used].lexeme = token->lexeme;
@@ -83,9 +84,10 @@ void tokens_add(TokenArray* tokenArray,Token* token){
 
 void delete_tokenArray(TokenArray* tokenArray){
 	if(tokenArray){
-		for(int i =0; i <tokenArray->used;i++){
+		int i;
+		for(i =0; i <tokenArray->used;i++){
 			delete_token(&tokenArray->tokens[i]);
-//			tokenArray->tokens[i] = NULL;
+/*			tokenArray->tokens[i] = NULL;*/
 		}
 	}
 }

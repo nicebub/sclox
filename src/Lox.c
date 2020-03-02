@@ -22,11 +22,12 @@ void init_lox(Lox* lox){
 }
  void run(Lox* lox,char * source){
 	    Scanner scanner;
+	    int i;
 	    init_scanner(&scanner, source);
-//	    init_tokenArray(&scanner.tokens);
+/*	    init_tokenArray(&scanner.tokens);*/
 	    scanTokens(lox,&scanner);
-	    // For now, just print the tokens.
-	    for(int i = 0;i<scanner.tokens.used;i++)
+/*	    // For now, just print the tokens.*/
+	    for(i = 0;i<scanner.tokens.used;i++)
 	    	printf("%s\n",token_toString(&scanner.tokens.tokens[i]));
 	    delete_tokenArray(&scanner.tokens);
 	    init_tokenArray(&scanner.tokens);

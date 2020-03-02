@@ -13,7 +13,7 @@
 #include "Lox.h"
 
 void init_scanner(Scanner* scanner, const char * source){
-//	asprintf(&scanner->source,"%s", source);
+/*	asprintf(&scanner->source,"%s", source);*/
 	scanner->source = strdup(source);
 	init_tokenArray(&scanner->tokens);
 	scanner->start = scanner->current = 0;
@@ -37,13 +37,13 @@ void init_scanner(Scanner* scanner, const char * source){
 	scanner->getTokenTypeFromString = &getTokenTypeFromString;
 }
 TokenArray * scanTokens(Lox* lox,Scanner* scanner){
+	Token temp_token;
 
 	while(!isAtEnd(scanner)) {
 		scanner->start = scanner->current;
 		scanToken(lox,scanner);
 	}
-//	Token *temp_token = malloc(sizeof(Token));
-	Token temp_token;
+/*	Token *temp_token = malloc(sizeof(Token));*/
 	init_token(&temp_token,EEOF,"",NULL,scanner->line);
 
 	tokens_add(&scanner->tokens,&temp_token);
@@ -57,7 +57,7 @@ void delete_scanner(Scanner* scanner){
 			scanner->source = NULL;
 		}
 		delete_tokenArray(&scanner->tokens);
-//		scanner->tokens = NULL;
+/*		scanner->tokens = NULL;*/
 	}
 }
 
@@ -149,13 +149,13 @@ void addToken(Scanner* scanner, TokenType type){
 }
 void addTokenWithObject(Scanner* scanner, TokenType type, char* literal){
 	char * text;
-//	Token* temp_token;
+	Token temp_token;
+/*	Token* temp_token;*/
 	text = NULL;
-//	temp_token = NULL;
+/*	temp_token = NULL; */
 	text = calloc((scanner->current-scanner->start),sizeof(char));
 	strncpy(text,&scanner->source[scanner->start],scanner->current-scanner->start);
-//	temp_token = malloc(sizeof(Token));
-	Token temp_token;
+/*	temp_token = malloc(sizeof(Token));*/
 	init_token(&temp_token,type,text,literal,scanner->line);
 	tokens_add(&scanner->tokens,&temp_token);
 	free(text);
@@ -176,6 +176,7 @@ char peek(Scanner* scanner){
 }
 
 void string(Lox* lox,Scanner* scanner){
+	char * new_str;
 	while(peek(scanner) != '"' && !isAtEnd(scanner)){
 		if(peek(scanner) == '\n') scanner->line++;
 		advance(scanner);
@@ -187,7 +188,6 @@ void string(Lox* lox,Scanner* scanner){
 	}
 
 	advance(scanner);
-	char * new_str;
 	new_str = NULL;
 	new_str = calloc((scanner->current-1)-(scanner->start +1),sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start+1],(scanner->current-1)-(scanner->start +1));
@@ -202,10 +202,12 @@ int isDigit(const char c){
 }
 
 void number(Scanner* scanner){
-	double x = 0;
+	double x;
+	char * new_str;
 /*	double y = 0;
 	double mult = 10;
 	double * worker = NULL;*/
+	x = 0;
 	while(isDigit(peek(scanner)))
 		advance(scanner);
 	if((peek(scanner) == '.' && isDigit(peekNext(scanner)))){
@@ -214,7 +216,7 @@ void number(Scanner* scanner){
 			advance(scanner);
 	}
 /*	char * str_ptr;*/
-	char * new_str = calloc(scanner->current-scanner->start,sizeof(char));
+	new_str = calloc(scanner->current-scanner->start,sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start],scanner->current - scanner->start);
 /*	str_ptr = new_str;*/
 /*	x = atof(new_str);*/
@@ -243,7 +245,7 @@ TokenType getTokenTypeFromString(const char * inString){
 	while(kmap[which++].keyword != KNULL){
 		if(!strcmp(kmap[which-1].keywordName,inString))
 			return kmap[which-1].keyword;
-//		printf("%s\n",kmap[which-1].keywordName);
+/*		printf("%s\n",kmap[which-1].keywordName);*/
 	}
 	return KNULL;
 }
@@ -255,7 +257,7 @@ void cComment(Scanner* scanner){
     	   if(peek(scanner) == '\n')
     		   scanner->line++;
     	   else if(peek(scanner) == '/' && peekNext(scanner) == '*'){
- //   		   printf("found nested /*\n");
+ /*   		   printf("found nested \/\*\n"); */
     		   nested++;
     		   advance(scanner);
     		   advance(scanner);
@@ -263,12 +265,12 @@ void cComment(Scanner* scanner){
     	   }
     	   advance(scanner);
        }
-//       printf("lookahead 1 : %c\n",peek(scanner));
+/*       printf("lookahead 1 : %c\n",peek(scanner));*/
        advance(scanner);
        if(isAtEnd(scanner))
     		   return;
     	if(peek(scanner) == '/'){
-//           printf("lookahead 2 : %c\n",peek(scanner));
+/*           printf("lookahead 2 : %c\n",peek(scanner));*/
            advance(scanner);
            nested--;
            if(!nested)

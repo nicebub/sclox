@@ -8,14 +8,14 @@
 #ifndef TOKENTYPE_H_
 #define TOKENTYPE_H_
 #include <stdlib.h>
-typedef enum _TokenType TokenType;
+/*typedef enum _TokenType TokenType;*/
 /*typedef enum _Keywords Keywords;*/
 
 typedef struct _keywordMap keywordMap;
 
 
 
-enum _TokenType {
+typedef enum _TokenType {
 	LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
 	COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
@@ -30,7 +30,7 @@ enum _TokenType {
 	PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, KNULL,
 
 	EEOF
-};
+} TokenType;
 struct _keywordMap {
 	TokenType keyword;
 	char * keywordName;
