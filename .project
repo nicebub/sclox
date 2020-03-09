@@ -23,4 +23,16 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/Expr.c</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/Expr.c</location>
+		</link>
+		<link>
+			<name>src/Expr.h</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/Expr.h</location>
+		</link>
+	</linkedResources>
 </projectDescription>
