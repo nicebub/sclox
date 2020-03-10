@@ -1,0 +1,3 @@
+[submodule "src/CException"]
+	path = src/CException
+	url = https://github.com/ThrowTheSwitch/CException.git
