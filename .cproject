@@ -88,6 +88,8 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/classCreate}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/sclox/src}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/sclox/src/CException/lib}&quot;"/>
                                     								
                                 </option>
                                 								
