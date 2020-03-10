@@ -21,7 +21,7 @@ void init_lox(Lox* lox){
 	lox->runFile = &runFile;
 	lox->report = &report;
 	lox->error = &error;
-	lox->lparse_error = &lparse_error;
+	lox->parse_error = &lparse_error;
 
 }
  void run(Lox* lox,char * source){
@@ -33,11 +33,11 @@ void init_lox(Lox* lox){
 /*	    int i;*/
 
 	    init_printer(&printer);
-	    init_scanner(&scanner, source);
+	    init_scanner(&scanner, source,lox);
 /*	    init_tokenArray(&scanner.tokens);*/
-	    scanTokens(lox,&scanner);
-	    init_parser(&parser,&scanner.tokens);
-	    expression = parse(&parser);
+	    scanTokens(&scanner);
+	    init_parser(&parser,&scanner.tokens,lox);
+	    expression = (Expr*)parse(&parser);
 	    if(lox->hadError)
 	    	return;
 	    str = print(&printer,expression);
@@ -95,7 +95,7 @@ void init_lox(Lox* lox){
 }
 
  void report(Lox* lox,int line, const char * where, const char * message){
-	fprintf(stderr,"[line %d] Error %s:%s\n",line,where,message);
+	fprintf(stderr,"[line %d] Error %s: %s\n",line,where,message);
 	lox->hadError = 1;
 }
 
@@ -104,7 +104,7 @@ void init_lox(Lox* lox){
 }
 static void lparse_error(Lox* lox,Token* token, const char* message){
 	if(token->type == EEOF){
-		report(lox, token->line, " at end", message);
+		report(lox, token->line, "at end", message);
 	}
 	else{
 		char * str = NULL;

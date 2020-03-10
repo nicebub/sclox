@@ -11,6 +11,7 @@
 #include "TokenType.h"
 #include "Token.h"
 #include "Expr.h"
+#include "Lox.h"
 
 typedef struct _Parser Parser;
 /*
@@ -19,22 +20,25 @@ struct _Parser_vtable{
 	int (*match)(Parser* parser,TokenType* types);
 	int (*isAtEnd)(Parser* parser);
 	int (*peek)(Parser* parser);
+	int (*error)(Parser* parser, Token* token, const char* message);
 };
 */
 struct _Parser {
 /*	Parser_vtable vtable;*/
 	TokenArray* tokens;
+	Lox* lox;
 	int current;
 	int (*match)(Parser* parser,TokenType* types);
 	int (*isAtEnd)(Parser* parser);
 	Token* (*peek)(Parser* parser);
 	Token* (*advance)(Parser* parser);
+	int (*error)(Parser* parser, Token* token, const char* message);
 };
 
 
-void init_parser(Parser* parser, TokenArray* tokens);
+void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
-Expr* parse(Parser* parser);
+volatile Expr* parse(Parser* parser);
 Expr* expression(Parser* parser);
 Expr* equality(Parser* parser);
 Expr* comparison(Parser* parser);
@@ -53,6 +57,6 @@ void synchronize(Parser* parser);
 
 
 Token* consume(Parser* parser, TokenType type, const char* message);
-void parse_error(Parser* parser, Token* token, const char* message);
+int parse_error(Parser* parser, Token* token, const char* message);
 
 #endif /* PARSER_H_ */

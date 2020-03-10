@@ -12,21 +12,22 @@
 #include "Lox.h"
 typedef struct _Scanner Scanner;
 struct _Scanner {
+	Lox* lox;
 	char * source;
 	TokenArray tokens;
 	int start;
 	int current;
 	int line;
-	TokenArray * (*scanTokens)(Lox* lox,Scanner* scanner);
+	TokenArray * (*scanTokens)(Scanner* scanner);
 	void (*delete_scanner)(Scanner* scanner);
 	int (*isAtEnd)(Scanner* scanner);
-	void (*scanToken)(Lox* lox,Scanner* scanner);
+	void (*scanToken)(Scanner* scanner);
 	char (*advance)(Scanner* scanner);
 	void (*addToken)(Scanner* scanner, TokenType type);
 	void (*addTokenWithObject)(Scanner* scanner, TokenType type, char* literal);
 	int (*match)(Scanner* scanner, const char expected);
 	char (*peek)(Scanner* scanner);
-	void (*string)(Lox* lox,Scanner* scanner);
+	void (*string)(Scanner* scanner);
 	int (*isDigit)(const char c);
 	void (*number)(Scanner* scanner);
 	char (*peekNext)(Scanner* scanner);
@@ -38,9 +39,9 @@ struct _Scanner {
 };
 
 
-void init_scanner(Scanner* scanner, const char * source);
-TokenArray * scanTokens(Lox* lox,Scanner* scanner);
-void scanToken(Lox* lox,Scanner* scanner);
+void init_scanner(Scanner* scanner, const char * source, Lox* lox);
+TokenArray * scanTokens(Scanner* scanner);
+void scanToken(Scanner* scanner);
 void delete_scanner(Scanner* scanner);
 int isAtEnd(Scanner* scanner);
 char advance(Scanner* scanner);
@@ -48,7 +49,7 @@ void addToken(Scanner* scanner, TokenType type);
 void addTokenWithObject(Scanner* scanner, TokenType type, char* literal);
 int match(Scanner* scanner, const char expected);
 char peek(Scanner* scanner);
-void string(Lox* lox,Scanner* scanner);
+void string(Scanner* scanner);
 int isDigit(const char c);
 void number(Scanner* scanner);
 char peekNext(Scanner* scanner);

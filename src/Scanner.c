@@ -12,10 +12,11 @@
 #include "TokenType.h"
 #include "Lox.h"
 
-void init_scanner(Scanner* scanner, const char * source){
+void init_scanner(Scanner* scanner, const char * source, Lox* lox){
 /*	asprintf(&scanner->source,"%s", source);*/
 	scanner->source = strdup(source);
 	init_tokenArray(&scanner->tokens);
+	scanner->lox = lox;
 	scanner->start = scanner->current = 0;
 	scanner->line=1;
 	scanner->scanTokens = &scanTokens;
@@ -36,12 +37,12 @@ void init_scanner(Scanner* scanner, const char * source){
 	scanner->isAlphaNumeric =&isAlphaNumeric;
 	scanner->getTokenTypeFromString = &getTokenTypeFromString;
 }
-TokenArray * scanTokens(Lox* lox,Scanner* scanner){
+TokenArray * scanTokens(Scanner* scanner){
 	Token temp_token;
 
 	while(!isAtEnd(scanner)) {
 		scanner->start = scanner->current;
-		scanToken(lox,scanner);
+		scanToken(scanner);
 	}
 /*	Token *temp_token = malloc(sizeof(Token));*/
 	init_token(&temp_token,EEOF,"",NULL,scanner->line);
@@ -65,7 +66,7 @@ int isAtEnd(Scanner* scanner){
 	return scanner->current >= strlen(scanner->source);
 }
 
-void scanToken(Lox* lox,Scanner* scanner){
+void scanToken(Scanner* scanner){
 	char c = advance(scanner);
 	switch(c){
 		case ' ':
@@ -100,7 +101,7 @@ void scanToken(Lox* lox,Scanner* scanner){
 	        else
 	          addToken(scanner,SLASH);
 	        break;
-	    case '"': string(lox, scanner); break;
+	    case '"': string(scanner); break;
 	    default:
 	        if (isDigit(c)) {
 	          number(scanner);
@@ -109,7 +110,7 @@ void scanToken(Lox* lox,Scanner* scanner){
 	                 identifier(scanner);
 	        }
 	        else
-	          lox->error(lox,scanner->line, "Unexpected character.");
+	          scanner->lox->error(scanner->lox,scanner->line, "Unexpected character.");
 
 	        break;
 	}
@@ -175,7 +176,7 @@ char peek(Scanner* scanner){
 	return scanner->source[scanner->current];
 }
 
-void string(Lox* lox,Scanner* scanner){
+void string(Scanner* scanner){
 	char * new_str;
 	while(peek(scanner) != '"' && !isAtEnd(scanner)){
 		if(peek(scanner) == '\n') scanner->line++;
@@ -183,7 +184,7 @@ void string(Lox* lox,Scanner* scanner){
 
 	}
 	if(isAtEnd(scanner)){
-		lox->error(lox,scanner->line,"Unterminated string.");
+		scanner->lox->error(scanner->lox,scanner->line,"Unterminated string.");
 		return;
 	}
 

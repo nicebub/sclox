@@ -32,7 +32,7 @@ struct _Loxfuncs{
 	void (*runFile)(Lox* lox,const char*);
 	void (*report)(Lox* lox,int,const char*, const char*);
 	void (*error)(Lox* lox,int,const char*);
-	void (*lparse_error)(Lox* lox,Token* token, const char* message);
+	void (*parse_error)(Lox* lox,Token* token, const char* message);
 
 };
 
@@ -44,7 +44,7 @@ struct _Lox {
 	void (*runFile)(Lox* lox,const char*);
 	void (*report)(Lox* lox,int,const char*, const char*);
 	void (*error)(Lox* lox,int,const char*);
-	void (*lparse_error)(Lox* lox,Token* token, const char* message);
+	void (*parse_error)(Lox* lox,Token* token, const char* message);
 };
 
 

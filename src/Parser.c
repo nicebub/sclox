@@ -4,25 +4,37 @@
  *  Created on: Mar 9, 2020
  *      Author: scotty
  */
-
+#include "CException.h"
 #include "Parser.h"
 
 #include "Token.h"
 #include "Expr.h"
 #include "TokenType.h"
-
-void init_parser(Parser* parser, TokenArray* tokens){
+#include "string.h"
+#include <stdio.h>
+void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
+	parser->lox = lox;
 	parser->match = &parser_match;
 	parser->isAtEnd = &parser_isAtEnd;
 	parser->peek = &parser_peek;
 	parser->advance = &parser_advance;
+	parser->error = &parse_error;
 	parser->tokens = tokens;
 	parser->current = 0;
 }
 
-Expr* parse(Parser* parser){
+volatile Expr* parse(Parser* parser){
 /*	try{*/
-	Expr* expr = expression(parser);
+	CEXCEPTION_T e;
+	volatile Expr* expr ;
+	Try {
+		expr = expression(parser);
+	}
+	Catch(e) {
+		printf("Caught an exception during parse\n");
+		return NULL;
+
+	}
 /*	 }*/
 /*	catch {
 	 return NULL;
@@ -139,27 +151,29 @@ Expr* primary(Parser* parser){
 	if(parser->match(parser,types)){
 		Expr* expr = expression(parser);
 		Grouping*  group;
-		consume(parser, RIGHT_PAREN, "Expect ')' after expression.\n");
+		consume(parser, RIGHT_PAREN, "Expect ')' after expression.");
 		group = malloc(sizeof(Grouping));
 		new_Grouping(group,expr);
 		return (Expr*)group;
 	}
-    return NULL;
+	Throw(parser->error(parser,parser->peek(parser),"Expect expression."));
+/*    return NULL;*/
 /*	 throw error(peek(parser), "Expect expression.");*/
 
 }
 
 Token* consume(Parser* parser, TokenType type, const char* message){
-    if(check(parser,type)){
-	   Token* adv = parser->advance(parser);
-		return adv;
-    }
+    if(check(parser,type))
+		return parser->advance(parser);
 
+    Throw(parser->error(parser,parser->peek(parser),message));
 /*	 otherwise throw error(peek(),message);*/
     return NULL;
 }
 
-void parse_error(Parser* parser, Token* token, const char* message){
+int parse_error(Parser* parser, Token* token, const char* message){
+	parser->lox->parse_error(parser->lox,token,message);
+	return 1;
 /*	 Lox.error(token,message);
 	 return new ParseError() exception*/
 }
