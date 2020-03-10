@@ -109,7 +109,7 @@ void scanToken(Lox* lox,Scanner* scanner){
 	                 identifier(scanner);
 	        }
 	        else
-	          error(lox,scanner->line, "Unexpected character.");
+	          lox->error(lox,scanner->line, "Unexpected character.");
 
 	        break;
 	}
@@ -183,7 +183,7 @@ void string(Lox* lox,Scanner* scanner){
 
 	}
 	if(isAtEnd(scanner)){
-		error(lox,scanner->line,"Unterminated string.");
+		lox->error(lox,scanner->line,"Unterminated string.");
 		return;
 	}
 

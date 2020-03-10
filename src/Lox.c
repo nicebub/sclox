@@ -8,8 +8,11 @@
 #include <stdlib.h>
 #include "Lox.h"
 #include "Scanner.h"
+#include "Parser.h"
+#include "Expr.h"
 #include "Token.h"
 #include "TokenType.h"
+#include "AstPrinter.h"
 
 void init_lox(Lox* lox){
 	lox->hadError = 0;
@@ -18,17 +21,33 @@ void init_lox(Lox* lox){
 	lox->runFile = &runFile;
 	lox->report = &report;
 	lox->error = &error;
+	lox->lparse_error = &lparse_error;
 
 }
  void run(Lox* lox,char * source){
 	    Scanner scanner;
-	    int i;
+	    Parser parser;
+	    Expr *expression;
+	    AstPrinter printer;
+	    char * str;
+/*	    int i;*/
+
+	    init_printer(&printer);
 	    init_scanner(&scanner, source);
 /*	    init_tokenArray(&scanner.tokens);*/
 	    scanTokens(lox,&scanner);
-/*	    // For now, just print the tokens.*/
-	    for(i = 0;i<scanner.tokens.used;i++)
+	    init_parser(&parser,&scanner.tokens);
+	    expression = parse(&parser);
+	    if(lox->hadError)
+	    	return;
+	    str = print(&printer,expression);
+	    printf("%s\n",str);
+	    free(str);
+	    str = NULL;
+	    /*	    // For now, just print the tokens.*/
+/*	    for(i = 0;i<scanner.tokens.used;i++)
 	    	printf("%s\n",token_toString(&scanner.tokens.tokens[i]));
+	    */
 	    delete_tokenArray(&scanner.tokens);
 	    init_tokenArray(&scanner.tokens);
 }
@@ -63,13 +82,15 @@ void init_lox(Lox* lox){
 	for(;;){
 		printf("> ");
 		written = getline(&line,&lcap,stdin);
-		line[written-1] = '\0';
-		if(line[written-2] == '\r')
-			line[written-2] = '\0';
-		run(lox,line);
-		free(line);
-		line = NULL;
-		lox->hadError = 0;
+	    if(line){
+/*		   line[written-1] = '\0';
+		   if(line[written-2] == '\r')
+			  line[written-2] = '\0';*/
+		   run(lox,line);
+		   free(line);
+		   line = NULL;
+		   lox->hadError = 0;
+	    }
 	}
 }
 
@@ -77,6 +98,19 @@ void init_lox(Lox* lox){
 	fprintf(stderr,"[line %d] Error %s:%s\n",line,where,message);
 	lox->hadError = 1;
 }
+
  void error(Lox* lox,int line, const char* message){
 	report(lox,line,"",message);
+}
+static void lparse_error(Lox* lox,Token* token, const char* message){
+	if(token->type == EEOF){
+		report(lox, token->line, " at end", message);
+	}
+	else{
+		char * str = NULL;
+		asprintf(&str," at '%s'",token->lexeme);
+		report(lox, token->line, str,message);
+		free(str);
+		str = NULL;
+	}
 }

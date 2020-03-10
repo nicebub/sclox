@@ -20,10 +20,11 @@ void new_Grouping (Grouping * inObj,Expr* expressionparam){
 void* acceptGrouping(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitGroupingExpr(visitor,arg);
 }
-void new_Literal (Literal * inObj,void* valueparam,int* valueTypeparam){
+void new_Literal (Literal * inObj,void* valueparam,int valueTypeparam,TokenType typeparam){
 	inObj->super.vtable.accept = &acceptLiteral;
 	inObj->value = valueparam;
 	inObj->valueType = valueTypeparam;
+	inObj->type = typeparam;
 }
 void* acceptLiteral(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitLiteralExpr(visitor,arg);

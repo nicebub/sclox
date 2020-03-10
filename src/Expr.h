@@ -42,9 +42,10 @@ typedef struct _Literal  Literal ;
 struct _Literal  {
 	Expr super;
 	void* value;
-	int* valueType;
+	int valueType;
+	TokenType type;
 };
-void new_Literal (Literal * inObj,void* valueparam,int* valueTypeparam);
+void new_Literal (Literal * inObj,void* valueparam,int valueTypeparam,TokenType typeparam);
 void* acceptLiteral(Expr* arg, Visitor* visitor);
 static void* visitLiteralExpr( Visitor* visitor,Expr* arg);
 typedef struct _Unary  Unary ;

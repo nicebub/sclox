@@ -18,7 +18,10 @@ void init_printer(AstPrinter* printer){
 }
 
 char* print(AstPrinter* printer, Expr* expression){
-	return expression->vtable.accept(expression,&printer->super);
+	   if(expression)
+		  return
+			 expression->vtable.accept(expression,&printer->super);
+    return NULL;
 }
 
 static void * visitBinaryExprPrinter(Visitor* visitor,Expr* expression){
@@ -50,19 +53,20 @@ static void * visitLiteralExprPrinter(Visitor* visitor,Expr* expression){
 	Literal * expr = (Literal*) expression;
 	char * inString = NULL;
 
-	if(expr->value == NULL) return (void*)nil;
-	switch(*expr->valueType){
+	if(expr->value == NULL) return (void*)strdup(nil);
+	switch(expr->valueType){
 		case 0:
-			asprintf(&inString,"%d", *(int*)expr->value);
-			break;
+/*			asprintf(&inString,"%d", *(int*)expr->value);
+			break;*/
 		case 1:
-			asprintf(&inString,"%.2f", *(double*)expr->value);
-			break;
+/*			asprintf(&inString,"%.2f", *(double*)expr->value);
+			break;*/
 		case 2:
-			asprintf(&inString,"%c", *(char*)expr->value);
-			break;
+/*			asprintf(&inString,"%c", *(char*)expr->value);
+			break;*/
 		case 3:
-			inString = strdup((char*)expr->value);
+		   asprintf(&inString, " %s ", (char*)expr->value);
+/*			inString = strdup((char*)expr->value);*/
 			break;
 	}
 	return inString;
@@ -85,7 +89,7 @@ char * parenthesize(Visitor* visitor,char* name, Expr** expr_array){
 		other = NULL;
 /*		result = asprintf(&builder," %s", other);*/
 	}
-	builder = realloc(builder,sizeof(char)*(strlen(builder)+3));
-	strcat(builder,") ");
+	builder = realloc(builder,sizeof(char)*(strlen(builder)+4));
+	strcat(builder," ) ");
 	return builder;
 }
