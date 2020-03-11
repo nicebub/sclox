@@ -5,13 +5,13 @@
  *      Author: scotty
  */
 #include "CException.h"
+#include <stdio.h>
 #include "Parser.h"
 
 #include "Token.h"
 #include "Expr.h"
 #include "TokenType.h"
 #include "string.h"
-#include <stdio.h>
 void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
@@ -117,34 +117,45 @@ Expr* unary(Parser* parser){
 }
 
 Expr* primary(Parser* parser){
+	Object * obj;
 	TokenType types[] = { FALSE, KNULL };
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-		new_Literal(lit,strdup("false"),3, FALSE);
+		obj = malloc(sizeof(Object));
+		init_Object(obj,strdup("false"),FALSE);
+		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = TRUE;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-		new_Literal(lit,strdup("true"),3, TRUE);
+		obj = malloc(sizeof(Object));
+		init_Object(obj,strdup("true"),TRUE);
+		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = NIL;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-		new_Literal(lit,strdup("nil"),3, NIL);
+/*		obj = malloc(sizeof(Object));*/
+/*		init_Object(obj,strdup("nil"),NIL);*/
+		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = NUMBER;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-		new_Literal(lit,previous(parser)->literal,1,NUMBER);
+/*		obj = malloc(sizeof(Object));*/
+/*		init_Object(obj,previous(parser)->literal-> ,NUMBER);*/
+		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = STRING;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-		new_Literal(lit,previous(parser)->literal,3,STRING);
+/*		obj = malloc(sizeof(Object));*/
+/*		init_Object(obj,previous(parser)->literal,STRING);*/
+		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = LEFT_PAREN;
@@ -157,7 +168,8 @@ Expr* primary(Parser* parser){
 		return (Expr*)group;
 	}
 	Throw(parser->error(parser,parser->peek(parser),"Expect expression."));
-/*    return NULL;*/
+	/* shouldn't reach this return statement */
+    return NULL;
 /*	 throw error(peek(parser), "Expect expression.");*/
 
 }
@@ -194,6 +206,7 @@ void synchronize(Parser* parser){
 		case PRINT:
 		case RETURN:
 			return;
+		default: break;
 		}
 		parser->advance(parser);
 	}
@@ -235,3 +248,28 @@ Token* parser_peek(Parser* parser){
 Token* previous(Parser* parser){
 	return &parser->tokens->tokens[parser->current-1];
 }
+
+/*
+ * TODO  - CHALLENGES
+ * In C, a block is a statement form that allows you to pack a series of
+ *  statements where a single one is expected. The comma operator is an
+ *  analogous syntax for expressions. A comma-separated series of expressions
+ *   can be given where a single expression is expected (except inside a
+ *   function call’s argument list). At runtime, the comma operator evaluates
+ *   the left operand and discards the result. Then it evaluates and returns
+ *   the right operand.
+ *
+ * Add support for comma expressions. Give them the same precedence and
+ *   associativity as in C. Write the grammar, and then implement the necessary
+ *    parsing code.
+ *
+ * Likewise, add support for the C-style conditional or “ternary” operator ?:.
+ *    What precedence level is allowed between the ? and :? Is the whole operator
+ *    left-associative or right-associative?
+ *
+ * Add error productions to handle each binary operator appearing without a
+ *    left-hand operand. In other words, detect a binary operator appearing at the
+ *    beginning of an expression. Report that as an error, but also parse and
+ *    discard a right-hand operand with the appropriate precedence.
+ *
+ */

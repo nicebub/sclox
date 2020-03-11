@@ -1,39 +1,90 @@
+
 #include "Token.h"
+#include "Object.h"
+#include "ReturnResult.h"
 #include "Expr.h"
-static void* visitBinaryExpr(Visitor* visitor,Expr* expr){return NULL;}
-static void* visitGroupingExpr(Visitor* visitor,Expr* expr){return NULL;}
-static void* visitLiteralExpr(Visitor* visitor,Expr* expr){return NULL;}
-static void* visitUnaryExpr(Visitor* visitor,Expr* expr){return NULL;}
+
+static ReturnResult visitBinaryExpr(Visitor* visitor,Expr* expr){ReturnResult r; r.value.string=NULL; return r;}
+static ReturnResult visitGroupingExpr(Visitor* visitor,Expr* expr){ReturnResult r; r.value.string=NULL; return r;}
+static ReturnResult visitLiteralExpr(Visitor* visitor,Expr* expr){ReturnResult r; r.value.string=NULL; return r;}
+static ReturnResult visitUnaryExpr(Visitor* visitor,Expr* expr){ReturnResult r; r.value.string=NULL; return r;}
 void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
 	inObj->super.vtable.accept = &acceptBinary;
+	inObj->super.vtable.delete_Expr = &delete_Binary ;
 	inObj->left = leftparam;
 	inObj->operator = operatorparam;
 	inObj->right = rightparam;
 }
-void* acceptBinary(Expr *arg, Visitor* visitor){
+void delete_Binary (Expr* arg){
+	Binary * expr = (Binary *)arg;
+
+	delete_Expr(expr->left);
+	expr->left=NULL;
+	delete_Token(expr->operator);
+	expr->operator=NULL;
+	delete_Expr(expr->right);
+	expr->right=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+ReturnResult acceptBinary(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitBinaryExpr(visitor,arg);
 }
 void new_Grouping (Grouping * inObj,Expr* expressionparam){
 	inObj->super.vtable.accept = &acceptGrouping;
+	inObj->super.vtable.delete_Expr = &delete_Grouping ;
 	inObj->expression = expressionparam;
 }
-void* acceptGrouping(Expr *arg, Visitor* visitor){
+void delete_Grouping (Expr* arg){
+	Grouping * expr = (Grouping *)arg;
+
+	delete_Expr(expr->expression);
+	expr->expression=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+ReturnResult acceptGrouping(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitGroupingExpr(visitor,arg);
 }
-void new_Literal (Literal * inObj,void* valueparam,int valueTypeparam,TokenType typeparam){
+void new_Literal (Literal * inObj,Object* valueparam){
 	inObj->super.vtable.accept = &acceptLiteral;
+	inObj->super.vtable.delete_Expr = &delete_Literal ;
 	inObj->value = valueparam;
-	inObj->valueType = valueTypeparam;
-	inObj->type = typeparam;
 }
-void* acceptLiteral(Expr *arg, Visitor* visitor){
+void delete_Literal (Expr* arg){
+	Literal * expr = (Literal *)arg;
+
+	delete_Object(expr->value);
+	expr->value=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+ReturnResult acceptLiteral(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitLiteralExpr(visitor,arg);
 }
 void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam){
 	inObj->super.vtable.accept = &acceptUnary;
+	inObj->super.vtable.delete_Expr = &delete_Unary ;
 	inObj->operator = operatorparam;
 	inObj->right = rightparam;
 }
-void* acceptUnary(Expr *arg, Visitor* visitor){
+void delete_Unary (Expr* arg){
+	Unary * expr = (Unary *)arg;
+
+	delete_Token(expr->operator);
+	expr->operator=NULL;
+	delete_Expr(expr->right);
+	expr->right=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+ReturnResult acceptUnary(Expr *arg, Visitor* visitor){
 	 return visitor->vtable.visitUnaryExpr(visitor,arg);
+}
+void delete_Expr(Expr* expr){
+	expr->vtable.delete_Expr(expr);
 }

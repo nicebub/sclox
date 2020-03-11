@@ -25,7 +25,7 @@ void init_scanner(Scanner* scanner, const char * source, Lox* lox){
 	scanner->scanToken = &scanToken;
 	scanner->advance = &advance;
 	scanner->addToken = &addToken;
-	scanner->addTokenWithObject = & addTokenWithObject;
+	scanner->addTokenWithObject = &addTokenWithObject;
 	scanner->match = &match;
 	scanner->peek = &peek;
 	scanner->string = &string;
@@ -148,7 +148,7 @@ char advance(Scanner* scanner){
 void addToken(Scanner* scanner, TokenType type){
 	addTokenWithObject(scanner,type,NULL);
 }
-void addTokenWithObject(Scanner* scanner, TokenType type, char* literal){
+void addTokenWithObject(Scanner* scanner, TokenType type, Object* literal){
 	char * text;
 	Token temp_token;
 /*	Token* temp_token;*/
@@ -178,6 +178,7 @@ char peek(Scanner* scanner){
 
 void string(Scanner* scanner){
 	char * new_str;
+	Object* obj;
 	while(peek(scanner) != '"' && !isAtEnd(scanner)){
 		if(peek(scanner) == '\n') scanner->line++;
 		advance(scanner);
@@ -192,9 +193,11 @@ void string(Scanner* scanner){
 	new_str = NULL;
 	new_str = calloc((scanner->current-1)-(scanner->start +1),sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start+1],(scanner->current-1)-(scanner->start +1));
-	addTokenWithObject(scanner,STRING,new_str);
-	free(new_str);
-	new_str = NULL;
+	obj = malloc(sizeof(Object));
+	init_Object(obj,new_str,STRING);
+	addTokenWithObject(scanner,STRING,obj);
+/*	free(new_str);
+	new_str = NULL;*/
 
 }
 
@@ -203,12 +206,12 @@ int isDigit(const char c){
 }
 
 void number(Scanner* scanner){
-	double x;
+	double *x;
 	char * new_str;
+	Object* obj;
 /*	double y = 0;
 	double mult = 10;
 	double * worker = NULL;*/
-	x = 0;
 	while(isDigit(peek(scanner)))
 		advance(scanner);
 	if((peek(scanner) == '.' && isDigit(peekNext(scanner)))){
@@ -230,7 +233,11 @@ void number(Scanner* scanner){
 		}
 		*worker +=
 	}*/
-	addTokenWithObject(scanner,NUMBER,new_str);
+	x = malloc(sizeof(double));
+	sscanf(new_str,"%lf",x);
+	obj = malloc(sizeof(Object));
+	init_Object(obj,x, NUMBER);
+	addTokenWithObject(scanner,NUMBER,obj);
 	free(new_str);
 	new_str = NULL;
 }

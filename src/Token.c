@@ -4,44 +4,54 @@
  *  Created on: Feb 29, 2020
  *      Author: scotty
  */
-
-#include "Token.h"
-#include "TokenType.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "Token.h"
+#include "TokenType.h"
+#include "Object.h"
+
 #define TOKEN_INIT_SIZE 5
 
-void init_token(Token* token, TokenType type, char* lexeme, char* literal, int line){
+void init_token(Token* token, TokenType type, char* lexeme, Object* literal, int line){
 	token->type = type;
 	token->lexeme = lexeme?strdup(lexeme):NULL;
-	token->literal = literal?strdup(literal):NULL;
+/*	token->literal = literal?strdup(literal):NULL;*/
+	if(!literal) token->literal = NULL;
+	else
+		token->literal = literal;
 /*	asprintf(&token->lexeme,"%s",lexeme);
 	asprintf(&token->literal,"%s",literal);*/
 	token->line = line;
 	token->inString = NULL;
 	token->toString = &token_toString;
-	token->delete_token = &delete_token;
+	token->delete_token = &delete_Token;
 }
 
 char * token_toString(Token* token){
+	char* fresh;
+	fresh = NULL;
 	if(token->inString)
 		free(token->inString);
 	token->inString = NULL;
-	asprintf(&token->inString,"%s %s %s",typeName[token->type], token->lexeme, token->literal);
+	if(token->type == NUMBER){
+		asprintf(&fresh,"%.2f",*(double*)token->literal->value);
+	}
+	asprintf(&token->inString,"%s %s %s",typeName[token->type], token->lexeme, fresh);
+	free(fresh);
+	fresh = NULL;
 	return token->inString;
 }
 
-void delete_token(Token* token){
+void delete_Token(Token* token){
 	if(token){
 		if(token->lexeme){
 			free(token->lexeme);
 			token->lexeme = NULL;
 		}
-		if(token->literal){
-			free(token->literal);
-			token->literal = NULL;
-		}
+/*		delete_Object(token->literal);
+		token->literal = NULL;*/
 		if(token->inString){
 			free(token->inString);
 			token->inString = NULL;
@@ -75,10 +85,14 @@ void tokens_add(TokenArray* tokenArray,Token* token){
 	for(i=init_start;i<init_finish;i++)
 		init_token(&tokenArray->tokens[i],EEOF,NULL,NULL,0);
 
+	init_token(&tokenArray->tokens[tokenArray->used],
+			token->type,token->lexeme,token->literal,token->line);
+/*
 	tokenArray->tokens[tokenArray->used].lexeme = token->lexeme;
 	tokenArray->tokens[tokenArray->used].line = token->line;
 	tokenArray->tokens[tokenArray->used].literal = token->literal;
 	tokenArray->tokens[tokenArray->used].type = token->type;
+	*/
 	tokenArray->used++;
 }
 
@@ -86,7 +100,7 @@ void delete_tokenArray(TokenArray* tokenArray){
 	if(tokenArray){
 		int i;
 		for(i =0; i <tokenArray->used;i++){
-			delete_token(&tokenArray->tokens[i]);
+			delete_Token(&tokenArray->tokens[i]);
 /*			tokenArray->tokens[i] = NULL;*/
 		}
 	}

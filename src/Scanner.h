@@ -24,7 +24,7 @@ struct _Scanner {
 	void (*scanToken)(Scanner* scanner);
 	char (*advance)(Scanner* scanner);
 	void (*addToken)(Scanner* scanner, TokenType type);
-	void (*addTokenWithObject)(Scanner* scanner, TokenType type, char* literal);
+	void (*addTokenWithObject)(Scanner* scanner, TokenType type, Object* literal);
 	int (*match)(Scanner* scanner, const char expected);
 	char (*peek)(Scanner* scanner);
 	void (*string)(Scanner* scanner);
@@ -46,7 +46,7 @@ void delete_scanner(Scanner* scanner);
 int isAtEnd(Scanner* scanner);
 char advance(Scanner* scanner);
 void addToken(Scanner* scanner, TokenType type);
-void addTokenWithObject(Scanner* scanner, TokenType type, char* literal);
+void addTokenWithObject(Scanner* scanner, TokenType type, Object* literal);
 int match(Scanner* scanner, const char expected);
 char peek(Scanner* scanner);
 void string(Scanner* scanner);

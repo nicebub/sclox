@@ -38,12 +38,16 @@ void init_lox(Lox* lox){
 	    scanTokens(&scanner);
 	    init_parser(&parser,&scanner.tokens,lox);
 	    expression = (Expr*)parse(&parser);
+
 	    if(lox->hadError)
 	    	return;
 	    str = print(&printer,expression);
+	    /* TODO need to delete expression potentially after printing */
 	    printf("%s\n",str);
 	    free(str);
 	    str = NULL;
+	    delete_Expr(expression);
+	    expression = NULL;
 	    /*	    // For now, just print the tokens.*/
 /*	    for(i = 0;i<scanner.tokens.used;i++)
 	    	printf("%s\n",token_toString(&scanner.tokens.tokens[i]));

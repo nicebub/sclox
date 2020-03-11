@@ -20,59 +20,67 @@ void init_printer(AstPrinter* printer){
 char* print(AstPrinter* printer, Expr* expression){
 	   if(expression)
 		  return
-			 expression->vtable.accept(expression,&printer->super);
+			 (expression->vtable.accept(expression,&printer->super)).value.string;
     return NULL;
 }
 
-static void * visitBinaryExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitBinaryExprPrinter(Visitor* visitor,Expr* expression){
 	Binary * expr = (Binary*) expression;
 	Expr * e_array[3];
 	e_array[0] = expr->left;
 	e_array[1] = expr->right;
 	e_array[2] = NULL;
-	return (void*) parenthesize(visitor,expr->operator->lexeme, e_array);
+
+	return parenthesize(visitor,expr->operator->lexeme, e_array);
 }
-static void * visitGroupingExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitGroupingExprPrinter(Visitor* visitor,Expr* expression){
 	Grouping * expr = (Grouping*) expression;
 	Expr * e_array[2];
 	e_array[0] = expr->expression;
 	e_array[1] = NULL;
-	return (void*)parenthesize(visitor,"group",e_array);
+	return parenthesize(visitor,"group",e_array);
 
 }
 const static char * nil = "nil";
-static void * visitUnaryExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitUnaryExprPrinter(Visitor* visitor,Expr* expression){
 	Unary * expr = (Unary*) expression;
 	Expr * e_array[2];
 	e_array[0] = expr->right;
 	e_array[1] = NULL;
-	return (void*)parenthesize(visitor,expr->operator->lexeme,e_array);
+	return parenthesize(visitor,expr->operator->lexeme,e_array);
 
 }
-static void * visitLiteralExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitLiteralExprPrinter(Visitor* visitor,Expr* expression){
+	ReturnResult r;
 	Literal * expr = (Literal*) expression;
 	char * inString = NULL;
-
-	if(expr->value == NULL) return (void*)strdup(nil);
-	switch(expr->valueType){
-		case 0:
-/*			asprintf(&inString,"%d", *(int*)expr->value);
-			break;*/
-		case 1:
+	if(expr->value == NULL || expr->value->value==NULL){
+		r.value.string = strdup(nil);
+		return r;
+	}
+	switch(expr->value->type){
+		case NUMBER:
+			asprintf(&inString,"%.2f", *(double*)expr->value->value);
+			break;
+		case TRUE:
 /*			asprintf(&inString,"%.2f", *(double*)expr->value);
 			break;*/
-		case 2:
+		case NIL:
 /*			asprintf(&inString,"%c", *(char*)expr->value);
 			break;*/
-		case 3:
-		   asprintf(&inString, " %s ", (char*)expr->value);
+		case STRING:
+		case FALSE:
+		   asprintf(&inString, " %s ", (char*)expr->value->value);
 /*			inString = strdup((char*)expr->value);*/
 			break;
+		default: break;
 	}
-	return inString;
+	r.value.string = inString;
+	return r;
 }
 
-char * parenthesize(Visitor* visitor,char* name, Expr** expr_array){
+ReturnResult parenthesize(Visitor* visitor,char* name, Expr** expr_array){
+	ReturnResult r;
 	char * builder;
 	Expr* temp;
 	int counter;
@@ -80,16 +88,18 @@ char * parenthesize(Visitor* visitor,char* name, Expr** expr_array){
 	temp = expr_array[0];
 	asprintf(&builder, "(%s ", name);
 	for(counter =0; expr_array[counter]!=NULL;counter++){
-		char* other = NULL;
+		ReturnResult other;
+		other.value.string= NULL;
 		temp = expr_array[counter];
-		other = (char*)temp->vtable.accept(temp,visitor);
-		builder = realloc(builder, sizeof(char)*(strlen(builder) +strlen(other)+1));
-		strcat(builder,other);
-		free(other);
-		other = NULL;
+		other = temp->vtable.accept(temp,visitor);
+		builder = realloc(builder, sizeof(char)*(strlen(builder) +strlen(other.value.string)+1));
+		strcat(builder,other.value.string);
+		free(other.value.string);
+		other.value.string = NULL;
 /*		result = asprintf(&builder," %s", other);*/
 	}
 	builder = realloc(builder,sizeof(char)*(strlen(builder)+4));
 	strcat(builder," ) ");
-	return builder;
+	r.value.string = builder;
+	return r;
 }
