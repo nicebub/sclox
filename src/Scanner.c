@@ -122,13 +122,15 @@ void identifier(Scanner* scanner){
 	new_str = NULL;
 	while(isAlphaNumeric(peek(scanner)))
 		advance(scanner);
-	new_str = calloc(scanner->current-scanner->start,sizeof(char));
+	new_str = calloc((scanner->current-scanner->start)+1,sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start],scanner->current-scanner->start);
+    new_str[scanner->current-scanner->start] = '\0';
 	type = getTokenTypeFromString(new_str);
 	if(type == KNULL)
 		type = IDENTIFIER;
 		addToken(scanner,type);
-
+    free(new_str);
+    new_str = NULL;
 }
 
 int isAlpha(const char c){
@@ -154,8 +156,9 @@ void addTokenWithObject(Scanner* scanner, TokenType type, Object* literal){
 /*	Token* temp_token;*/
 	text = NULL;
 /*	temp_token = NULL; */
-	text = calloc((scanner->current-scanner->start),sizeof(char));
+	text = calloc((scanner->current-scanner->start)+1,sizeof(char));
 	strncpy(text,&scanner->source[scanner->start],scanner->current-scanner->start);
+    text[scanner->current-scanner->start] = '\0';
 /*	temp_token = malloc(sizeof(Token));*/
 	init_token(&temp_token,type,text,literal,scanner->line);
 	tokens_add(&scanner->tokens,&temp_token);
@@ -191,8 +194,9 @@ void string(Scanner* scanner){
 
 	advance(scanner);
 	new_str = NULL;
-	new_str = calloc((scanner->current-1)-(scanner->start +1),sizeof(char));
+	new_str = calloc(((scanner->current-1)-(scanner->start +1))+1,sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start+1],(scanner->current-1)-(scanner->start +1));
+    new_str[(scanner->current-1)-(scanner->start +1)]='\0';
 	obj = malloc(sizeof(Object));
 	init_Object(obj,new_str,STRING);
 	addTokenWithObject(scanner,STRING,obj);
@@ -220,8 +224,9 @@ void number(Scanner* scanner){
 			advance(scanner);
 	}
 /*	char * str_ptr;*/
-	new_str = calloc(scanner->current-scanner->start,sizeof(char));
+	new_str = calloc((scanner->current-scanner->start)+1,sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start],scanner->current - scanner->start);
+    new_str[scanner->current-scanner->start]='\0';
 /*	str_ptr = new_str;*/
 /*	x = atof(new_str);*/
 /*	worker = x;
@@ -251,7 +256,7 @@ char peekNext(Scanner* scanner){
 TokenType getTokenTypeFromString(const char * inString){
 	int which = 0;
 	while(kmap[which++].keyword != KNULL){
-		if(!strcmp(kmap[which-1].keywordName,inString))
+		if(!strncmp(kmap[which-1].keywordName,inString,strlen(inString)))
 			return kmap[which-1].keyword;
 /*		printf("%s\n",kmap[which-1].keywordName);*/
 	}

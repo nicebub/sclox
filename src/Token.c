@@ -16,7 +16,7 @@
 
 void init_token(Token* token, TokenType type, char* lexeme, Object* literal, int line){
 	token->type = type;
-	token->lexeme = lexeme?strdup(lexeme):NULL;
+	token->lexeme = lexeme?strndup(lexeme,strlen(lexeme)):NULL;
 /*	token->literal = literal?strdup(literal):NULL;*/
 	if(!literal) token->literal = NULL;
 	else

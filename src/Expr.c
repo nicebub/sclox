@@ -56,7 +56,7 @@ void new_Literal (Literal * inObj,Object* valueparam){
 void delete_Literal (Expr* arg){
 	Literal * expr = (Literal *)arg;
 
-	delete_Object(expr->value);
+	delete_Object(&expr->value);
 	expr->value=NULL;
 
 	free(expr);

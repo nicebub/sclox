@@ -27,6 +27,7 @@ volatile Expr* parse(Parser* parser){
 /*	try{*/
 	CEXCEPTION_T e;
 	volatile Expr* expr ;
+    expr = NULL;
 	Try {
 		expr = expression(parser);
 	}

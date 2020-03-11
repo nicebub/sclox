@@ -17,13 +17,14 @@ void init_Object(Object* Object, void* value, TokenType type){
 	Object->isBool = type==FALSE||type==TRUE?1:0;
 
 }
-void delete_Object(Object* object){
-	if(object){
-		if(object->value){
-			free(object->value);
-			object->value = NULL;
+void delete_Object(Object** object){
+	if(object && *object){
+		if((*object)->value){
+			free((*object)->value);
+			(*object)->value = NULL;
 		}
-		free(object);
-		object = NULL;
+		free(*object);
+		*object = NULL;
+	    object = NULL;
 	}
 }

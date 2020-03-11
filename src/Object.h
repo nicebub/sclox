@@ -20,6 +20,6 @@ struct _Object {
 };
 
 void init_Object(Object* Object, void* value, TokenType type);
-void delete_Object(Object* Object);
+void delete_Object(Object** Object);
 
 #endif /* OBJECT_H_ */
