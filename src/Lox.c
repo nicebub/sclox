@@ -4,6 +4,7 @@
  *  Created on: Feb 29, 2020
  *      Author: scotty
  */
+#define CEXCEPTION_USE_CONFIG_FILE
 #include "CException.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +16,11 @@
 #include "TokenType.h"
 #include "AstPrinter.h"
 #include "Interpreter.h"
+
+static void error(Lox* lox,int line, const char* message);
+static void lparse_error(Lox* lox,Token* token, const char* message);
+static void runtimeError(Lox* lox, CEXCEPTION_T e);
+
 
 void init_lox(Lox* lox){
 	lox->hadError = 0;
@@ -135,6 +141,6 @@ static void lparse_error(Lox* lox,Token* token, const char* message){
 	}
 }
 static void runtimeError(Lox* lox, CEXCEPTION_T e){
-    printf("Runtime Error\n");
+    printf("%s\n[line %d] Runtime Error\n",e.message,e.token->line);
     lox->hadRuntimeError = 1;
 }

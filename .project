@@ -25,6 +25,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Visitor.h</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/Visitor.h</location>
+		</link>
+		<link>
 			<name>src/Expr.c</name>
 			<type>1</type>
 			<location>/Users/scotty/eclipsewksp2/sclox/src/Expr.c</location>
@@ -33,6 +38,16 @@
 			<name>src/Expr.h</name>
 			<type>1</type>
 			<location>/Users/scotty/eclipsewksp2/sclox/src/Expr.h</location>
+		</link>
+		<link>
+			<name>src/Stmt.c</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/Stmt.c</location>
+		</link>
+		<link>
+			<name>src/Stmt.h</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/Stmt.h</location>
 		</link>
 	</linkedResources>
 </projectDescription>

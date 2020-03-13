@@ -8,6 +8,8 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+#define CEXCEPTION_USE_CONFIG_FILE
+#include "CException.h"
 #include "TokenType.h"
 #include "Token.h"
 #include "Expr.h"
@@ -32,7 +34,7 @@ struct _Parser {
 	int (*isAtEnd)(Parser* parser);
 	Token* (*peek)(Parser* parser);
 	Token* (*advance)(Parser* parser);
-	int (*error)(Parser* parser, Token* token, const char* message);
+	CEXCEPTION_T (*error)(Parser* parser, Token* token, const char* message);
 };
 
 
@@ -57,6 +59,6 @@ void synchronize(Parser* parser);
 
 
 Token* consume(Parser* parser, TokenType type, const char* message);
-int parse_error(Parser* parser, Token* token, const char* message);
+CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message);
 
 #endif /* PARSER_H_ */

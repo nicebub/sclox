@@ -160,8 +160,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "43"
             endingLineNumber = "43"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "interpret(intprtr, expression)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -174,9 +174,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
-            landmarkName = "checkNumberOperands(operator, left, right)"
+            startingLineNumber = "267"
+            endingLineNumber = "267"
+            landmarkName = "checkNumberOperand(operator, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -192,7 +192,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "42"
             endingLineNumber = "42"
-            landmarkName = "init_Interpreter(intprtr, lox)"
+            landmarkName = "interpret(intprtr, expression)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -510,8 +510,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -528,7 +528,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
             endingLineNumber = "112"
-            landmarkName = "isTruthy(obj)"
+            landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -544,7 +544,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "113"
             endingLineNumber = "113"
-            landmarkName = "isTruthy(obj)"
+            landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -574,8 +574,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
+            startingLineNumber = "291"
+            endingLineNumber = "291"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -609,6 +609,22 @@
             startingLineNumber = "262"
             endingLineNumber = "262"
             landmarkName = "getTokenTypeFromString(inString)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "72B213F1-30FE-49E2-9139-416CBEDC89C4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Interpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
+            landmarkName = "init_Interpreter(intprtr, lox)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

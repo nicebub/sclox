@@ -11,6 +11,7 @@ C_SRCS += \
 ../src/Object.c \
 ../src/Parser.c \
 ../src/Scanner.c \
+../src/Stmt.c \
 ../src/Token.c \
 ../src/sclox.c 
 
@@ -22,6 +23,7 @@ OBJS += \
 ./src/Object.o \
 ./src/Parser.o \
 ./src/Scanner.o \
+./src/Stmt.o \
 ./src/Token.o \
 ./src/sclox.o 
 
@@ -33,6 +35,7 @@ C_DEPS += \
 ./src/Object.d \
 ./src/Parser.d \
 ./src/Scanner.d \
+./src/Stmt.d \
 ./src/Token.d \
 ./src/sclox.d 
 
@@ -46,6 +49,13 @@ src/%.o: ../src/%.c
 	@echo ' '
 
 src/Expr.o: /Users/scotty/eclipsewksp2/sclox/src/Expr.c
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C Compiler'
+	gcc -I"/Users/scotty/eclipsewksp2/classCreate" -I"/Users/scotty/eclipsewksp2/sclox/src" -I"/Users/scotty/eclipsewksp2/sclox/src/CException/lib" -O0 -g3 -pedantic -pedantic-errors -Wall -c -fmessage-length=0 -ansi -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+src/Stmt.o: /Users/scotty/eclipsewksp2/sclox/src/Stmt.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -I"/Users/scotty/eclipsewksp2/classCreate" -I"/Users/scotty/eclipsewksp2/sclox/src" -I"/Users/scotty/eclipsewksp2/sclox/src/CException/lib" -O0 -g3 -pedantic -pedantic-errors -Wall -c -fmessage-length=0 -ansi -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"

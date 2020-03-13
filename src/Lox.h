@@ -7,6 +7,7 @@
 
 #ifndef LOX_H_
 #define LOX_H_
+#define CEXCEPTION_USE_CONFIG_FILE
 #include "CException.h"
 #include "Token.h"
 
@@ -23,10 +24,6 @@ typedef struct _Loxfuncs Loxfuncs;
 
  void report(Lox* lox,int line, const char * where, const char * message);
  /*static void error(Lox* lox,int line, const char* message);*/
-
- static void error(Lox* lox,int line, const char* message);
- static void lparse_error(Lox* lox,Token* token, const char* message);
-static void runtimeError(Lox* lox, CEXCEPTION_T e);
 
 struct _Loxfuncs{
 	void (*run)(Lox* lox,char*);

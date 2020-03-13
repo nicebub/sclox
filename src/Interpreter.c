@@ -10,6 +10,8 @@ typedef struct _exception{
 } exception;
 #define CEXCEPTION_T exception
 */
+#define CEXCEPTION_USE_CONFIG_FILE
+
 #include "CException.h"
 #include <string.h>
 #include <stdio.h>
@@ -47,7 +49,7 @@ void interpret(Interpreter* intprtr, Expr* expression){
     }
 }
 
-ReturnResult visitLiteralExprInterpreter(Visitor* visitor, Expr* expr){
+ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	ReturnResult r;
     r.type = ((Literal*)expr)->value->type;
 	switch(r.type){
@@ -64,10 +66,10 @@ ReturnResult visitLiteralExprInterpreter(Visitor* visitor, Expr* expr){
 	}
 	return r;
 }
-ReturnResult visitGroupingExprInterpreter(Visitor* visitor, Expr* expr){
+ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	return evaluate(visitor,((Grouping*)expr)->expression);
 }
-ReturnResult visitUnaryExprInterpreter(Visitor* visitor, Expr* expr){
+ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	ReturnResult right,result;
 	right = evaluate(visitor,((Unary*)expr)->right);
 
@@ -88,7 +90,7 @@ ReturnResult visitUnaryExprInterpreter(Visitor* visitor, Expr* expr){
 	return result;
 }
 
-ReturnResult evaluate(Visitor* visitor, Expr* expr){
+ReturnResult evaluate(ExprVisitor* visitor, Expr* expr){
 	return expr->vtable.accept(expr,visitor);
 }
 ReturnResult isTruthy(Object* obj){
@@ -107,7 +109,8 @@ ReturnResult isTruthy(Object* obj){
     return r;
 }
 
-ReturnResult visitBinaryExprInterpreter(Visitor* visitor, Expr* expr){
+ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
+    CEXCEPTION_T e;
     ReturnResult left, right, result;
     left = evaluate(visitor,((Binary*)expr)->left);
     right = evaluate(visitor,((Binary*)expr)->right);
@@ -125,22 +128,58 @@ ReturnResult visitBinaryExprInterpreter(Visitor* visitor, Expr* expr){
 			 result.value.number = (double)left.value.number + (double)right.value.number;
 			 return result;
 		  }
-		  if(left.type == STRING && right.type == STRING){
-			 char* new_str;
+		  if((left.type == STRING && right.type == STRING) ||(left.type == STRING && right.type == NUMBER) ||
+			(left.type == NUMBER && right.type == STRING)){
+			 char* new_str, *num_str;
 			 new_str = NULL;
 			 result.type = STRING;
-			 new_str = malloc(sizeof(char)*(strlen(left.value.string)+strlen(right.value.string)+1));
-			 strncpy(new_str,left.value.string,strlen(left.value.string));
-			 strncat(new_str,right.value.string,strlen(right.value.string));
-			 result.value.string = new_str;
+			 switch(left.type){
+				case STRING:
+				    switch(right.type){
+					   case STRING:
+						  new_str = malloc(sizeof(char)*(strlen(left.value.string)+strlen(right.value.string)+1));
+						  strncpy(new_str,left.value.string,strlen(left.value.string));
+						  strncat(new_str,right.value.string,strlen(right.value.string));
+						  result.value.string = new_str;
+						  break;
+					   default:
+						  num_str = stringify(right);
+						  new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(left.value.string)+1));
+						  strncpy(new_str,left.value.string,strlen(left.value.string));
+						  strncat(new_str,num_str,strlen(num_str));
+						  result.value.string = new_str;
+						  free(num_str);
+						  num_str = NULL;
+						  break;
+				    }
+				    break;
+				default:
+				    num_str = stringify(left);
+				    new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(right.value.string)+1));
+				    strncpy(new_str,num_str,strlen(num_str));
+				    strncat(new_str,right.value.string,strlen(right.value.string));
+				    result.value.string = new_str;
+				    free(num_str);
+				    num_str = NULL;
+				    break;
+			 }
 			 return result;
 		  }
-		  Throw(4);
+		  e.id = 4;
+		  e.token = ((Binary*)expr)->operator;
+		  e.message = "Operands must be two numbers, two strings, or one of each";
+		  Throw(e);
 		  break;
 	   case SLASH:
 		  checkNumberOperands(((Binary*)expr)->operator,
 			 ((Literal*)((Binary*)expr)->left)->value,
 			 ((Literal*)((Binary*)expr)->right)->value);
+		  if(right.value.number == (double)0){
+			 e.id = 5;
+			 e.token = ((Binary*)expr)->operator;
+			 e.message = "Cannot divide by Zero";
+			 Throw(e);
+		  }
 		  result.type = NUMBER;
 		  result.value.number = (double)left.value.number / (double)right.value.number;
 		  return result;
@@ -223,13 +262,21 @@ int isEqual(ReturnResult left, ReturnResult right){
     return 0;
 }
 void checkNumberOperand(Token* operator,Object* right){
+    CEXCEPTION_T e;
     if(operator->type == NUMBER) return;
-    Throw(2);
+    e.id = 2;
+    e.token = operator;
+    e.message = "Operand must be a number";
+    Throw(e);
 }
 void checkNumberOperands(Token* operator, Object* left, Object* right){
-	   if(left->type == NUMBER && right->type == NUMBER)
+    CEXCEPTION_T e;
+    if(left->type == NUMBER && right->type == NUMBER)
 		  return;
-    Throw(3);
+    e.id = 3;
+    e.token = operator;
+    e.message = "Operands must be numbers";
+    Throw(e);
 }
 const static char* nil = "nil";
 

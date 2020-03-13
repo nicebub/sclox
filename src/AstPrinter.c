@@ -10,6 +10,12 @@
 #include "Expr.h"
 #include "stdio.h"
 #include "string.h"
+
+static ReturnResult visitBinaryExprPrinter(ExprVisitor* visitor,Expr* expression);
+static ReturnResult visitGroupingExprPrinter(ExprVisitor* visitor,Expr* expression);
+static ReturnResult visitUnaryExprPrinter(ExprVisitor* visitor,Expr* expression);
+static ReturnResult visitLiteralExprPrinter(ExprVisitor* visitor,Expr* expression);
+
 void init_printer(AstPrinter* printer){
 	printer->super.vtable.visitBinaryExpr = &visitBinaryExprPrinter;
 	printer->super.vtable.visitUnaryExpr = &visitUnaryExprPrinter;
@@ -24,7 +30,7 @@ char* print(AstPrinter* printer, Expr* expression){
     return NULL;
 }
 
-static ReturnResult visitBinaryExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitBinaryExprPrinter(ExprVisitor* visitor,Expr* expression){
 	Binary * expr = (Binary*) expression;
 	Expr * e_array[3];
 	e_array[0] = expr->left;
@@ -33,7 +39,7 @@ static ReturnResult visitBinaryExprPrinter(Visitor* visitor,Expr* expression){
 
 	return parenthesize(visitor,expr->operator->lexeme, e_array);
 }
-static ReturnResult visitGroupingExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitGroupingExprPrinter(ExprVisitor* visitor,Expr* expression){
 	Grouping * expr = (Grouping*) expression;
 	Expr * e_array[2];
 	e_array[0] = expr->expression;
@@ -42,7 +48,7 @@ static ReturnResult visitGroupingExprPrinter(Visitor* visitor,Expr* expression){
 
 }
 const static char * nil = "nil";
-static ReturnResult visitUnaryExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitUnaryExprPrinter(ExprVisitor* visitor,Expr* expression){
 	Unary * expr = (Unary*) expression;
 	Expr * e_array[2];
 	e_array[0] = expr->right;
@@ -50,7 +56,7 @@ static ReturnResult visitUnaryExprPrinter(Visitor* visitor,Expr* expression){
 	return parenthesize(visitor,expr->operator->lexeme,e_array);
 
 }
-static ReturnResult visitLiteralExprPrinter(Visitor* visitor,Expr* expression){
+static ReturnResult visitLiteralExprPrinter(ExprVisitor* visitor,Expr* expression){
 	ReturnResult r;
 	Literal * expr = (Literal*) expression;
 	char * inString = NULL;
@@ -79,7 +85,7 @@ static ReturnResult visitLiteralExprPrinter(Visitor* visitor,Expr* expression){
 	return r;
 }
 
-ReturnResult parenthesize(Visitor* visitor,char* name, Expr** expr_array){
+ReturnResult parenthesize(ExprVisitor* visitor,char* name, Expr** expr_array){
 	ReturnResult r;
 	char * builder;
 	Expr* temp;

@@ -4,6 +4,7 @@
  *  Created on: Mar 9, 2020
  *      Author: scotty
  */
+#define CEXCEPTION_USE_CONFIG_FILE
 #include "CException.h"
 #include <stdio.h>
 #include "Parser.h"
@@ -25,7 +26,7 @@ void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 
 volatile Expr* parse(Parser* parser){
 /*	try{*/
-	CEXCEPTION_T e;
+	volatile CEXCEPTION_T e;
 	volatile Expr* expr ;
     expr = NULL;
 	Try {
@@ -192,9 +193,11 @@ Token* consume(Parser* parser, TokenType type, const char* message){
     return NULL;
 }
 
-int parse_error(Parser* parser, Token* token, const char* message){
+CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message){
+    CEXCEPTION_T e;
 	parser->lox->parse_error(parser->lox,token,message);
-	return 1;
+    e.id = 1;
+	return e;
 /*	 Lox.error(token,message);
 	 return new ParseError() exception*/
 }

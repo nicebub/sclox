@@ -47,6 +47,7 @@
 		E213C6AF2417244F00141F63 /* Expr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Expr.c; path = ../../src/Expr.c; sourceTree = "<group>"; };
 		E213C6B02417244F00141F63 /* Scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Scanner.c; path = ../../src/Scanner.c; sourceTree = "<group>"; };
 		E213C6B12417244F00141F63 /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Token.h; path = ../../src/Token.h; sourceTree = "<group>"; };
+		E24DC44F241B4C7600A569CA /* CExceptionConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CExceptionConfig.h; path = ../../src/CExceptionConfig.h; sourceTree = "<group>"; };
 		E2BC490F2418CB8300F8F14C /* Interpreter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Interpreter.c; path = ../../src/Interpreter.c; sourceTree = "<group>"; };
 		E2BC49102418CB8300F8F14C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Object.c; path = ../../src/Object.c; sourceTree = "<group>"; };
 		E2BC49112418CB8300F8F14C /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = ../../src/Interpreter.h; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 				E213C6AE2417244F00141F63 /* Token.c */,
 				E213C6B12417244F00141F63 /* Token.h */,
 				E213C6A42417244F00141F63 /* TokenType.h */,
+				E24DC44F241B4C7600A569CA /* CExceptionConfig.h */,
 			);
 			path = sclox;
 			sourceTree = "<group>";
