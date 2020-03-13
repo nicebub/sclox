@@ -14,7 +14,7 @@ void init_Object(Object* Object, void* value, TokenType type){
 
 	Object->value = value;
 	Object->type = type;
-	Object->isBool = type==FALSE||type==TRUE?1:0;
+	Object->isBool = type==FALSE||type==TRUE||type==NIL?1:0;
 
 }
 void delete_Object(Object** object){

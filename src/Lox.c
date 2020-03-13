@@ -4,6 +4,7 @@
  *  Created on: Feb 29, 2020
  *      Author: scotty
  */
+#include "CException.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "Lox.h"
@@ -13,23 +14,26 @@
 #include "Token.h"
 #include "TokenType.h"
 #include "AstPrinter.h"
+#include "Interpreter.h"
 
 void init_lox(Lox* lox){
 	lox->hadError = 0;
+     lox->hadRuntimeError = 0;
 	lox->run = &run;
 	lox->runPrompt =&runPrompt;
 	lox->runFile = &runFile;
 	lox->report = &report;
 	lox->error = &error;
 	lox->parse_error = &lparse_error;
-
+     lox->runtimeError = &runtimeError;
 }
  void run(Lox* lox,char * source){
 	    Scanner scanner;
 	    Parser parser;
 	    Expr *expression;
 	    AstPrinter printer;
-	    char * str;
+	    Interpreter interpreter;
+/*	    char * str;*/
 /*	    int i;*/
 
 	    init_printer(&printer);
@@ -41,11 +45,15 @@ void init_lox(Lox* lox){
 
 	    if(lox->hadError)
 	    	return;
+	    init_Interpreter(&interpreter,lox);
+	    interpreter.interpret(&interpreter,expression);
+/*
 	    str = print(&printer,expression);
-	    /* TODO need to delete expression potentially after printing */
 	    printf("%s\n",str);
 	    free(str);
 	    str = NULL;
+ */
+	    /* TODO need to delete expression potentially after printing */
 	    delete_Expr(expression);
 	    expression = NULL;
 	    /*	    // For now, just print the tokens.*/
@@ -58,11 +66,13 @@ void init_lox(Lox* lox){
 
  void runFile(Lox* lox,const char * file){
 	FILE* inFile;
+/*	char c;*/
 	char* line;
-	size_t lread;
+	ssize_t lread;
+	size_t capp;
 	inFile = NULL;
 	line = NULL;
-	lread = 0;
+	lread = capp = 0;
 
 	if(!file){
 		printf("file not given\n");
@@ -73,10 +83,16 @@ void init_lox(Lox* lox){
 		perror("Error");
 		exit( EXIT_FAILURE);
 	}
-	while((lread = getline(&line,0,inFile)) > 0)
-		run(lox,line);
+	while((lread = getline(&line,&capp,inFile)) > 0){
+	   run(lox,line);
+	   free(line);
+	   line = NULL;
+/*	    scanf("%c",&c);*/
+	}
 	 if(lox->hadError)
-		 exit(65);
+	   exit(65);
+	if(lox->hadRuntimeError)
+	    exit(70);
 }
 
  void runPrompt(Lox* lox){
@@ -117,4 +133,8 @@ static void lparse_error(Lox* lox,Token* token, const char* message){
 		free(str);
 		str = NULL;
 	}
+}
+static void runtimeError(Lox* lox, CEXCEPTION_T e){
+    printf("Runtime Error\n");
+    lox->hadRuntimeError = 1;
 }

@@ -18,9 +18,9 @@ void init_token(Token* token, TokenType type, char* lexeme, Object* literal, int
 	token->type = type;
 	token->lexeme = lexeme?strndup(lexeme,strlen(lexeme)):NULL;
 /*	token->literal = literal?strdup(literal):NULL;*/
-	if(!literal) token->literal = NULL;
-	else
-		token->literal = literal;
+/*	if(!literal) token->literal = NULL;
+	else*/
+	token->literal = literal;
 /*	asprintf(&token->lexeme,"%s",lexeme);
 	asprintf(&token->literal,"%s",literal);*/
 	token->line = line;
@@ -50,7 +50,7 @@ void delete_Token(Token* token){
 			free(token->lexeme);
 			token->lexeme = NULL;
 		}
-/*		delete_Object(token->literal);
+/*	TODO	delete_Object(token->literal);
 		token->literal = NULL;*/
 		if(token->inString){
 			free(token->inString);

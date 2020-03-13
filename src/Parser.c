@@ -121,26 +121,34 @@ Expr* primary(Parser* parser){
 	Object * obj;
 	TokenType types[] = { FALSE, KNULL };
 	if(parser->match(parser,types)){
+		double* val;
 		Literal* lit = malloc(sizeof(Literal));
 		obj = malloc(sizeof(Object));
-		init_Object(obj,strdup("false"),FALSE);
+	    val = malloc(sizeof(double));
+	    *val = 0;
+		init_Object(obj,val,FALSE);
+/*		init_Object(obj,strdup("false"),FALSE);*/
 		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = TRUE;
 	if(parser->match(parser,types)){
+	    double* val;
 		Literal* lit = malloc(sizeof(Literal));
 		obj = malloc(sizeof(Object));
-		init_Object(obj,strdup("true"),TRUE);
+	     val = malloc(sizeof(double));
+	     *val = 1;
+	     init_Object(obj,val,TRUE);
+/*		init_Object(obj,strdup("true"),TRUE);*/
 		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = NIL;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-/*		obj = malloc(sizeof(Object));*/
-/*		init_Object(obj,strdup("nil"),NIL);*/
-		new_Literal(lit,previous(parser)->literal);
+		obj = malloc(sizeof(Object));
+		init_Object(obj,strdup("nil"),NIL);
+		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = NUMBER;

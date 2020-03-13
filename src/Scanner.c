@@ -256,7 +256,10 @@ char peekNext(Scanner* scanner){
 TokenType getTokenTypeFromString(const char * inString){
 	int which = 0;
 	while(kmap[which++].keyword != KNULL){
-		if(!strncmp(kmap[which-1].keywordName,inString,strlen(inString)))
+	    size_t length = strlen(inString);
+	    if(strlen(kmap[which-1].keywordName) > length)
+		   length = strlen(kmap[which-1].keywordName);
+		if(strncmp(kmap[which-1].keywordName,inString,length)==0)
 			return kmap[which-1].keyword;
 /*		printf("%s\n",kmap[which-1].keywordName);*/
 	}
