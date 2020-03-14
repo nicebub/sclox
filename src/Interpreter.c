@@ -76,13 +76,13 @@ ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	switch(((Unary*)expr)->operator->type){
 		case BANG:
 		   result.type = BOOLEAN;
-		   result.value.number = ! isTruthy(((Literal*)((Unary*)expr)->right)->value).value.number;
+		   result.value.number = ! isTruthy(right).value.number;
 		   return result;
 		case MINUS:
-		   checkNumberOperand(((Unary*)expr)->operator,
-						  ((Literal*)((Unary*)expr)->right)->value );
+		   checkNumberOperand(((Unary*)expr)->operator,right);
 		   result.type = NUMBER;
-		   result.value.number = - * (double*) ((Literal*)((Unary*)expr)->right)->value->value;
+   		   result.value.number = - (double) right.value.number;
+/*		   result.value.number = - * (double*) ((Literal*)((Unary*)expr)->right)->value->value;*/
 			return  result;
 	    default: break;
 	}
@@ -93,19 +93,16 @@ ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 ReturnResult evaluate(ExprVisitor* visitor, Expr* expr){
 	return expr->vtable.accept(expr,visitor);
 }
-ReturnResult isTruthy(Object* obj){
+ReturnResult isTruthy(ReturnResult obj){
 	ReturnResult r;
-    if(obj == NULL || obj->type == KNULL){
+    if(obj.type == BOOLEAN || obj.type == FALSE || obj.type == TRUE || obj.type == NIL){
+	   r.type = BOOLEAN;
+	   r.value.number = (double)obj.value.number;
+    }
+    else{
 	   r.type = BOOLEAN;
 	   r.value.number = 0;
-	   return r;
     }
-    if(obj->isBool){
-	   r.type = BOOLEAN;
-	   r.value.number = *((double*)obj->value);
-    }
-    r.type = BOOLEAN;
-    r.value.number = 0;
     return r;
 }
 
@@ -116,9 +113,7 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
     right = evaluate(visitor,((Binary*)expr)->right);
     switch(((Binary*)expr)->operator->type){
 	  case MINUS:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = NUMBER;
 		  result.value.number = (double)left.value.number - (double)right.value.number;
 		  return result;
@@ -171,9 +166,7 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  Throw(e);
 		  break;
 	   case SLASH:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  if(right.value.number == (double)0){
 			 e.id = 5;
 			 e.token = ((Binary*)expr)->operator;
@@ -184,37 +177,27 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  result.value.number = (double)left.value.number / (double)right.value.number;
 		  return result;
 	   case STAR:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = NUMBER;
 		  result.value.number = (double)left.value.number * (double)right.value.number;
 		  return result;
 	   case GREATER:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = BOOLEAN;
 		  result.value.number = (double)left.value.number > (double)right.value.number;
 		  return result;
 	   case GREATER_EQUAL:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = BOOLEAN;
 		  result.value.number = (double)left.value.number >= (double)right.value.number;
 		  return result;
 	   case LESS:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = BOOLEAN;
 		  result.value.number = (double)left.value.number < (double)right.value.number;
 		  return result;
 	   case LESS_EQUAL:
-		  checkNumberOperands(((Binary*)expr)->operator,
-			 ((Literal*)((Binary*)expr)->left)->value,
-			 ((Literal*)((Binary*)expr)->right)->value);
+		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result.type = BOOLEAN;
 		  result.value.number = (double)left.value.number <= (double)right.value.number;
 		  return result;
@@ -248,30 +231,44 @@ int isEqual(ReturnResult left, ReturnResult right){
 	   case BOOLEAN:
 	   case TRUE:
 	   case FALSE:
-		  return left.value.number == right.value.number;
+		  switch(right.type){
+			 case NUMBER:
+			 case BOOLEAN:
+			 case FALSE:
+			 case TRUE:
+				    return left.value.number == right.value.number;
+				break;
+			 default: return 0;break;
+		  }
 	   case STRING:
-	   {
-		   size_t length = strlen(left.value.string);
-		   if(length < strlen(right.value.string))
-				   length = strlen(right.value.string);
-		  return strncmp(left.value.string,right.value.string,length) == 0;
-	   }
+		  switch(right.type){
+			 case STRING:
+				{
+					size_t length = strlen(left.value.string);
+					if(length < strlen(right.value.string))
+							length = strlen(right.value.string);
+				    return strncmp(left.value.string,right.value.string,length) == 0;
+				}
+				break;
+			 
+			 default: return 0; break;
+		  }
 	   break;
 	   default: break;
     }
     return 0;
 }
-void checkNumberOperand(Token* operator,Object* right){
+void checkNumberOperand(Token* operator,ReturnResult right){
     CEXCEPTION_T e;
-    if(operator->type == NUMBER) return;
+    if(right.type == NUMBER) return;
     e.id = 2;
     e.token = operator;
     e.message = "Operand must be a number";
     Throw(e);
 }
-void checkNumberOperands(Token* operator, Object* left, Object* right){
+void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right){
     CEXCEPTION_T e;
-    if(left->type == NUMBER && right->type == NUMBER)
+    if(left.type == NUMBER && right.type == NUMBER)
 		  return;
     e.id = 3;
     e.token = operator;

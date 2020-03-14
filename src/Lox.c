@@ -66,8 +66,8 @@ void init_lox(Lox* lox){
 /*	    for(i = 0;i<scanner.tokens.used;i++)
 	    	printf("%s\n",token_toString(&scanner.tokens.tokens[i]));
 	    */
-	    delete_tokenArray(&scanner.tokens);
-	    init_tokenArray(&scanner.tokens);
+	    deleteTokenArray(&scanner.tokens);
+	    init_TokenArray(&scanner.tokens);
 }
 
  void runFile(Lox* lox,const char * file){

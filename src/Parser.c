@@ -254,11 +254,11 @@ int parser_isAtEnd(Parser* parser){
 }
 
 Token* parser_peek(Parser* parser){
-	return &parser->tokens->tokens[parser->current];
+	return getTokeninArrayAt(parser->tokens,parser->current);
 }
 
 Token* previous(Parser* parser){
-	return &parser->tokens->tokens[parser->current-1];
+	return getTokeninArrayAt(parser->tokens,parser->current-1);
 }
 
 /*

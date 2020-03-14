@@ -19,10 +19,10 @@ struct _Interpreter {
     Lox* lox;
     void (*interpret)(Interpreter*, Expr* );
     ReturnResult (*evaluate)(ExprVisitor*, Expr*);
-    ReturnResult (*isTruthy)(Object*);
+    ReturnResult (*isTruthy)(ReturnResult);
     int (*isEqual)(ReturnResult left, ReturnResult right);
-    void (*checkNumberOperand)(Token* operator,Object* right);
-    void (*checkNumberOperands)(Token* operator, Object* left, Object* right);
+    void (*checkNumberOperand)(Token* operator,ReturnResult right);
+    void (*checkNumberOperands)(Token* operator, ReturnResult left, ReturnResult right);
     char* (*stringify)(ReturnResult);
 
 };
@@ -36,10 +36,10 @@ ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
 
 ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
-ReturnResult isTruthy(Object* obj);
+ReturnResult isTruthy(ReturnResult obj);
 int isEqual(ReturnResult left, ReturnResult right);
-void checkNumberOperand(Token* operator,Object* right);
-void checkNumberOperands(Token* operator, Object* left, Object* right);
+void checkNumberOperand(Token* operator,ReturnResult right);
+void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right);
 char* stringify(ReturnResult obj);
 
 #endif /* INTERPRETER_H_ */

@@ -15,7 +15,7 @@
 void init_scanner(Scanner* scanner, const char * source, Lox* lox){
 /*	asprintf(&scanner->source,"%s", source);*/
 	scanner->source = strdup(source);
-	init_tokenArray(&scanner->tokens);
+	init_TokenArray(&scanner->tokens);
 	scanner->lox = lox;
 	scanner->start = scanner->current = 0;
 	scanner->line=1;
@@ -45,9 +45,9 @@ TokenArray * scanTokens(Scanner* scanner){
 		scanToken(scanner);
 	}
 /*	Token *temp_token = malloc(sizeof(Token));*/
-	init_token(&temp_token,EEOF,"",NULL,scanner->line);
+	init_Token(&temp_token,EEOF,"",NULL,scanner->line);
 
-	tokens_add(&scanner->tokens,&temp_token);
+	addElementToTokenArray(&scanner->tokens,&temp_token);
 	return &scanner->tokens;
 }
 
@@ -57,7 +57,7 @@ void delete_scanner(Scanner* scanner){
 			free(scanner->source);
 			scanner->source = NULL;
 		}
-		delete_tokenArray(&scanner->tokens);
+		deleteTokenArray(&scanner->tokens);
 /*		scanner->tokens = NULL;*/
 	}
 }
@@ -160,8 +160,8 @@ void addTokenWithObject(Scanner* scanner, TokenType type, Object* literal){
 	strncpy(text,&scanner->source[scanner->start],scanner->current-scanner->start);
     text[scanner->current-scanner->start] = '\0';
 /*	temp_token = malloc(sizeof(Token));*/
-	init_token(&temp_token,type,text,literal,scanner->line);
-	tokens_add(&scanner->tokens,&temp_token);
+	init_Token(&temp_token,type,text,literal,scanner->line);
+	addElementToTokenArray(&scanner->tokens,&temp_token);
 	free(text);
 	text = NULL;
 }

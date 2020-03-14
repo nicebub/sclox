@@ -9,9 +9,9 @@
 #define TOKEN_H_
 #include "TokenType.h"
 #include "Object.h"
+#include "List.h"
 
 typedef struct _Token Token;
-typedef struct _TokenArray TokenArray;
 struct _Token {
 	TokenType type;
 	char * lexeme;
@@ -23,21 +23,12 @@ struct _Token {
 
 };
 
-struct _TokenArray {
-	Token * tokens;
-	int size;
-	int used;
-	void (*tokens_add)(TokenArray* tokenArray,Token* token);
-	void (*delete_tokenArray)(TokenArray* tokenArray);
-};
+declareArrayType(Token);
 
-void init_token(Token* token, TokenType type, char* lexeme, Object* literal, int line);
+void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line);
 
 char * token_toString(Token* token);
 void delete_Token(Token* token);
 
-void init_tokenArray(TokenArray* tokenArray);
-void tokens_add(TokenArray* tokenArray,Token* token);
-void delete_tokenArray(TokenArray* tokenArray);
 
 #endif /* TOKEN_H_ */
