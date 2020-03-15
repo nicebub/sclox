@@ -110,6 +110,30 @@ void delete_Unary (Expr* arg){
 ReturnResult acceptUnary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitUnaryExpr(visitor,arg);
 }
+
+static ReturnResult visitVariableExpr( ExprVisitor* visitor,Expr* arg);
+
+static ReturnResult visitVariableExpr(ExprVisitor* visitor,Expr* expr){
+    ReturnResult r; r.value.string=NULL; return r;
+}
+void new_Variable (Variable * inObj,Token* nameparam){
+	inObj->super.vtable.accept = &acceptVariable;
+	inObj->super.vtable.delete_Expr = &delete_Variable ;
+	inObj->name = nameparam;
+}
+void delete_Variable (Expr* arg){
+	Variable * expr = (Variable *)arg;
+
+    delete_Token(expr->name);
+    expr->name=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+ReturnResult acceptVariable(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitVariableExpr(visitor,arg);
+}
 void delete_Expr(Expr* expr){
 	expr->vtable.delete_Expr(expr);
 }

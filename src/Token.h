@@ -9,7 +9,6 @@
 #define TOKEN_H_
 #include "TokenType.h"
 #include "Object.h"
-#include "List.h"
 
 typedef struct _Token Token;
 struct _Token {
@@ -23,7 +22,6 @@ struct _Token {
 
 };
 
-declareArrayType(Token);
 
 void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line);
 

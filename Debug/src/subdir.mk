@@ -12,7 +12,10 @@ C_SRCS += \
 ../src/Parser.c \
 ../src/Scanner.c \
 ../src/Stmt.c \
+../src/StmtArray.c \
 ../src/Token.c \
+../src/TokenArray.c \
+../src/additions.c \
 ../src/sclox.c 
 
 OBJS += \
@@ -24,7 +27,10 @@ OBJS += \
 ./src/Parser.o \
 ./src/Scanner.o \
 ./src/Stmt.o \
+./src/StmtArray.o \
 ./src/Token.o \
+./src/TokenArray.o \
+./src/additions.o \
 ./src/sclox.o 
 
 C_DEPS += \
@@ -36,7 +42,10 @@ C_DEPS += \
 ./src/Parser.d \
 ./src/Scanner.d \
 ./src/Stmt.d \
+./src/StmtArray.d \
 ./src/Token.d \
+./src/TokenArray.d \
+./src/additions.d \
 ./src/sclox.d 
 
 

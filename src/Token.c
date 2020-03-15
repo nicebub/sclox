@@ -11,7 +11,7 @@
 #include "Token.h"
 #include "TokenType.h"
 #include "Object.h"
-#include "List.h"
+#include "TokenArray.h"
 
 #define TOKEN_INIT_SIZE 5
 
@@ -59,7 +59,11 @@ void delete_Token(Token* token){
 		}
 	}
 }
-void initializeTokenElement(Token* tok){
-	init_Token(tok,EEOF,NULL,NULL,0);
+void initializeTokenElement(Token* tok, void* values){
+	Token* newtok = (Token*)values;
+	if(!values)
+		init_Token(tok,EEOF,NULL,NULL,0);
+	else{
+		init_Token(tok,newtok->type,newtok->lexeme,newtok->literal,newtok->line);
+	}
 }
-defineArrayFuncs(Token)

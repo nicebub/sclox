@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "new_Expression:Stmt.c">
+      </ContextState>
+      <ContextState
+         contextName = "initializeStmtElement:additions.c">
+      </ContextState>
+      <ContextState
+         contextName = "expressionStatement:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "run:Lox.c">
+      </ContextState>
+      <ContextState
+         contextName = "parser_match:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "parse:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "addElementToStmtArray:StmtArray.c">
+      </ContextState>
+      <ContextState
+         contextName = "execute:Interpreter.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(Expression*)stmt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "interpret:Interpreter.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "((Literal*)((Expression*)stmt)-&gt;expression)">
+            </PersistentString>
+            <PersistentString
+               value = "(Expression*)stmt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "statement:Parser.c">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

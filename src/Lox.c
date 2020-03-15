@@ -16,6 +16,7 @@
 #include "TokenType.h"
 #include "AstPrinter.h"
 #include "Interpreter.h"
+#include "Stmt.h"
 
 static void error(Lox* lox,int line, const char* message);
 static void lparse_error(Lox* lox,Token* token, const char* message);
@@ -37,6 +38,7 @@ void init_lox(Lox* lox){
 	    Scanner scanner;
 	    Parser parser;
 	    Expr *expression;
+	    StmtArray* statements;
 	    AstPrinter printer;
 	    Interpreter interpreter;
 /*	    char * str;*/
@@ -47,12 +49,13 @@ void init_lox(Lox* lox){
 /*	    init_tokenArray(&scanner.tokens);*/
 	    scanTokens(&scanner);
 	    init_parser(&parser,&scanner.tokens,lox);
-	    expression = (Expr*)parse(&parser);
+/*	    init_StmtArray(&statements);*/
+	    statements = (StmtArray*)parse(&parser);
 
 	    if(lox->hadError)
 	    	return;
 	    init_Interpreter(&interpreter,lox);
-	    interpreter.interpret(&interpreter,expression);
+	    interpreter.interpret(&interpreter,statements);
 /*
 	    str = print(&printer,expression);
 	    printf("%s\n",str);
@@ -60,7 +63,7 @@ void init_lox(Lox* lox){
 	    str = NULL;
  */
 	    /* TODO need to delete expression potentially after printing */
-	    delete_Expr(expression);
+/*	    delete_Expr(expression);*/
 	    expression = NULL;
 	    /*	    // For now, just print the tokens.*/
 /*	    for(i = 0;i<scanner.tokens.used;i++)

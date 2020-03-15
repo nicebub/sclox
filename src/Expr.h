@@ -23,6 +23,7 @@ struct _ExprVisitor_vtable {
 	ReturnResult (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
+	ReturnResult (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
 
 };
 struct _ExprVisitor {
@@ -72,5 +73,14 @@ struct _Unary  {
 void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam);
 void delete_Unary (Expr* arg);
 ReturnResult acceptUnary(Expr* arg, ExprVisitor* visitor);
+typedef struct _Variable  Variable ;
+struct _Variable  {
+	Expr super;
+	Token* name;
+
+};
+void new_Variable (Variable * inObj,Token* nameparam);
+void delete_Variable (Expr* arg);
+ReturnResult acceptVariable(Expr* arg, ExprVisitor* visitor);
 void delete_Expr(Expr* expr);
 #endif

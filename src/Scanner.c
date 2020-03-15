@@ -44,7 +44,7 @@ TokenArray * scanTokens(Scanner* scanner){
 		scanner->start = scanner->current;
 		scanToken(scanner);
 	}
-/*	Token *temp_token = malloc(sizeof(Token));*/
+/*	temp_token = malloc(sizeof(Token));*/
 	init_Token(&temp_token,EEOF,"",NULL,scanner->line);
 
 	addElementToTokenArray(&scanner->tokens,&temp_token);

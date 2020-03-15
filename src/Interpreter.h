@@ -12,12 +12,15 @@
 #include "ReturnResult.h"
 #include "Object.h"
 #include "Lox.h"
+#include "Stmt.h"
+#include "additions.h"
 
 typedef struct _Interpreter Interpreter;
+typedef struct _SuperVisitor SuperVisitor;
 struct _Interpreter {
-	ExprVisitor super;
+	StmtVisitor super;
     Lox* lox;
-    void (*interpret)(Interpreter*, Expr* );
+    void (*interpret)(Interpreter*, StmtArray* );
     ReturnResult (*evaluate)(ExprVisitor*, Expr*);
     ReturnResult (*isTruthy)(ReturnResult);
     int (*isEqual)(ReturnResult left, ReturnResult right);
@@ -28,15 +31,11 @@ struct _Interpreter {
 };
 
 void init_Interpreter(Interpreter* intprt, Lox* lox);
-void interpret(Interpreter* intprtr, Expr* expression);
+void interpret(Interpreter* intprtr, StmtArray* array);
+void execute(Interpreter* intprtr, Stmt* stmt);
 
-ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
 
-ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
-ReturnResult isTruthy(ReturnResult obj);
+
 int isEqual(ReturnResult left, ReturnResult right);
 void checkNumberOperand(Token* operator,ReturnResult right);
 void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right);

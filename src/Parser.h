@@ -14,7 +14,9 @@
 #include "Token.h"
 #include "Expr.h"
 #include "Lox.h"
-
+#include "Stmt.h"
+#include "additions.h"
+#include "TokenArray.h"
 typedef struct _Parser Parser;
 /*
 typedef struct _Parser_vtable Parser_vtable;
@@ -40,7 +42,13 @@ struct _Parser {
 
 void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
-volatile Expr* parse(Parser* parser);
+volatile StmtArray* parse(Parser* parser);
+Stmt* declaration(Parser* parser);
+Stmt* varDeclaration(Parser* parser);
+Stmt* statement(Parser* parser);
+Stmt* expressionStatement(Parser* parser);
+Stmt* printStatement(Parser* parser);
+
 Expr* expression(Parser* parser);
 Expr* equality(Parser* parser);
 Expr* comparison(Parser* parser);
@@ -60,5 +68,6 @@ void synchronize(Parser* parser);
 
 Token* consume(Parser* parser, TokenType type, const char* message);
 CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message);
+
 
 #endif /* PARSER_H_ */

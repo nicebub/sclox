@@ -21,13 +21,26 @@ typedef struct _exception{
 #include "TokenType.h"
 #include "ReturnResult.h"
 #include "Object.h"
+#include "additions.h"
+
+ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
+ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
+ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
+ReturnResult isTruthy(ReturnResult obj);
+
 
 void init_Interpreter(Interpreter* intprtr, Lox* lox){
     intprtr->lox = lox;
-	intprtr->super.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
-	intprtr->super.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
-	intprtr->super.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
-    intprtr->super.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
+	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
+	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
+	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
+    intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
+    intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
+    intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
     intprtr->checkNumberOperand = &checkNumberOperand;
     intprtr->checkNumberOperands = &checkNumberOperands;
     intprtr->evaluate = &evaluate;
@@ -37,16 +50,24 @@ void init_Interpreter(Interpreter* intprtr, Lox* lox){
     intprtr->stringify = &stringify;
 }
 
-void interpret(Interpreter* intprtr, Expr* expression){
+void interpret(Interpreter* intprtr, StmtArray* array){
     CEXCEPTION_T e;
     Try{
-	   volatile ReturnResult value;
-	   value = evaluate(&intprtr->super, expression);
-	   printf("%s\n", stringify(value));
+        int i;
+/*	   volatile ReturnResult value;*/
+	   for(i=0;i<array->used;i++){
+		  Stmt* stmt = getStmtinArrayAt(array,i);
+		   execute(intprtr,stmt);
+	   }
     }
     Catch(e){
 	   intprtr->lox->runtimeError(intprtr->lox,e);
     }
+}
+
+void execute(Interpreter* intprtr, Stmt* stmt){
+    Expression * ex = (Expression*)stmt;
+	ex->super.vtable.accept(stmt,&intprtr->super);
 }
 
 ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
@@ -240,6 +261,7 @@ int isEqual(ReturnResult left, ReturnResult right){
 				break;
 			 default: return 0;break;
 		  }
+		  break;
 	   case STRING:
 		  switch(right.type){
 			 case STRING:
@@ -316,4 +338,19 @@ char* stringify(ReturnResult obj){
 /*    asprintf(&text,"%lf",(double)obj.value.number);*/
 
     return obj.value.string;
+}
+
+ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
+	ReturnResult result;
+	result.type = KNULL;
+	evaluate(&visitor->expr,((Expression*)stmt)->expression);
+	return result;
+}
+
+ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
+	ReturnResult r,result;
+	r = evaluate(&visitor->expr,((Print*)stmt)->expression);
+	printf("%s\n",stringify(r));
+	result.type = KNULL;
+	return result;
 }

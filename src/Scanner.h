@@ -9,6 +9,7 @@
 #define SCANNER_H_
 #include "TokenType.h"
 #include "Token.h"
+#include "TokenArray.h"
 #include "Lox.h"
 typedef struct _Scanner Scanner;
 struct _Scanner {

@@ -13,6 +13,9 @@
 #include "Expr.h"
 #include "TokenType.h"
 #include "string.h"
+#include "Stmt.h"
+#include "additions.h"
+#include "TokenArray.h"
 void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
@@ -24,26 +27,72 @@ void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->current = 0;
 }
 
-volatile Expr* parse(Parser* parser){
-/*	try{*/
-	volatile CEXCEPTION_T e;
-	volatile Expr* expr ;
-    expr = NULL;
+volatile StmtArray* parse(Parser* parser){
+	StmtArray *statements;
+	statements = malloc(sizeof(StmtArray));
+	init_StmtArray(statements);
+
+	while(!parser->isAtEnd(parser)){
+		statements->addElementToArray(statements,declaration(parser));
+	}
+	if(statements)
+		return (StmtArray*)statements;
+	return NULL;
+}
+
+Stmt* declaration(Parser* parser){
+	CEXCEPTION_T e;
+	TokenType toks[] = { VAR, KNULL };
 	Try {
-		expr = expression(parser);
+		if(parser->match(parser,toks))
+			return varDeclaration(parser);
+		return statement(parser);
 	}
 	Catch(e) {
-		printf("Caught an exception during parse\n");
+		synchronize(parser);
 		return NULL;
-
 	}
-/*	 }*/
-/*	catch {
-	 return NULL;
-	 }*/
-	if(expr)
-		return expr;
-	return NULL;
+    return NULL;
+}
+
+Stmt* varDeclaration(Parser* parser){
+	Token* name;
+	Expr * initializer;
+	Var* result;
+	TokenType toks[] = { EQUAL, KNULL };
+	initializer = NULL;
+	name = consume(parser,IDENTIFIER, "Expect variable name.");
+
+	if(parser->match(parser,toks))
+		initializer = expression(parser);
+	consume(parser,SEMICOLON, "Expect ';' after variable declaration.");
+	result = malloc(sizeof(Var));
+	new_Var(result,name,initializer);
+	return (Stmt*)result;
+}
+
+Stmt* statement(Parser* parser){
+    TokenType p[] = {PRINT, KNULL };
+	if(parser->match(parser,p))
+		return printStatement(parser);
+	return expressionStatement(parser);
+}
+
+Stmt* printStatement(Parser* parser){
+	Print* result;
+	Expr* value = expression(parser);
+	consume(parser,SEMICOLON, "Expect ';' after value.");
+	result = malloc(sizeof(Print));
+	new_Print(result,value);
+	return (Stmt*)result;
+}
+Stmt* expressionStatement(Parser* parser){
+	Expression* ex;
+	Expr* expr = expression(parser);
+	consume(parser,SEMICOLON, "Expect ';' after expression.");
+	ex = malloc(sizeof(Expression));
+	new_Expression(ex,expr);
+	return (Stmt*)ex;
 }
 
 Expr* expression(Parser* parser){
@@ -168,6 +217,15 @@ Expr* primary(Parser* parser){
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
+	types[0] = IDENTIFIER;
+	if(parser->match(parser,types)){
+		Variable* var = malloc(sizeof(Variable));
+/*		obj = malloc(sizeof(Object));*/
+/*		init_Object(obj,previous(parser)->literal,STRING);*/
+		new_Variable(var,previous(parser));
+		return (Expr*)var;
+	}
+
 	types[0] = LEFT_PAREN;
 	if(parser->match(parser,types)){
 		Expr* expr = expression(parser);
@@ -260,6 +318,7 @@ Token* parser_peek(Parser* parser){
 Token* previous(Parser* parser){
 	return getTokeninArrayAt(parser->tokens,parser->current-1);
 }
+
 
 /*
  * TODO  - CHALLENGES

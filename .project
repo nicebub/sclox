@@ -25,6 +25,16 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>TokenArray.c</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/TokenArray.c</location>
+		</link>
+		<link>
+			<name>TokenArray.h</name>
+			<type>1</type>
+			<location>/Users/scotty/eclipsewksp2/sclox/src/TokenArray.h</location>
+		</link>
+		<link>
 			<name>Visitor.h</name>
 			<type>1</type>
 			<location>/Users/scotty/eclipsewksp2/sclox/src/Visitor.h</location>

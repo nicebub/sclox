@@ -22,9 +22,11 @@ typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
 	ReturnResult (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
+	ReturnResult (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
 
 };
 struct _StmtVisitor {
+	ExprVisitor expr;
 	StmtVisitor_vtable vtable;
 
 };
@@ -50,5 +52,15 @@ struct _Print  {
 void new_Print (Print * inObj,Expr* expressionparam);
 void delete_Print (Stmt* arg);
 ReturnResult acceptPrint(Stmt* arg, StmtVisitor* visitor);
+typedef struct _Var  Var ;
+struct _Var  {
+	Stmt super;
+	Token* name;
+	Expr* initializer;
+
+};
+void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam);
+void delete_Var (Stmt* arg);
+ReturnResult acceptVar(Stmt* arg, StmtVisitor* visitor);
 void delete_Stmt(Stmt* expr);
 #endif
