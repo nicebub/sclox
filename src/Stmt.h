@@ -30,7 +30,11 @@ struct _StmtVisitor {
 	StmtVisitor_vtable vtable;
 
 };
+static short int Stmtcounter=0;
+    
 struct _Stmt {
+	short int id;
+	short int owner_references;
 	Stmt_vtable vtable;
 
 };
@@ -63,4 +67,9 @@ void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam);
 void delete_Var (Stmt* arg);
 ReturnResult acceptVar(Stmt* arg, StmtVisitor* visitor);
 void delete_Stmt(Stmt* expr);
+short int addtoStmtCounter(void);
+
+
+Stmt* getStmtReference(Stmt* arg);
+void removeStmtReference(Stmt* arg);
 #endif

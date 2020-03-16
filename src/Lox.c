@@ -37,38 +37,29 @@ void init_lox(Lox* lox){
  void run(Lox* lox,char * source){
 	    Scanner scanner;
 	    Parser parser;
-	    Expr *expression;
+/*	    Expr *expression;*/
 	    StmtArray* statements;
 	    AstPrinter printer;
 	    Interpreter interpreter;
-/*	    char * str;*/
-/*	    int i;*/
 
 	    init_printer(&printer);
 	    init_scanner(&scanner, source,lox);
-/*	    init_tokenArray(&scanner.tokens);*/
 	    scanTokens(&scanner);
 	    init_parser(&parser,&scanner.tokens,lox);
-/*	    init_StmtArray(&statements);*/
+/*	    init_StmtArray(statements);*/
 	    statements = (StmtArray*)parse(&parser);
 
 	    if(lox->hadError)
 	    	return;
 	    init_Interpreter(&interpreter,lox);
 	    interpreter.interpret(&interpreter,statements);
-/*
-	    str = print(&printer,expression);
-	    printf("%s\n",str);
-	    free(str);
-	    str = NULL;
- */
 	    /* TODO need to delete expression potentially after printing */
-/*	    delete_Expr(expression);*/
-	    expression = NULL;
-	    /*	    // For now, just print the tokens.*/
-/*	    for(i = 0;i<scanner.tokens.used;i++)
-	    	printf("%s\n",token_toString(&scanner.tokens.tokens[i]));
-	    */
+	    deleteStmtArray(statements);
+	    statements = NULL;
+/*	    init_StmtArray(statements);*/
+/*	    delete_Expr(expression);
+	    expression = NULL;*/
+
 	    deleteTokenArray(&scanner.tokens);
 	    init_TokenArray(&scanner.tokens);
 }
@@ -96,7 +87,6 @@ void init_lox(Lox* lox){
 	   run(lox,line);
 	   free(line);
 	   line = NULL;
-/*	    scanf("%c",&c);*/
 	}
 	 if(lox->hadError)
 	   exit(65);
@@ -144,6 +134,6 @@ static void lparse_error(Lox* lox,Token* token, const char* message){
 	}
 }
 static void runtimeError(Lox* lox, CEXCEPTION_T e){
-    printf("%s\n[line %d] Runtime Error\n",e.message,e.token->line);
+    fprintf(stderr,"%s\n[line %d] Runtime Error\n",e.message,e.token->line);
     lox->hadRuntimeError = 1;
 }

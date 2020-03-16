@@ -21,6 +21,8 @@ void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int
 /*	token->literal = literal?strdup(literal):NULL;*/
 /*	if(!literal) token->literal = NULL;
 	else*/
+	token->id = getNextTokenID();
+	token->owner_references = 1;
 	token->literal = literal;
 /*	asprintf(&token->lexeme,"%s",lexeme);
 	asprintf(&token->literal,"%s",literal);*/
@@ -30,6 +32,19 @@ void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int
 	token->delete_token = &delete_Token;
 }
 
+Token* getTokenReference(Token* tok){
+	tok->owner_references += 1;
+	return tok;
+}
+void releaseTokenReference(Token* tok){
+	tok->owner_references -= 1;
+}
+
+
+short int getNextTokenID(void){
+	Tcounter += 1;
+	return Tcounter;
+}
 char * token_toString(Token* token){
 	char* fresh;
 	fresh = NULL;
@@ -51,8 +66,8 @@ void delete_Token(Token* token){
 			free(token->lexeme);
 			token->lexeme = NULL;
 		}
-/*	TODO	delete_Object(token->literal);
-		token->literal = NULL;*/
+/*		delete_Object(&token->literal);*/
+/*		token->literal = NULL;*/
 		if(token->inString){
 			free(token->inString);
 			token->inString = NULL;

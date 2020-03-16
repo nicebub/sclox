@@ -30,7 +30,11 @@ struct _ExprVisitor {
 	ExprVisitor_vtable vtable;
 
 };
+static short int Exprcounter=0;
+    
 struct _Expr {
+	short int id;
+	short int owner_references;
 	Expr_vtable vtable;
 
 };
@@ -83,4 +87,9 @@ void new_Variable (Variable * inObj,Token* nameparam);
 void delete_Variable (Expr* arg);
 ReturnResult acceptVariable(Expr* arg, ExprVisitor* visitor);
 void delete_Expr(Expr* expr);
+short int addtoExprCounter(void);
+
+
+Expr* getExprReference(Expr* arg);
+void removeExprReference(Expr* arg);
 #endif

@@ -3,9 +3,10 @@
 #define _STMTA_H
 #include "Token.h"
 #include "Stmt.h"
+
 typedef struct _StmtArray StmtArray;
 struct _StmtArray {
-    Stmt* * Stmts;
+    Stmt ** Stmts;
     int size;
     int used;
     void (*addElementToArray)(StmtArray* array,Stmt* element);

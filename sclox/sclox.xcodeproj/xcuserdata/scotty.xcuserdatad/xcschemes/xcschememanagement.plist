@@ -9,6 +9,16 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>Mem Test_HashMap.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Test_HashMap.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>sclox debug.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -23,6 +33,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>E213C6992417242E00141F63</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E2EB41DA241F420200A3E77B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

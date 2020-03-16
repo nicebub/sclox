@@ -10,6 +10,7 @@
 #include "TokenType.h"
 #include "Object.h"
 
+static short int Tcounter = 0;
 typedef struct _Token Token;
 struct _Token {
 	TokenType type;
@@ -17,6 +18,8 @@ struct _Token {
 	Object* literal;
 	char * inString;
 	int line;
+	short int id;
+	short int owner_references;
 	char * (*toString)(Token* token);
 	void (*delete_token)(Token* token);
 
@@ -27,6 +30,10 @@ void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int
 
 char * token_toString(Token* token);
 void delete_Token(Token* token);
+short int getNextTokenID(void);
+
+Token* getTokenReference(Token* tok);
+void releaseTokenReference(Token* tok);
 
 
 #endif /* TOKEN_H_ */
