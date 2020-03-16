@@ -15,7 +15,8 @@ static struct _Hashnode_vtable HashNodeMap_vtable = {
 		&get_hnode_keymap,
 		&get_hnode_value_typemap,
 		&get_hnode_key_typemap,
-	     &toStringMapNode
+	     &toStringMapNode,
+	     &toStringMapNodeValue
 };
 static struct _hash_vtable hashmap_vtable = {
 		&add_to_hashmap,
@@ -27,11 +28,11 @@ static struct _hash_vtable hashmap_vtable = {
 		&delete_hashmap,
 		&delete_hashnodemap,
 		&remove_from_hashmap,
-		&toStringmap
+		&toStringMap
 
 };
 
-struct _HASH *create_hashmap(int size){
+struct _HASH *create_hashmap(int size,char*(*func)(void* value)){
 
     HashMap *m;
     int i;
@@ -49,7 +50,8 @@ struct _HASH *create_hashmap(int size){
     m->super.vtable.get_value_for_key = &get_value_for_keymap;
     m->super.vtable.print_hash = &print_hashmap;
     m->super.vtable.remove_from_hash = &remove_from_hashmap;
-    m->super.vtable.toString = &toStringmap;
+    m->super.vtable.toString = &toStringMap;
+    m->super.vtable.func = func;
     m->super.alpha = 2;
     m->super.size = size;
     m->super.used = 0;
@@ -68,7 +70,7 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
 	   if(get_value_for_keymap(h,key)!=NULL)
 		  return;
 	   hm = (HashMap*)h;
-	   hn = (HashMapNode*) create_hashnodemap(key,value );
+	   hn = (HashMapNode*) create_hashnodemap(key,value,h->vtable.func );
 	   res = compute_hash_valuemap((struct _HASH*)hm,key);
 	   if(hm->super.Buckets[res] == NULL){
 		  hm->super.Buckets[res] = (struct _Hashnode*) hn;
@@ -84,13 +86,14 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
 }
 }
 
-HashMapNode* create_hashnodemap(void*key,void*value ){
+HashMapNode* create_hashnodemap(void*key,void*value,char*(*func)(void* value) ){
 	    HashMapNode *h;
 	    h = malloc(sizeof(HashMapNode));
 	    h->super.key = key;
 	    h->super.value = value;
 	   h->super.next = NULL;
 	   h->super.vtable = HashNodeMap_vtable;
+    h->super.vtable.func = func;
 
     /*
     h->super.vtable.delete_hashnodel = &delete_hashnodelmap;
@@ -144,13 +147,17 @@ void * get_value_for_keymap(struct _HASH* h, void* key){
 	}
 	return NULL;
 }
-
+char* toStringMapNodeValue(struct _Hashnode* node){
+    if(node)
+	   return node->vtable.func(node->value);
+    return NULL;
+}
 char* toStringMapNode(struct _Hashnode* node){
     char* temp;
     char * num;
     size_t str_len;
     num = NULL;
-    asprintf(&num,"%d",*(int*)node->value);
+    asprintf(&num,"%s",toStringMapNodeValue(node));
     str_len = (4+strlen(num)+strlen((char*)node->key));
     temp = malloc(sizeof(char)*str_len);
     memset(temp,0,str_len);
@@ -162,7 +169,7 @@ char* toStringMapNode(struct _Hashnode* node){
     free(num);
     return temp;
 }
-char* toStringmap(struct _HASH* h){
+char* toStringMap(struct _HASH* h){
     int fullstr_len,i;
     int count;
     char* temp, *num;
@@ -174,7 +181,8 @@ char* toStringmap(struct _HASH* h){
 	   HashMapNode* node = (HashMapNode*)((HashMap*)h)->super.Buckets[i];
 	   if(node){
 		  while(node){
-			 asprintf(&num,"%d",*(int*)node->super.value);
+			 num = toStringMapNodeValue((struct _Hashnode*)node);
+/*			 asprintf(&num,"%d",*(int*)node->super.value);*/
 			 fullstr_len += strlen(node->super.key);
 			 fullstr_len += strlen(num);
 			 free(num);

@@ -18,6 +18,7 @@
 		E26CB635241CADB50067C811 /* TokenArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB631241CADB40067C811 /* TokenArray.c */; };
 		E26CB636241CADB50067C811 /* StmtArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB632241CADB40067C811 /* StmtArray.c */; };
 		E2860478241C5096001E1586 /* Stmt.c in Sources */ = {isa = PBXBuildFile; fileRef = E2860476241C5096001E1586 /* Stmt.c */; };
+		E29EA637242026E200EAAAF4 /* Test_HashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E29EA636242026E200EAAAF4 /* Test_HashMap.c */; };
 		E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC490F2418CB8300F8F14C /* Interpreter.c */; };
 		E2BC49152418CB8400F8F14C /* Object.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC49102418CB8300F8F14C /* Object.c */; };
 		E2BC49182418CBA200F8F14C /* CException.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC49172418CBA200F8F14C /* CException.c */; };
@@ -25,7 +26,6 @@
 		E2EB41EF241F425C00A3E77B /* HashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E2EB41EB241F425C00A3E77B /* HashMap.c */; };
 		E2EB41F0241F425C00A3E77B /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = E2EB41ED241F425C00A3E77B /* hash.c */; };
 		E2EB41F1241F425C00A3E77B /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = E2EB41ED241F425C00A3E77B /* hash.c */; };
-		E2EB41F3241F42A100A3E77B /* Test_HashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E2EB41F2241F42A100A3E77B /* Test_HashMap.c */; };
 		E2EB41FD241F4ADC00A3E77B /* unity.c in Frameworks */ = {isa = PBXBuildFile; fileRef = E2EB41FA241F4ADC00A3E77B /* unity.c */; };
 		E2EB4202241FC6FE00A3E77B /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = E2EB41FF241FC6FE00A3E77B /* unity.c */; };
 /* End PBXBuildFile section */
@@ -90,6 +90,7 @@
 		E26CB634241CADB50067C811 /* TokenArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TokenArray.h; path = ../../src/TokenArray.h; sourceTree = "<group>"; };
 		E2860476241C5096001E1586 /* Stmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Stmt.c; path = ../../src/Stmt.c; sourceTree = "<group>"; };
 		E2860477241C5096001E1586 /* Stmt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stmt.h; path = ../../src/Stmt.h; sourceTree = "<group>"; };
+		E29EA636242026E200EAAAF4 /* Test_HashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Test_HashMap.c; path = ../../test/Test_HashMap.c; sourceTree = "<group>"; };
 		E2BC490F2418CB8300F8F14C /* Interpreter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Interpreter.c; path = ../../src/Interpreter.c; sourceTree = "<group>"; };
 		E2BC49102418CB8300F8F14C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Object.c; path = ../../src/Object.c; sourceTree = "<group>"; };
 		E2BC49112418CB8300F8F14C /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = ../../src/Interpreter.h; sourceTree = "<group>"; };
@@ -102,7 +103,6 @@
 		E2EB41EB241F425C00A3E77B /* HashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = HashMap.c; path = ../../src/HashMap.c; sourceTree = "<group>"; };
 		E2EB41EC241F425C00A3E77B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HashMap.h; path = ../../src/HashMap.h; sourceTree = "<group>"; };
 		E2EB41ED241F425C00A3E77B /* hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hash.c; path = ../../src/hash.c; sourceTree = "<group>"; };
-		E2EB41F2241F42A100A3E77B /* Test_HashMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Test_HashMap.c; sourceTree = "<group>"; };
 		E2EB41F4241F434B00A3E77B /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		E2EB41F5241F4A8D00A3E77B /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../Programming/sclex/Makefile; sourceTree = "<group>"; };
 		E2EB41F8241F4ADB00A3E77B /* unity_internals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = unity_internals.h; path = ../../../Programming/sclex/unity/src/unity_internals.h; sourceTree = "<group>"; };
@@ -200,7 +200,7 @@
 		E2EB41DC241F420200A3E77B /* Test_HashMap */ = {
 			isa = PBXGroup;
 			children = (
-				E2EB41F2241F42A100A3E77B /* Test_HashMap.c */,
+				E29EA636242026E200EAAAF4 /* Test_HashMap.c */,
 			);
 			path = Test_HashMap;
 			sourceTree = "<group>";
@@ -317,7 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E2EB41F3241F42A100A3E77B /* Test_HashMap.c in Sources */,
+				E29EA637242026E200EAAAF4 /* Test_HashMap.c in Sources */,
 				E2EB4202241FC6FE00A3E77B /* unity.c in Sources */,
 				E2EB41EF241F425C00A3E77B /* HashMap.c in Sources */,
 				E2EB41F1241F425C00A3E77B /* hash.c in Sources */,
@@ -468,10 +468,16 @@
 				DEVELOPMENT_TEAM = 78XPJAU3A2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_PROFILING_CODE = YES;
-				HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
-				LIBRARY_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
+				HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/Unity/src/;
+				LIBRARY_SEARCH_PATHS = (
+					/Users/scotty/Programming/sclex/Unity/src/,
+					/Users/scotty/eclipsewksp2/sclox/src/,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
+				USER_HEADER_SEARCH_PATHS = (
+					/Users/scotty/Programming/sclex/Unity/src/,
+					/Users/scotty/eclipsewksp2/sclox/src/,
+				);
 			};
 			name = Debug;
 		};
@@ -483,10 +489,16 @@
 				DEVELOPMENT_TEAM = 78XPJAU3A2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_PROFILING_CODE = YES;
-				HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
-				LIBRARY_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
+				HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/Unity/src/;
+				LIBRARY_SEARCH_PATHS = (
+					/Users/scotty/Programming/sclex/Unity/src/,
+					/Users/scotty/eclipsewksp2/sclox/src/,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Users/scotty/Programming/sclex/unity/src/;
+				USER_HEADER_SEARCH_PATHS = (
+					/Users/scotty/Programming/sclex/Unity/src/,
+					/Users/scotty/eclipsewksp2/sclox/src/,
+				);
 			};
 			name = Release;
 		};

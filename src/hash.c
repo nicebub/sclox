@@ -16,7 +16,7 @@ struct _hr search_cache(struct _hash * s, void * key, int kt);
 
 
 static int uniques=0;
-struct _Hashnode *create_hashnode(void * key, void* value){
+struct _Hashnode *create_hashnode(void * key, void* value,char*(*func)(void* value)){
     struct _Hashnode *h;
     h = malloc(sizeof(*h));
     h->key = key;
@@ -30,6 +30,8 @@ struct _Hashnode *create_hashnode(void * key, void* value){
     h->vtable.set_hnode_key = &set_hnode_key;
     h->vtable.set_hnode_value = &set_hnode_value;
     h->vtable.toString = &toStringNode;
+    h->vtable.toStringValue = &toStringNodeValue;
+    h->vtable.func = func;
     uniques++;
     return h;
 }
@@ -81,6 +83,11 @@ void delete_hashnodel(struct _Hashnode* hn){
 char* toStringNode(struct _Hashnode* node){
     if(node)
 	   return node->vtable.toString(node);
+    return NULL;
+}
+char* toStringNodeValue(struct _Hashnode* node){
+    if(node)
+	   return node->vtable.func(node->value);
     return NULL;
 }
 void set_hnode_value(struct _Hashnode* hn, void * v){

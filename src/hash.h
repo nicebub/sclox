@@ -37,7 +37,8 @@ struct _Hashnode_vtable {
 	int (*get_hnode_value_type)(struct _Hashnode* hn);
 	int (*get_hnode_key_type)(struct _Hashnode* hn);
     char* (*toString)(struct _Hashnode* node);
-
+    char * (*toStringValue)(struct _Hashnode* nodevalue);
+    char*(*func)(void* value);
 };
 
 struct _Hashnode {
@@ -58,8 +59,8 @@ struct _hash_vtable {
 		void (*delete_hashnode)(struct _HASH*,struct _Hashnode*);
 		struct _Hashnode* (*remove_from_hash)(struct _HASH* h, void*key);
 		char * (*toString)(struct _HASH* h);
+	   char*(*func)(void* value);
 };
-
 struct _HASH {
 	struct _Hashnode** Buckets;
 	struct _hash_vtable vtable;
@@ -68,11 +69,13 @@ struct _HASH {
     int alpha;
 
 };
+struct _Hashnode *create_hashnode(void * key, void* value,char*(*func)(void* value));
 
-struct _HASH *create_hash(int size);
+struct _HASH *create_hash(int size,char*(*func)(void* value));
 void add_to_hash(struct _HASH*, void * key,void * value);
 char * toString(struct _HASH* h);
 char* toStringNode(struct _Hashnode* node);
+char* toStringNodeValue(struct _Hashnode* node);
 
 struct _HASH *copy_hash(struct _HASH* h);
 

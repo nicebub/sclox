@@ -12,9 +12,16 @@
 #include "HashMap.h"
 static HashMap* m;
 int *r;
+char* print_int(void* a){
+    char * n;
+    n = NULL;
+    asprintf(&n,"%d",*(int*)a);
+/*    fprintf(stderr,"found int : %s\n",n);*/
+    return n;
+}
 void setUp(void){
     m = NULL;
-    m = (HashMap*)create_hashmap(3);
+    m = (HashMap*)create_hashmap(3,&print_int);
     r = NULL;
     r = malloc(sizeof(int));
 

@@ -16,7 +16,7 @@ static struct _hash_vtable hashmap_vtable;
 static struct _Hashnode_vtable HashNodeMap_vtable;
 struct _HashMap;
 struct _HashMapNode;
-struct _HASH *create_hashmap(int size);
+struct _HASH *create_hashmap(int size,char*(*func)(void* value));
 void add_to_hashmap(struct _HASH*, void * key,void * value);
 
 struct _HASH *copy_hashmap(struct _HASH* h);
@@ -26,8 +26,9 @@ void * get_value_for_keymap(struct _HASH*, void* k);
 struct _HASH* combine_hashesmap(struct _HASH*, struct _HASH*);
 short int compute_hash_valuemap(struct _HASH * hashMap,void *key);
 struct _Hashnode* remove_from_hashmap(struct _HASH* h, void*key);
-char * toStringmap(struct _HASH* h);
+char * toStringMap(struct _HASH* h);
 char* toStringMapNode(struct _Hashnode* node);
+char *toStringMapNodeValue(struct _Hashnode* node);
 
 void delete_hashmap(struct _HASH* h);
 void print_hashmap(struct _HASH * h);
@@ -41,7 +42,7 @@ void * get_hnode_keymap(struct _Hashnode*);
 int get_hnode_value_typemap(struct _Hashnode* hn);
 int get_hnode_key_typemap(struct _Hashnode* hn);
 
-HashMapNode* create_hashnodemap(void*key,void*value );
+HashMapNode* create_hashnodemap(void*key,void*value,char*(*func)(void* value) );
 
 short int compute_hash_valuemap(struct _HASH * h,void *key);
 
