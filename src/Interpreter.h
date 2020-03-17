@@ -14,6 +14,12 @@
 #include "Stmt.h"
 #include "additions.h"
 #include "Environment.h"
+#ifndef _STMTARRAY
+#define _STMTARRAY
+	typedef struct _StmtArray StmtArray;
+	extern deleteStmtArray(StmtArray* array);
+#endif
+#include "StmtArray.h"
 typedef struct _Interpreter Interpreter;
 typedef struct _SuperVisitor SuperVisitor;
 struct _Interpreter {

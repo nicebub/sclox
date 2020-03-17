@@ -43,6 +43,9 @@ struct _Parser {
 void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
 volatile StmtArray* parse(Parser* parser);
+
+Expr* or(Parser* parser);
+Stmt* ifStatement(Parser* parser);
 StmtArray* block(Parser* parser);
 Stmt* declaration(Parser* parser);
 Stmt* varDeclaration(Parser* parser);
@@ -50,6 +53,7 @@ Stmt* statement(Parser* parser);
 Stmt* expressionStatement(Parser* parser);
 Stmt* printStatement(Parser* parser);
 
+Expr* and(Parser* parser);
 Expr* expression(Parser* parser);
 Expr* equality(Parser* parser);
 Expr* comparison(Parser* parser);

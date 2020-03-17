@@ -1,6 +1,12 @@
 
 #include <stdio.h>
 #include "Token.h"
+#ifndef _STMTARRAY
+#define _STMTARRAY
+	typedef struct _StmtArray StmtArray;
+	extern void deleteStmtArray(StmtArray* array);
+#endif
+
 #include "StmtArray.h"
 #define INIT_SIZE 5
 

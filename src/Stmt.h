@@ -6,13 +6,13 @@
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
-#include "Expr.h"
-
 #ifndef _STMTARRAY
 #define _STMTARRAY
-	typedef struct _StmtArray StmtArray;
-	extern void deleteStmtArray(StmtArray* array);
+    typedef struct _StmtArray StmtArray;
+    extern void deleteStmtArray(StmtArray* array);
 #endif
+#include "Expr.h"
+
 
 typedef struct _Stmt Stmt;
 typedef struct _StmtVisitor StmtVisitor;
@@ -28,14 +28,16 @@ typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
 	ReturnResult (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
+	ReturnResult (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
 
 };
 struct _StmtVisitor {
-	ExprVisitor expr;
-	StmtVisitor_vtable vtable;
 
+    ExprVisitor expr;
+    StmtVisitor_vtable vtable;
+    
 };
 static short int Stmtcounter=0;
     
@@ -65,6 +67,17 @@ struct _Expression  {
 void new_Expression (Expression * inObj,Expr* expressionparam);
 void delete_Expression (Stmt* arg);
 ReturnResult acceptExpression(Stmt* arg, StmtVisitor* visitor);
+typedef struct _If          If         ;
+struct _If          {
+	Stmt super;
+	Expr* condition;
+	Stmt* thenBranch;
+	Stmt* elseBranch;
+
+};
+void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam);
+void delete_If         (Stmt* arg);
+ReturnResult acceptIf(Stmt* arg, StmtVisitor* visitor);
 typedef struct _Print  Print ;
 struct _Print  {
 	Stmt super;

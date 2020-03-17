@@ -23,7 +23,16 @@ typedef struct _exception{
 #include "Object.h"
 #include "additions.h"
 #include "Environment.h"
+#ifndef _STMTARRAY
+#define _STMTARRAY
+	typedef struct _StmtArray StmtArray;
+	extern deleteStmtArray(StmtArray* array);
+#endif
 
+	#include "StmtArray.h"
+
+ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr);
 ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
 ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
@@ -47,7 +56,9 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
     intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExpr;
     intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExpr;
+    intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExpr;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
+    intprtr->super.vtable.visitIfStmt = &visitIfStmt;
     intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
     intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
     intprtr->super.vtable.visitVarStmt = &visitVarStmt;
@@ -155,13 +166,17 @@ ReturnResult evaluate(ExprVisitor* visitor, Expr* expr){
 }
 ReturnResult isTruthy(ReturnResult obj){
 	ReturnResult r;
-    if(obj.type == BOOLEAN || obj.type == FALSE || obj.type == TRUE || obj.type == NIL){
+    if(obj.type == BOOLEAN || obj.type == FALSE || obj.type == TRUE || obj.type == NUMBER){
 	   r.type = BOOLEAN;
 	   r.value.number = (double)obj.value.number;
     }
+    else if(obj.type == NIL){
+ 	   r.type = BOOLEAN;
+ 	   r.value.number = 0;
+    }
     else{
 	   r.type = BOOLEAN;
-	   r.value.number = 0;
+	   r.value.number = 1;
     }
     return r;
 }
@@ -381,6 +396,37 @@ char* stringify(ReturnResult obj){
 
     return obj.value.string;
 }
+ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
+	ReturnResult left;
+	Logical* log;
+	log = (Logical*) expr;
+	left = evaluate(visitor,log->left);
+	if(log->operator->type == OR){
+		if(isTruthy(left).value.number)
+		    return left;
+	       }
+	else{
+	    if(!isTruthy(left).value.number){
+			return left;
+		}
+	}
+	return evaluate(visitor,log->right);
+}
+
+ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr){
+	ReturnResult r,a;
+	If* stmt = (If*) expr;
+    a = evaluate(&visitor->expr,stmt->condition);
+    if(isTruthy(a).value.number){
+		execute((Interpreter*)visitor,stmt->thenBranch);
+	}
+	else if(stmt->elseBranch != NULL){
+		execute((Interpreter*)visitor,stmt->elseBranch);
+	}
+	r.type = KNULL;
+	return r;
+}
+
 
 ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
 	ReturnResult result;

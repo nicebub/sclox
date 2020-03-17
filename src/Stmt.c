@@ -3,6 +3,11 @@
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
+#ifndef _STMTARRAY
+#define _STMTARRAY
+    typedef struct _StmtArray StmtArray;
+    extern void deleteStmtArray(StmtArray* array);
+#endif
 #include "Expr.h"
 #include "Stmt.h"
 
@@ -24,8 +29,6 @@ void new_Block (Block * inObj,StmtArray* statementsparam){
 }
 void delete_Block (Stmt* arg){
 	Block * expr = (Block *)arg;
-
-extern void deleteStmtArray(StmtArray* array);
 
 if(expr->super.owner_references ==1){
     deleteStmtArray(expr->statements);
@@ -76,6 +79,46 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptExpression(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitExpressionStmt(visitor,arg);
+}
+
+static ReturnResult visitIfStmt( StmtVisitor* visitor,Stmt* arg);
+
+static ReturnResult visitIfStmt(StmtVisitor* visitor,Stmt* stmt){
+    ReturnResult r; r.value.string=NULL; return r;
+}
+void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam){
+    inObj->super.vtable.accept = &acceptIf;
+    
+    inObj->super.vtable.delete_Stmt = &delete_If         ;
+	inObj->condition = conditionparam;
+	inObj->thenBranch = thenBranchparam;
+	inObj->elseBranch = elseBranchparam;
+	strcpy((char*)&inObj->super.instanceOf,"If");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoStmtCounter();
+}
+void delete_If         (Stmt* arg){
+	If         * expr = (If         *)arg;
+
+if(expr->super.owner_references ==1){
+    delete_Expr(expr->condition);
+    expr->condition=NULL;
+    delete_Stmt(expr->thenBranch);
+    expr->thenBranch=NULL;
+    delete_Stmt(expr->elseBranch);
+    expr->elseBranch=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+ReturnResult acceptIf(Stmt *arg, StmtVisitor* visitor){
+    return visitor->vtable.visitIfStmt(visitor,arg);
 }
 
 static ReturnResult visitPrintStmt( StmtVisitor* visitor,Stmt* arg);
@@ -149,7 +192,7 @@ ReturnResult acceptVar(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitVarStmt(visitor,arg);
 }
 void delete_Stmt(Stmt* expr){
-	expr->vtable.delete_Stmt(expr);
+	if(expr)		expr->vtable.delete_Stmt(expr);
 }
 short int addtoStmtCounter(void){
      Stmtcounter += 1;

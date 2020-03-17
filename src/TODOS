@@ -1,0 +1,75 @@
+/*
+ * TODO  - CHALLENGES
+ * In C, a block is a statement form that allows you to pack a series of
+ *  statements where a single one is expected. The comma operator is an
+ *  analogous syntax for expressions. A comma-separated series of expressions
+ *   can be given where a single expression is expected (except inside a
+ *   function call’s argument list). At runtime, the comma operator evaluates
+ *   the left operand and discards the result. Then it evaluates and returns
+ *   the right operand.
+ *
+ * Add support for comma expressions. Give them the same precedence and
+ *   associativity as in C. Write the grammar, and then implement the necessary
+ *    parsing code.
+ *
+ * Likewise, add support for the C-style conditional or “ternary” operator ?:.
+ *    What precedence level is allowed between the ? and :? Is the whole operator
+ *    left-associative or right-associative?
+ *
+ * Add error productions to handle each binary operator appearing without a
+ *    left-hand operand. In other words, detect a binary operator appearing at the
+ *    beginning of an expression. Report that as an error, but also parse and
+ *    discard a right-hand operand with the appropriate precedence.
+ *
+ */
+
+CHALLENGES
+The REPL no longer supports entering a single expression and automatically printing its result value. That’s a drag. Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute it. If they enter an expression, evaluate it and display the result value.
+Maybe you want Lox to be a little more explicit about variable initialization. Instead of implicitly initializing variables to nil, make it a runtime error to access a variable that has not been initialized or assigned to, as in:
+
+// No initializers.
+var a;
+var b;
+
+a = "assigned";
+print a; // OK, was assigned first.
+
+print b; // Error!
+What does the following program do?
+
+var a = 1;
+{
+  var a = a + 2;
+  print a;
+}
+What did you expect it to do? Is it what you think it should do? What does analogous code in other languages you are familiar with do? What do you think users will expect this to do?
+
+
+DESIGN NOTE: IMPLICIT VARIABLE DECLARATION
+Lox has distinct syntax for declaring a new variable and assigning to an existing one. Some languages collapse those to only assignment syntax. Assigning to a non-existent variable automatically brings it into being. This is called implicit variable declaration and exists in Python, Ruby, and CoffeeScript, among others. JavaScript has an explicit syntax to declare variables, but can also create new variables on assignment. Visual BASIC has an option to enable or disable implicit variables.
+
+When the same syntax can assign or create a variable, each language must decide what happens when it isn’t clear about which behavior the user intends. In particular, each language must choose how implicit declaration interacts with shadowing, and which scope an implicitly declared variable goes into.
+
+In Python, assignment always creates a variable in the current function’s scope, even if there is a variable with the same name declared outside of the function.
+Ruby avoids some ambiguity by having different naming rules for local and global variables. However, blocks (which are more like closures than like “blocks” in C) in Ruby have their own scope, so it still has the problem. Assignment in Ruby assigns to an existing variable outside of the current block if there is one with the same name. Otherwise, it creates a new variable in the current block’s scope.
+CoffeeScript, which takes after Ruby in many ways, is similar. It explicitly disallows shadowing by saying that assignment always assigns to a variable in an outer scope if there is one, all the way up to the outermost global scope. Otherwise, it creates the variable in the current function scope.
+In JavaScript, assignment modifies an existing variable in any enclosing scope, if found. If not, it implicitly creates a new variable in the global scope.
+The main advantage to implicit declaration is simplicity. There’s less syntax and no “declaration” concept to learn. Users can just start assigning stuff and the language figures it out.
+
+Older statically typed languages like C benefit from explicit declaration because they give the user a place to tell the compiler what type each variable has and how much storage to allocate for it. In a dynamically typed, garbage collected language, that isn’t really necessary, so you can get away with making declarations implicit. It feels a little more “scripty”, more “you know what I mean”.
+
+But is that a good idea? Implicit declaration has some problems.
+
+A user may intend to assign to an existing variable, but may have misspelled it. The interpreter doesn’t know that, so it goes ahead and silently creates some new variable and the variable the user wanted to assign to still has its old value. This is particularly heinous in JavaScript where a typo will create a global variable, which may in turn interfere with other code.
+JS, Ruby, and CoffeeScript use the presence of an existing variable with the same name—even in an outer scope—to determine whether or not an assignment creates a new variable or assigns to an existing one. That means adding a new variable in a surrounding scope can change the meaning of existing code. What was once a local variable may silently turn into an assignment to that new outer variable.
+In Python, you may want to assign to some variable outside of the current function instead of creating a new variable in the current one, but you can’t.
+Over time, the languages I know with implicit variable declaration ended up adding more features and complexity to deal with these problems.
+
+Implicit declaration of global variables in JavaScript is universally considered a mistake today. “Strict mode” disables it and makes it a compile error.
+Python added a global statement to let you explicitly assign to a global variable from within a function. Later, as a functional programming style and nested functions became more popular, they added a similar nonlocal statement to assign to variables in enclosing functions.
+Ruby extended its block syntax to allow declaring certain variables to be explicitly local to the block even if the same name exists in an outer scope.
+Given those, I think the simplicity argument is mostly lost. There is an argument that implicit declaration is the right default but I personally find that less compelling.
+
+My opinion is that implicit declaration made sense in years past when most scripting languages were heavily imperative and code was pretty flat. As programmers got more comfortable with deep nesting, functional programming, and closures, it’s become much more common to want access to variables in outer scopes. That makes it more likely that users will run into the tricky cases where it’s not clear whether they intend their assignment to create a new variable or reuse a surrounding one.
+
+So I prefer explicitly declaring variables, which is why Lox requires it.

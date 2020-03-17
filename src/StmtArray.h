@@ -7,7 +7,7 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
-	extern delete_StmtArray(StmtArray* array);
+	extern void deleteStmtArray(StmtArray* array);
 #endif
 struct _StmtArray {
     Stmt ** Stmts;

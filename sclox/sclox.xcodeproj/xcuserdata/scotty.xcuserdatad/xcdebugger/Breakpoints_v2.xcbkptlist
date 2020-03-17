@@ -48,8 +48,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "138"
             endingLineNumber = "138"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "expressionStatement(parser)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -96,7 +96,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "109"
             endingLineNumber = "109"
-            landmarkName = "printStatement(parser)"
+            landmarkName = "ifStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -144,8 +144,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "58"
             endingLineNumber = "58"
-            landmarkName = "varDeclaration(parser)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -160,8 +160,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
             endingLineNumber = "44"
-            landmarkName = "init_Interpreter(intprtr, lox)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -192,8 +192,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "43"
             endingLineNumber = "43"
-            landmarkName = "init_Interpreter(intprtr, lox)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -208,7 +208,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "135"
             endingLineNumber = "135"
-            landmarkName = "assignment(parser)"
+            landmarkName = "expressionStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -216,7 +216,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "64E48CEF-E68E-44F2-9977-8F9E1A87E7B9"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Parser.c"
@@ -224,7 +224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "147"
             endingLineNumber = "147"
-            landmarkName = "equality(parser)"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -238,9 +238,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "equality(parser)"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -254,9 +254,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
-            landmarkName = "comparison(parser)"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
+            landmarkName = "and(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -270,9 +270,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
-            landmarkName = "addition(parser)"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "and(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -288,7 +288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "105"
             endingLineNumber = "105"
-            landmarkName = "printStatement(parser)"
+            landmarkName = "ifStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -320,7 +320,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "91"
             endingLineNumber = "91"
-            landmarkName = "block(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -432,7 +432,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "117"
             endingLineNumber = "117"
-            landmarkName = "expressionStatement(parser)"
+            landmarkName = "block(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -446,9 +446,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
-            landmarkName = "equality(parser)"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -462,9 +462,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "equality(parser)"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -478,9 +478,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "equality(parser)"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -512,7 +512,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "114"
             endingLineNumber = "114"
-            landmarkName = "visitLiteralExprInterpreter(visitor, expr)"
+            landmarkName = "visitBlockStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -528,7 +528,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "115"
             endingLineNumber = "115"
-            landmarkName = "visitLiteralExprInterpreter(visitor, expr)"
+            landmarkName = "visitBlockStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -544,7 +544,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "144"
             endingLineNumber = "144"
-            landmarkName = "equality(parser)"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -624,7 +624,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "117"
             endingLineNumber = "117"
-            landmarkName = "visitLiteralExprInterpreter(visitor, expr)"
+            landmarkName = "visitBlockStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -656,7 +656,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "106"
             endingLineNumber = "106"
-            landmarkName = "printStatement(parser)"
+            landmarkName = "ifStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -672,7 +672,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "92"
             endingLineNumber = "92"
-            landmarkName = "block(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -704,8 +704,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
             endingLineNumber = "112"
-            landmarkName = "expressionStatement(parser)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -720,7 +720,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "118"
             endingLineNumber = "118"
-            landmarkName = "assignment(parser)"
+            landmarkName = "block(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -734,9 +734,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "comparison(parser)"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
+            landmarkName = "and(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -782,9 +782,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "addition(parser)"
+            startingLineNumber = "182"
+            endingLineNumber = "182"
+            landmarkName = "assignment(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -824,7 +824,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "6926A7E0-CB75-4A53-9D46-AF25900D2047"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Parser.c"
@@ -942,9 +942,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "primary(parser)"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
+            landmarkName = "multiplication(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -958,9 +958,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
-            landmarkName = "primary(parser)"
+            startingLineNumber = "254"
+            endingLineNumber = "254"
+            landmarkName = "multiplication(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -974,9 +974,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
-            landmarkName = "primary(parser)"
+            startingLineNumber = "258"
+            endingLineNumber = "258"
+            landmarkName = "unary(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1040,7 +1040,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "20"
             endingLineNumber = "20"
-            landmarkName = "addElementToStmtArray(array, element)"
+            landmarkName = "init_StmtArray(array)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1056,7 +1056,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
             endingLineNumber = "63"
-            landmarkName = "interpret(intprtr, array)"
+            landmarkName = "init_Interpreter(intprtr, lox)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1072,8 +1072,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "73"
             endingLineNumber = "73"
-            landmarkName = "interpret(intprtr, array)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1448,15 +1448,15 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "C6E1128E-3E4C-4360-81AE-02BFB2E826A4"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "397"
-            endingLineNumber = "397"
-            landmarkName = "visitPrintStmt(visitor, stmt)"
+            startingLineNumber = "398"
+            endingLineNumber = "398"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1518,9 +1518,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "415"
-            endingLineNumber = "415"
-            landmarkName = "visitVarStmt(visitor, stmt)"
+            startingLineNumber = "418"
+            endingLineNumber = "418"
+            landmarkName = "visitIfStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1566,9 +1566,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "416"
-            endingLineNumber = "416"
-            landmarkName = "visitVarStmt(visitor, stmt)"
+            startingLineNumber = "419"
+            endingLineNumber = "419"
+            landmarkName = "visitIfStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1646,9 +1646,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "parser_match(parser, types)"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
+            landmarkName = "primary(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1662,9 +1662,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "336"
-            endingLineNumber = "336"
-            landmarkName = "parser_match(parser, types)"
+            startingLineNumber = "339"
+            endingLineNumber = "339"
+            landmarkName = "primary(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1710,9 +1710,9 @@
             filePath = "../src/Parser.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
-            landmarkName = "primary(parser)"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "unary(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1720,7 +1720,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E65532EF-9A9E-41C7-9A56-1B7BCCF2E24F"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Parser.c"
@@ -1736,7 +1736,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "C5B933BA-5A8A-4651-A49D-70F91C1CC34E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Parser.c"
@@ -1745,6 +1745,166 @@
             startingLineNumber = "48"
             endingLineNumber = "48"
             landmarkName = "declaration(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "345AD6F6-A584-434C-97AD-678A253B4C5B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Expr.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "197"
+            endingLineNumber = "197"
+            landmarkName = "acceptLogical(arg, visitor)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "94C523DD-FBDE-4006-8D84-3F4BB7BAFCAB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "and(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "32F85A92-473D-4605-BD60-03C35E591863"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "or(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "040ACD4D-A89B-417E-9B40-45C86AAE070B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "and(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C8785EEB-FA28-4447-9CE9-12C82D5FF60F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
+            landmarkName = "primary(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B5E5CC37-E21F-4CCC-B2E1-47EDC879C027"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
+            landmarkName = "comparison(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6952B892-9C92-43DC-A049-95BD69F762C6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "equality(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F94B35E-BF9A-4D40-A479-A8B9E25680AC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
+            landmarkName = "multiplication(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3330744E-0820-4912-B2B7-2250961D32C9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Parser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "241"
+            endingLineNumber = "241"
+            landmarkName = "addition(parser)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5350074B-FFF5-44A4-8423-9137548B10E8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Interpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "400"
+            endingLineNumber = "400"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

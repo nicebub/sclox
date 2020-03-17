@@ -6,6 +6,11 @@
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
+#ifndef _STMTARRAY
+#define _STMTARRAY
+    typedef struct _StmtArray StmtArray;
+    extern void deleteStmtArray(StmtArray* array);
+#endif
 
 
 typedef struct _Expr Expr;
@@ -24,13 +29,16 @@ struct _ExprVisitor_vtable {
 	ReturnResult (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
+	ReturnResult (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
 
 };
 struct _ExprVisitor {
-	ExprVisitor_vtable vtable;
 
+    
+    ExprVisitor_vtable vtable;
+    
 };
 static short int Exprcounter=0;
     
@@ -81,6 +89,17 @@ struct _Literal  {
 void new_Literal (Literal * inObj,Object* valueparam);
 void delete_Literal (Expr* arg);
 ReturnResult acceptLiteral(Expr* arg, ExprVisitor* visitor);
+typedef struct _Logical   Logical  ;
+struct _Logical   {
+	Expr super;
+	Expr* left;
+	Token* operator;
+	Expr* right;
+
+};
+void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam);
+void delete_Logical  (Expr* arg);
+ReturnResult acceptLogical(Expr* arg, ExprVisitor* visitor);
 typedef struct _Unary  Unary ;
 struct _Unary  {
 	Expr super;

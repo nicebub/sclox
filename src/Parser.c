@@ -73,7 +73,11 @@ Stmt* varDeclaration(Parser* parser){
 }
 
 Stmt* statement(Parser* parser){
-    TokenType p[] = {PRINT, KNULL };
+    TokenType p[] = {IF, KNULL };
+    if(parser->match(parser,p)){
+    	return ifStatement(parser);
+    }
+    p[0] = PRINT;
 	if(parser->match(parser,p)){
 		return printStatement(parser);
 	}
@@ -87,6 +91,25 @@ Stmt* statement(Parser* parser){
 	return expressionStatement(parser);
 
 }
+Stmt* ifStatement(Parser* parser){
+	Expr* condition;
+	Stmt* thenBranch;
+	Stmt* elseBranch;
+	Stmt* r;
+	TokenType tok[] = { ELSE, KNULL };
+	consume(parser,LEFT_PAREN, "Expect '(' after  'if'.");
+	condition = expression(parser);
+	consume(parser, RIGHT_PAREN,"Expect ')' after if condition.");
+	thenBranch = statement(parser);
+	elseBranch =  NULL;
+	if(parser->match(parser,tok)){
+		elseBranch = statement(parser);
+	}
+	r = malloc(sizeof(If));
+	new_If((If*)r,condition,thenBranch,elseBranch);
+	return r;
+}
+
 StmtArray* block(Parser* parser){
 	StmtArray* array;
 /*	TokenType p[] = {RIGHT_BRACE, KNULL };*/
@@ -116,10 +139,45 @@ Stmt* expressionStatement(Parser* parser){
 	new_Expression(ex,expr);
 	return (Stmt*)ex;
 }
+Expr* or(Parser* parser){
+	Logical* expr;
+	TokenType tok[] = { OR, KNULL };
+	expr = NULL;
+	expr = (Logical*)and(parser);
+	while(parser->match(parser,tok)){
+		Expr* right;
+	    Logical* newy;
+		Token* operator;
+		operator = previous(parser);
+		right = and(parser);
+		newy = malloc(sizeof(Logical));
+		new_Logical(newy,(Expr*)expr,operator,right);
+	    expr = newy;
+	}
+	return (Expr*)expr;
+}
+Expr* and(Parser* parser){
+	Logical* expr;
+	TokenType tok[] = { AND, KNULL };
+	expr = NULL;
+	expr = (Logical*)equality(parser);
+	while(parser->match(parser,tok)){
+		Token* operator;
+		Expr* right;
+		Logical* newy;
+		operator = previous(parser);
+		right = equality(parser);
+		newy = malloc(sizeof(Logical));
+		new_Logical(newy,(Expr*)expr,operator,right);
+	    expr = newy;
+	}
+	return (Expr*)expr;
+}
 Expr* assignment(Parser* parser){
 	TokenType toks[] = {EQUAL, KNULL };
 	Expr* expr;
-	expr = equality(parser);
+	expr = or(parser);
+
 	if(parser->match(parser,toks)){
 		Token* equals;
 		Expr* value;
@@ -360,29 +418,3 @@ Token* parser_peek(Parser* parser){
 Token* previous(Parser* parser){
 	return getTokeninArrayAt(parser->tokens,parser->current-1);
 }
-
-
-/*
- * TODO  - CHALLENGES
- * In C, a block is a statement form that allows you to pack a series of
- *  statements where a single one is expected. The comma operator is an
- *  analogous syntax for expressions. A comma-separated series of expressions
- *   can be given where a single expression is expected (except inside a
- *   function call’s argument list). At runtime, the comma operator evaluates
- *   the left operand and discards the result. Then it evaluates and returns
- *   the right operand.
- *
- * Add support for comma expressions. Give them the same precedence and
- *   associativity as in C. Write the grammar, and then implement the necessary
- *    parsing code.
- *
- * Likewise, add support for the C-style conditional or “ternary” operator ?:.
- *    What precedence level is allowed between the ? and :? Is the whole operator
- *    left-associative or right-associative?
- *
- * Add error productions to handle each binary operator appearing without a
- *    left-hand operand. In other words, detect a binary operator appearing at the
- *    beginning of an expression. Report that as an error, but also parse and
- *    discard a right-hand operand with the appropriate precedence.
- *
- */
