@@ -10,7 +10,7 @@
 #define CEXCEPTION_USE_CONFIG_FILE
 #include "CException.h"
 #include "Token.h"
-
+#include "Interpreter.h"
 typedef struct _Lox Lox;
 typedef struct _Loxfuncs Loxfuncs;
 
@@ -40,6 +40,7 @@ struct _Lox {
 
 	int hadError;
      int hadRuntimeError;
+	Interpreter interpreter;
 	void (*run)(Lox* lox,char*);
 	void (*runPrompt)(Lox* lox);
 	void (*runFile)(Lox* lox,const char*);

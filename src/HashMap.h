@@ -22,6 +22,7 @@ void add_to_hashmap(struct _HASH*, void * key,void * value);
 struct _HASH *copy_hashmap(struct _HASH* h);
 
 void * get_value_for_keymap(struct _HASH*, void* k);
+struct _Hashnode * get_node_for_keymap(struct _HASH* h, void* key);
 
 struct _HASH* combine_hashesmap(struct _HASH*, struct _HASH*);
 short int compute_hash_valuemap(struct _HASH * hashMap,void *key);

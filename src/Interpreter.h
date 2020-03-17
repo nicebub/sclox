@@ -11,15 +11,15 @@
 #include "Expr.h"
 #include "ReturnResult.h"
 #include "Object.h"
-#include "Lox.h"
 #include "Stmt.h"
 #include "additions.h"
-
+#include "Environment.h"
 typedef struct _Interpreter Interpreter;
 typedef struct _SuperVisitor SuperVisitor;
 struct _Interpreter {
 	StmtVisitor super;
-    Lox* lox;
+	Environment* environment;
+    void* lox;
     void (*interpret)(Interpreter*, StmtArray* );
     ReturnResult (*evaluate)(ExprVisitor*, Expr*);
     ReturnResult (*isTruthy)(ReturnResult);
@@ -30,7 +30,7 @@ struct _Interpreter {
 
 };
 
-void init_Interpreter(Interpreter* intprt, Lox* lox);
+void init_Interpreter(Interpreter* intprt, void* lox);
 void interpret(Interpreter* intprtr, StmtArray* array);
 void execute(Interpreter* intprtr, Stmt* stmt);
 

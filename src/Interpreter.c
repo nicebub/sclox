@@ -22,6 +22,7 @@ typedef struct _exception{
 #include "ReturnResult.h"
 #include "Object.h"
 #include "additions.h"
+#include "Environment.h"
 
 ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
@@ -31,16 +32,21 @@ ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
 ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
 ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
 ReturnResult isTruthy(ReturnResult obj);
+ReturnResult visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
+ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
 
-
-void init_Interpreter(Interpreter* intprtr, Lox* lox){
+void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->lox = lox;
+    intprtr->environment = malloc(sizeof(Environment));
+    init_Environment(intprtr->environment);
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
+    intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExpr;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
     intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
+    intprtr->super.vtable.visitVarStmt = &visitVarStmt;
     intprtr->checkNumberOperand = &checkNumberOperand;
     intprtr->checkNumberOperands = &checkNumberOperands;
     intprtr->evaluate = &evaluate;
@@ -61,7 +67,7 @@ void interpret(Interpreter* intprtr, StmtArray* array){
 	   }
     }
     Catch(e){
-	   intprtr->lox->runtimeError(intprtr->lox,e);
+	   ((Lox*)intprtr->lox)->runtimeError(intprtr->lox,e);
     }
 }
 
@@ -353,4 +359,36 @@ ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
 	printf("%s\n",stringify(r));
 	result.type = KNULL;
 	return result;
+}
+
+ReturnResult visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
+	Interpreter* intprtr;
+	ReturnResult *r,a;
+	Var* vstmt;
+	intprtr = (Interpreter*) visitor;
+	r = NULL;
+	vstmt = (Var*)stmt;
+	if(vstmt->initializer != NULL){
+		r = malloc(sizeof(ReturnResult));
+		a = evaluate(&visitor->expr,vstmt->initializer);
+		r->type = a.type;
+		r->value = a.value;
+	}
+	intprtr->environment->defineEnv(intprtr->environment,strdup(vstmt->name->lexeme),r);
+	a.type = NIL;
+	return a;
+}
+ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* expr){
+	Environment* env;
+	ReturnResult *r,a;
+	env = (((Interpreter*)visitor)->environment);
+	r = (env->get(env,((Variable*)expr)->name ));
+    if(r){
+	a.type = r->type;
+	a.value = r->value;
+	   return a;
+    }
+    a.type = KNULL;
+    a.value.number=0;
+	return a;
 }

@@ -14,12 +14,6 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "parse:Parser.c">
-      </ContextState>
-      <ContextState
-         contextName = "parser_match:Parser.c">
-      </ContextState>
-      <ContextState
          contextName = "interpret:Interpreter.c">
          <PersistentStrings>
             <PersistentString
@@ -31,6 +25,15 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "parser_match:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "parse:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "visitVarStmt:Interpreter.c">
+      </ContextState>
+      <ContextState
          contextName = "new_Expression:Stmt.c">
       </ContextState>
       <ContextState
@@ -38,12 +41,23 @@
       </ContextState>
       <ContextState
          contextName = "add_to_hashmap:HashMap.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "hm-&gt;super.Buckets[7]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "runPrompt:Lox.c">
       </ContextState>
       <ContextState
          contextName = "statement:Parser.c">
       </ContextState>
       <ContextState
          contextName = "expressionStatement:Parser.c">
+      </ContextState>
+      <ContextState
+         contextName = "get:Environment.c">
       </ContextState>
       <ContextState
          contextName = "delete_hashnodelmap:HashMap.c">
@@ -55,6 +69,9 @@
                value = "*(int*)hnm-&gt;super.value">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "visitVariableExpr:Interpreter.c">
       </ContextState>
       <ContextState
          contextName = "run:Lox.c">

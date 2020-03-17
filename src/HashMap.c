@@ -22,6 +22,7 @@ static struct _hash_vtable hashmap_vtable = {
 		&add_to_hashmap,
 		&copy_hashmap,
 		&get_value_for_keymap,
+		&get_node_for_keymap,
 		&compute_hash_valuemap,
 		&combine_hashesmap,
 		&print_hashmap,
@@ -64,11 +65,15 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
     HashMapNode *temp;
     HashMap *hm;
     if(h && key){
+
 	   hm = (HashMap*) h;
-	   if(hm->super.size == hm->super.used)
-		  return;
-	   if(get_value_for_keymap(h,key)!=NULL)
-		  return;
+	   if(get_value_for_keymap(h,key)!=NULL){
+		   HashMapNode* ex;
+		   ex = (HashMapNode*)get_node_for_keymap(h,key);
+		   free(ex->super.value);
+		   ex->super.value = value;
+		   return;
+	   }
 	   hm = (HashMap*)h;
 	   hn = (HashMapNode*) create_hashnodemap(key,value,h->vtable.func );
 	   res = compute_hash_valuemap((struct _HASH*)hm,key);
@@ -147,6 +152,24 @@ void * get_value_for_keymap(struct _HASH* h, void* key){
 	}
 	return NULL;
 }
+struct _Hashnode * get_node_for_keymap(struct _HASH* h, void* key){
+
+	char *n;
+	short int res;
+	struct _Hashnode *temp;
+
+	if(h && key){
+		res = compute_hash_valuemap(h,key);
+		temp = ((HashMap*)h)->super.Buckets[res];
+		n = (char*)key;
+		while(temp != NULL){
+			if(strcmp(temp->key,n)==0)
+				return temp;
+			temp = temp->next;
+		}
+	}
+	return NULL;
+}
 char* toStringMapNodeValue(struct _Hashnode* node){
     if(node)
 	   return node->vtable.func(node->value);
@@ -177,7 +200,7 @@ char* toStringMap(struct _HASH* h){
     char each[] = "(,),";
     fullstr_len=0;
     num = NULL;
-    for(i=0;i<h->used;i++){
+    for(i=0;i<h->size;i++){
 	   HashMapNode* node = (HashMapNode*)((HashMap*)h)->super.Buckets[i];
 	   if(node){
 		  while(node){
@@ -196,7 +219,7 @@ char* toStringMap(struct _HASH* h){
     memset(temp,0,fullstr_len);
     temp[0]='(';
     count = 0;
-    for(i=0;i<h->used;i++){
+    for(i=0;i<h->size;i++){
 	   HashMapNode* node = (HashMapNode*)((HashMap*)h)->super.Buckets[i];
 	   if(node){
 		  while(node){

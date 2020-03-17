@@ -18,6 +18,7 @@
 		E26CB635241CADB50067C811 /* TokenArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB631241CADB40067C811 /* TokenArray.c */; };
 		E26CB636241CADB50067C811 /* StmtArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB632241CADB40067C811 /* StmtArray.c */; };
 		E2860478241C5096001E1586 /* Stmt.c in Sources */ = {isa = PBXBuildFile; fileRef = E2860476241C5096001E1586 /* Stmt.c */; };
+		E28E714624204B5D0067DC82 /* Environment.c in Sources */ = {isa = PBXBuildFile; fileRef = E28E714424204B5D0067DC82 /* Environment.c */; };
 		E29EA637242026E200EAAAF4 /* Test_HashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E29EA636242026E200EAAAF4 /* Test_HashMap.c */; };
 		E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC490F2418CB8300F8F14C /* Interpreter.c */; };
 		E2BC49152418CB8400F8F14C /* Object.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC49102418CB8300F8F14C /* Object.c */; };
@@ -90,6 +91,8 @@
 		E26CB634241CADB50067C811 /* TokenArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TokenArray.h; path = ../../src/TokenArray.h; sourceTree = "<group>"; };
 		E2860476241C5096001E1586 /* Stmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Stmt.c; path = ../../src/Stmt.c; sourceTree = "<group>"; };
 		E2860477241C5096001E1586 /* Stmt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stmt.h; path = ../../src/Stmt.h; sourceTree = "<group>"; };
+		E28E714424204B5D0067DC82 /* Environment.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Environment.c; path = ../../src/Environment.c; sourceTree = "<group>"; };
+		E28E714524204B5D0067DC82 /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = ../../src/Environment.h; sourceTree = "<group>"; };
 		E29EA636242026E200EAAAF4 /* Test_HashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Test_HashMap.c; path = ../../test/Test_HashMap.c; sourceTree = "<group>"; };
 		E2BC490F2418CB8300F8F14C /* Interpreter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Interpreter.c; path = ../../src/Interpreter.c; sourceTree = "<group>"; };
 		E2BC49102418CB8300F8F14C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Object.c; path = ../../src/Object.c; sourceTree = "<group>"; };
@@ -155,6 +158,8 @@
 		E213C69C2417242E00141F63 /* sclox */ = {
 			isa = PBXGroup;
 			children = (
+				E28E714424204B5D0067DC82 /* Environment.c */,
+				E28E714524204B5D0067DC82 /* Environment.h */,
 				E2EB4200241FC6FE00A3E77B /* unity_internals.h */,
 				E2EB41FF241FC6FE00A3E77B /* unity.c */,
 				E2EB4201241FC6FE00A3E77B /* unity.h */,
@@ -295,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E213C6B22417244F00141F63 /* Lox.c in Sources */,
+				E28E714624204B5D0067DC82 /* Environment.c in Sources */,
 				E2BC49182418CBA200F8F14C /* CException.c in Sources */,
 				E2BC49152418CB8400F8F14C /* Object.c in Sources */,
 				E213C6B62417244F00141F63 /* Token.c in Sources */,

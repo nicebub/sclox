@@ -26,6 +26,7 @@ static void runtimeError(Lox* lox, CEXCEPTION_T e);
 void init_lox(Lox* lox){
 	lox->hadError = 0;
      lox->hadRuntimeError = 0;
+    init_Interpreter(&lox->interpreter,lox);
 	lox->run = &run;
 	lox->runPrompt =&runPrompt;
 	lox->runFile = &runFile;
@@ -40,7 +41,6 @@ void init_lox(Lox* lox){
 /*	    Expr *expression;*/
 	    StmtArray* statements;
 	    AstPrinter printer;
-	    Interpreter interpreter;
 
 	    init_printer(&printer);
 	    init_scanner(&scanner, source,lox);
@@ -51,8 +51,7 @@ void init_lox(Lox* lox){
 
 	    if(lox->hadError)
 	    	return;
-	    init_Interpreter(&interpreter,lox);
-	    interpreter.interpret(&interpreter,statements);
+	lox->interpreter.interpret(&lox->interpreter,statements);
 	    /* TODO need to delete expression potentially after printing */
 	    deleteStmtArray(statements);
 	    statements = NULL;

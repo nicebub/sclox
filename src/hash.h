@@ -52,6 +52,7 @@ struct _hash_vtable {
 		void (*add_to_hash)(struct _HASH *, void * key, void* value);
 		struct _HASH *(*copy_hash)(struct _HASH * h);
 		void * (*get_value_for_key)(struct _HASH*, void* key);
+		struct _Hashnode * (*get_node_for_key)(struct _HASH* h, void* key);
 		short int (*compute_hash_value)(struct _HASH * s, void * key);
 		struct _HASH* (*combine_hashes)(struct _HASH*, struct _HASH*);
 		void (*print_hash)(struct _HASH * h);
@@ -80,6 +81,8 @@ char* toStringNodeValue(struct _Hashnode* node);
 struct _HASH *copy_hash(struct _HASH* h);
 
 void * get_value_for_key(struct _HASH*, void* k);
+struct _Hashnode * get_node_for_key(struct _HASH* h, void* key);
+
 short int compute_hash_value(struct _HASH * s, void * key);
 
 struct _HASH* combine_hashes(struct _HASH*, struct _HASH*);

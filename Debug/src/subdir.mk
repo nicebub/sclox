@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/AstPrinter.c \
+../src/Environment.c \
 ../src/Expr.c \
 ../src/HashMap.c \
 ../src/Interpreter.c \
@@ -22,6 +23,7 @@ C_SRCS += \
 
 OBJS += \
 ./src/AstPrinter.o \
+./src/Environment.o \
 ./src/Expr.o \
 ./src/HashMap.o \
 ./src/Interpreter.o \
@@ -39,6 +41,7 @@ OBJS += \
 
 C_DEPS += \
 ./src/AstPrinter.d \
+./src/Environment.d \
 ./src/Expr.d \
 ./src/HashMap.d \
 ./src/Interpreter.d \
