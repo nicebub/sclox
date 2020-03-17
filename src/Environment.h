@@ -12,15 +12,18 @@
 #include "ReturnResult.h"
 typedef struct _Environment Environment;
 struct _Environment {
+    Environment* Enclosing;
 	HashMap *hashMap;
 	void (*defineEnv)(Environment* env,char* name, ReturnResult* value);
 	void* (*get)(Environment* env,Token* name);
+	void (*assign)(Environment* env, Token* name, ReturnResult* value);
 };
 
 void init_Environment(Environment* env);
+void init_EnvironmentwithEnclosing(Environment* env,Environment* enclosing);
 Environment* create_Environment(void);
 void defineEnv(Environment* env,char* name, ReturnResult *value);
 void* get(Environment* env,Token* name);
-
+void assign(Environment* env, Token* name, ReturnResult* value);
 
 #endif /* ENVIRONMENT_H_ */

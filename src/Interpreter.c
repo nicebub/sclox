@@ -24,10 +24,12 @@ typedef struct _exception{
 #include "additions.h"
 #include "Environment.h"
 
+ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
 ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
 ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr);
 ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
 ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
 ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
@@ -44,7 +46,9 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
     intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExpr;
+    intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExpr;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
+    intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
     intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
     intprtr->super.vtable.visitVarStmt = &visitVarStmt;
     intprtr->checkNumberOperand = &checkNumberOperand;
@@ -75,7 +79,36 @@ void execute(Interpreter* intprtr, Stmt* stmt){
     Expression * ex = (Expression*)stmt;
 	ex->super.vtable.accept(stmt,&intprtr->super);
 }
+void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
+	CEXCEPTION_T e;
+	Environment * previous;
+	int i;
+	previous = intrprtr->environment;
+	Try{
+		intrprtr->environment = newenv;
 
+		for(i = 0; i<array->used;i++){
+			execute(intrprtr,array->getElementInArrayAt(array,i));
+		}
+	}
+	Catch(e){
+		fprintf(stderr,"RuntimeError: caught in executeBlock.\n");
+	}
+	intrprtr->environment = previous;
+}
+ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
+	Block* temp;
+	Interpreter* intrprtr;
+	Environment* env;
+	ReturnResult r;
+	temp= (Block*)expr;
+	intrprtr = (Interpreter*) visitor;
+	env = malloc(sizeof(Environment));
+	init_EnvironmentwithEnclosing(env,intrprtr->environment);
+	executeBlock(intrprtr ,temp->statements,env);
+	r.type = KNULL;
+	return r;
+}
 ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	ReturnResult r;
     r.type = ((Literal*)expr)->value->type;
@@ -160,6 +193,7 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				    switch(right.type){
 					   case STRING:
 						  new_str = malloc(sizeof(char)*(strlen(left.value.string)+strlen(right.value.string)+1));
+						  memset(new_str,0,strlen(left.value.string)+strlen(right.value.string)+1);
 						  strncpy(new_str,left.value.string,strlen(left.value.string));
 						  strncat(new_str,right.value.string,strlen(right.value.string));
 						  result.value.string = new_str;
@@ -167,6 +201,7 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 					   default:
 						  num_str = stringify(right);
 						  new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(left.value.string)+1));
+						  memset(new_str,0,strlen(num_str)+strlen(left.value.string)+1);
 						  strncpy(new_str,left.value.string,strlen(left.value.string));
 						  strncat(new_str,num_str,strlen(num_str));
 						  result.value.string = new_str;
@@ -178,6 +213,7 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				default:
 				    num_str = stringify(left);
 				    new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(right.value.string)+1));
+				    memset(new_str,0,strlen(num_str)+strlen(right.value.string)+1);
 				    strncpy(new_str,num_str,strlen(num_str));
 				    strncat(new_str,right.value.string,strlen(right.value.string));
 				    result.value.string = new_str;
@@ -372,12 +408,37 @@ ReturnResult visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
 		r = malloc(sizeof(ReturnResult));
 		a = evaluate(&visitor->expr,vstmt->initializer);
 		r->type = a.type;
-		r->value = a.value;
+		 if(r->type == NUMBER)
+			    memcpy(&r->value,&a.value,sizeof(double));
+		 else{
+			r->value.string = strdup(a.value.string);
+/*			r->value.string = malloc(sizeof(char)*(strlen(a.value.string)+1));
+			memcpy(r->value.string,&a.value.string,strlen(a.value.string)+1);*/
+		 }
 	}
 	intprtr->environment->defineEnv(intprtr->environment,strdup(vstmt->name->lexeme),r);
 	a.type = NIL;
 	return a;
 }
+ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr){
+	Assign* assign = (Assign*) expr;
+	ReturnResult *r,a;
+	Interpreter* intprtr;
+	r = malloc(sizeof(ReturnResult));
+	intprtr= (Interpreter*)visitor;
+	a = evaluate(visitor,assign->value);
+	r->type = a.type;
+    if(r->type == NUMBER)
+		  memcpy(&r->value,&a.value,sizeof(double));
+    else{
+	   r->value.string = strdup(a.value.string);
+	   /*	   memcpy(&r->value.string,&a.value.string,strlen(a.value.string)+1);*/
+    }
+	r->value = a.value;
+	intprtr->environment->assign(intprtr->environment,assign->name,r);
+	return a;
+}
+
 ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
 	ReturnResult *r,a;
@@ -385,7 +446,12 @@ ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 	r = (env->get(env,((Variable*)expr)->name ));
     if(r){
 	a.type = r->type;
-	a.value = r->value;
+	if(a.type == NUMBER)
+	    memcpy(&a.value,&r->value,sizeof(double));
+	else{
+	    a.value.string = strdup(r->value.string);
+/*	    memcpy(&a.value.string,&r->value.string,strlen(r->value.string)+1);*/
+	}
 	   return a;
     }
     a.type = KNULL;

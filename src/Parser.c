@@ -16,6 +16,7 @@
 #include "Stmt.h"
 #include "additions.h"
 #include "TokenArray.h"
+#include "StmtArray.h"
 void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
@@ -73,10 +74,31 @@ Stmt* varDeclaration(Parser* parser){
 
 Stmt* statement(Parser* parser){
     TokenType p[] = {PRINT, KNULL };
-	if(parser->match(parser,p))
+	if(parser->match(parser,p)){
 		return printStatement(parser);
+	}
+	p[0] = LEFT_BRACE;
+	if(parser->match(parser,p)){
+		Block* tempblock;
+		tempblock = malloc(sizeof(Block));
+		new_Block(tempblock,block(parser));
+	    return (Stmt*)tempblock;
+	}
 	return expressionStatement(parser);
+
 }
+StmtArray* block(Parser* parser){
+	StmtArray* array;
+/*	TokenType p[] = {RIGHT_BRACE, KNULL };*/
+	array = malloc(sizeof(StmtArray));
+	init_StmtArray(array);
+	while(!check(parser,RIGHT_BRACE) && !parser->isAtEnd(parser)){
+		array->addElementToArray(array,declaration(parser));
+	}
+	consume(parser,RIGHT_BRACE, "Expect '}' after block.");
+	return array;
+}
+
 
 Stmt* printStatement(Parser* parser){
 	Print* result;
@@ -94,9 +116,29 @@ Stmt* expressionStatement(Parser* parser){
 	new_Expression(ex,expr);
 	return (Stmt*)ex;
 }
+Expr* assignment(Parser* parser){
+	TokenType toks[] = {EQUAL, KNULL };
+	Expr* expr;
+	expr = equality(parser);
+	if(parser->match(parser,toks)){
+		Token* equals;
+		Expr* value;
+		equals = previous(parser);
+		value = assignment(parser);
+		if(strcmp(expr->instanceOf,"Variable")==0){
+			Token* name = ((Variable*)expr)->name;
+			Assign* assign;
+			assign = malloc(sizeof(Assign));
+			new_Assign(assign,name,value);
+			return (Expr*)assign;
+		}
+		parser->error(parser,equals,"Invalid assignment target.");
+	}
+	return expr;
+}
 
 Expr* expression(Parser* parser){
-	return equality(parser);
+	return assignment(parser);
 }
 
 Expr* equality(Parser* parser){

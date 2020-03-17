@@ -67,6 +67,7 @@ void init_lox(Lox* lox){
 	FILE* inFile;
 /*	char c;*/
 	char* line;
+	char* templine;
 	ssize_t lread;
 	size_t capp;
 	inFile = NULL;
@@ -82,11 +83,17 @@ void init_lox(Lox* lox){
 		perror("Error");
 		exit( EXIT_FAILURE);
 	}
+	templine = malloc(sizeof(char)*2);
+	memset(templine,0,sizeof(char)*2);
 	while((lread = getline(&line,&capp,inFile)) > 0){
-	   run(lox,line);
-	   free(line);
-	   line = NULL;
+	    templine = realloc(templine,sizeof(char)*(strlen(templine)+strlen(line)+1));
+	    strncat(templine,line,strlen(line));
 	}
+	free(line);
+	line = templine;
+	 run(lox,line);
+	 free(line);
+	 line = NULL;
 	 if(lox->hadError)
 	   exit(65);
 	if(lox->hadRuntimeError)

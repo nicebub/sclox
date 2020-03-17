@@ -1,10 +1,48 @@
 
+#include <string.h>
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
 #include "Expr.h"
 
 
+
+static ReturnResult visitAssignExpr( ExprVisitor* visitor,Expr* arg);
+
+static ReturnResult visitAssignExpr(ExprVisitor* visitor,Expr* expr){
+    ReturnResult r; r.value.string=NULL; return r;
+}
+void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam){
+    inObj->super.vtable.accept = &acceptAssign;
+    
+    inObj->super.vtable.delete_Expr = &delete_Assign   ;
+	inObj->name = nameparam;
+	inObj->value = valueparam;
+	strcpy((char*)&inObj->super.instanceOf,"Assign");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoExprCounter();
+}
+void delete_Assign   (Expr* arg){
+	Assign   * expr = (Assign   *)arg;
+
+if(expr->super.owner_references ==1){
+    delete_Token(expr->name);
+    expr->name=NULL;
+    delete_Expr(expr->value);
+    expr->value=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+ReturnResult acceptAssign(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitAssignExpr(visitor,arg);
+}
 
 static ReturnResult visitBinaryExpr( ExprVisitor* visitor,Expr* arg);
 
@@ -18,6 +56,7 @@ void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* right
 	inObj->left = leftparam;
 	inObj->operator = operatorparam;
 	inObj->right = rightparam;
+	strcpy((char*)&inObj->super.instanceOf,"Binary");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
 }
@@ -55,6 +94,7 @@ void new_Grouping (Grouping * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Expr = &delete_Grouping ;
 	inObj->expression = expressionparam;
+	strcpy((char*)&inObj->super.instanceOf,"Grouping");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
 }
@@ -88,6 +128,7 @@ void new_Literal (Literal * inObj,Object* valueparam){
     
     inObj->super.vtable.delete_Expr = &delete_Literal ;
 	inObj->value = valueparam;
+	strcpy((char*)&inObj->super.instanceOf,"Literal");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
 }
@@ -122,6 +163,7 @@ void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.delete_Expr = &delete_Unary ;
 	inObj->operator = operatorparam;
 	inObj->right = rightparam;
+	strcpy((char*)&inObj->super.instanceOf,"Unary");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
 }
@@ -157,6 +199,7 @@ void new_Variable (Variable * inObj,Token* nameparam){
     
     inObj->super.vtable.delete_Expr = &delete_Variable ;
 	inObj->name = nameparam;
+	strcpy((char*)&inObj->super.instanceOf,"Variable");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
 }

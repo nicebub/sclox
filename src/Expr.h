@@ -2,6 +2,7 @@
 #ifndef _EXPR_H
 #define _EXPR_H
 
+#include <string.h>
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
@@ -19,6 +20,7 @@ struct _Expr_vtable {
 
 typedef struct _ExprVisitor_vtable ExprVisitor_vtable;
 struct _ExprVisitor_vtable {
+	ReturnResult (*visitAssignExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
@@ -33,11 +35,23 @@ struct _ExprVisitor {
 static short int Exprcounter=0;
     
 struct _Expr {
-	short int id;
-	short int owner_references;
-	Expr_vtable vtable;
+
+                 char instanceOf[20];
+                 short int id;
+                 short int owner_references;
+                 Expr_vtable vtable;
 
 };
+typedef struct _Assign    Assign   ;
+struct _Assign    {
+	Expr super;
+	Token* name;
+	Expr* value;
+
+};
+void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam);
+void delete_Assign   (Expr* arg);
+ReturnResult acceptAssign(Expr* arg, ExprVisitor* visitor);
 typedef struct _Binary  Binary ;
 struct _Binary  {
 	Expr super;

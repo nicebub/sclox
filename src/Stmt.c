@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
@@ -6,6 +7,42 @@
 #include "Stmt.h"
 
 
+
+static ReturnResult visitBlockStmt( StmtVisitor* visitor,Stmt* arg);
+
+static ReturnResult visitBlockStmt(StmtVisitor* visitor,Stmt* stmt){
+    ReturnResult r; r.value.string=NULL; return r;
+}
+void new_Block (Block * inObj,StmtArray* statementsparam){
+    inObj->super.vtable.accept = &acceptBlock;
+    
+    inObj->super.vtable.delete_Stmt = &delete_Block ;
+	inObj->statements = statementsparam;
+	strcpy((char*)&inObj->super.instanceOf,"Block");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoStmtCounter();
+}
+void delete_Block (Stmt* arg){
+	Block * expr = (Block *)arg;
+
+extern void deleteStmtArray(StmtArray* array);
+
+if(expr->super.owner_references ==1){
+    deleteStmtArray(expr->statements);
+    expr->statements=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+ReturnResult acceptBlock(Stmt *arg, StmtVisitor* visitor){
+    return visitor->vtable.visitBlockStmt(visitor,arg);
+}
 
 static ReturnResult visitExpressionStmt( StmtVisitor* visitor,Stmt* arg);
 
@@ -17,6 +54,7 @@ void new_Expression (Expression * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Stmt = &delete_Expression ;
 	inObj->expression = expressionparam;
+	strcpy((char*)&inObj->super.instanceOf,"Expression");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
 }
@@ -50,6 +88,7 @@ void new_Print (Print * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Stmt = &delete_Print ;
 	inObj->expression = expressionparam;
+	strcpy((char*)&inObj->super.instanceOf,"Print");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
 }
@@ -84,6 +123,7 @@ void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam){
     inObj->super.vtable.delete_Stmt = &delete_Var ;
 	inObj->name = nameparam;
 	inObj->initializer = initializerparam;
+	strcpy((char*)&inObj->super.instanceOf,"Var");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
 }

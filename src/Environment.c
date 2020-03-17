@@ -14,10 +14,17 @@
 #include "Token.h"
 char* func(void* value){
 	if(value){
-		char* num ;
-		num = NULL;
-		asprintf(&num,"%d",*(int*)value);
-		return num;
+	    char* num ;
+	    ReturnResult * val = (ReturnResult*)value;
+	    if(val->type == NUMBER){
+		   num = NULL;
+		   asprintf(&num,"%f",val->value.number);
+		   return num;
+	    }
+	    else{
+		   num = NULL;
+		   return strdup(val->value.string);
+	    }
 	}
 	return NULL;
 }
@@ -28,29 +35,59 @@ void* get(Environment* env,Token* name){
 	struct _Hashnode* (*get_node)(struct _HASH*,void*);
 	HashMapNode* node;
 	char* temp;
+    temp = NULL;
 	map = env->hashMap;
 	get_node = env->hashMap->super.vtable.get_node_for_key;
 	if((node = (HashMapNode*)get_node((struct _HASH*)map,name->lexeme))){
 		return node->super.value;
 	}
-	return NULL;
+    if(env->Enclosing != NULL){
+	   void * temp;
+	   temp = env->get(env->Enclosing,name);
+	   return temp;
+    }
 	temp = NULL;
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
 	e.token = name;
 	e.message = temp;
 	Throw(e);
+    return NULL;
 /*	Throw(runtimeError(name,);*/
 }
 
 void defineEnv(Environment* env,char* name, ReturnResult *value){
-	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,(void*)value);
+	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
 }
 
 void init_Environment(Environment* env){
 	env->hashMap = (HashMap*)create_hashmap(15,&func);
-	env->defineEnv= defineEnv;
+	env->defineEnv= &defineEnv;
+	env->assign = &assign;
     env->get = &get;
+    env->Enclosing = NULL;
+}
+void init_EnvironmentwithEnclosing(Environment* env,Environment* enclosing){
+    init_Environment(env);
+    env->Enclosing = enclosing;
 }
 Environment* create_Environment(void){
 	return NULL;
+}
+void assign(Environment* env, Token* name, ReturnResult* value){
+	CEXCEPTION_T e;
+	char * temp;
+	if(env->hashMap->super.vtable.get_node_for_key((struct _HASH*)env->hashMap,name->lexeme)){
+		env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name->lexeme,value);
+		return;
+	}
+    if(env->Enclosing != NULL){
+	   env->assign(env->Enclosing,name,value);
+	   return;
+    }
+	temp = NULL;
+	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
+	e.token = name;
+	e.message = temp;
+	Throw(e);
+    return;
 }

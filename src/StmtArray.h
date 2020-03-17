@@ -4,7 +4,11 @@
 #include "Token.h"
 #include "Stmt.h"
 
-typedef struct _StmtArray StmtArray;
+#ifndef _STMTARRAY
+#define _STMTARRAY
+	typedef struct _StmtArray StmtArray;
+	extern delete_StmtArray(StmtArray* array);
+#endif
 struct _StmtArray {
     Stmt ** Stmts;
     int size;

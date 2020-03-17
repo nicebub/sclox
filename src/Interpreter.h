@@ -33,6 +33,7 @@ struct _Interpreter {
 void init_Interpreter(Interpreter* intprt, void* lox);
 void interpret(Interpreter* intprtr, StmtArray* array);
 void execute(Interpreter* intprtr, Stmt* stmt);
+void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
 
 
 

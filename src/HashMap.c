@@ -39,7 +39,7 @@ struct _HASH *create_hashmap(int size,char*(*func)(void* value)){
     int i;
     m = malloc(sizeof(HashMap));
     m->super.vtable = hashmap_vtable;
-    m->super.Buckets = malloc(sizeof(HashMapNode*)*size);
+    m->super.Buckets =malloc(sizeof(HashMapNode*)*size);
     for(i =0;i<size;i++)
 	   m->super.Buckets[i] = NULL;
     m->super.vtable.add_to_hash = &add_to_hashmap;
@@ -223,11 +223,14 @@ char* toStringMap(struct _HASH* h){
 	   HashMapNode* node = (HashMapNode*)((HashMap*)h)->super.Buckets[i];
 	   if(node){
 		  while(node){
+			 char * nstr = toStringMapNode((struct _Hashnode*)node);
 			 count++;
-			 strncat(temp,toStringMapNode((struct _Hashnode*)node),fullstr_len-strlen(temp));
+			 strncat(temp,nstr,fullstr_len-strlen(temp));
 				if(node->super.next !=NULL)
 				    strncat(temp,",",1);
 			 node= (HashMapNode*)node->super.next;
+			 free(nstr);
+			 nstr = NULL;
 		  }
 		  if(count < h->used)
 				strncat(temp,",",1);

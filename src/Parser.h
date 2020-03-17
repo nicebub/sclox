@@ -43,6 +43,7 @@ struct _Parser {
 void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
 volatile StmtArray* parse(Parser* parser);
+StmtArray* block(Parser* parser);
 Stmt* declaration(Parser* parser);
 Stmt* varDeclaration(Parser* parser);
 Stmt* statement(Parser* parser);

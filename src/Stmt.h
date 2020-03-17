@@ -2,11 +2,17 @@
 #ifndef _STMT_H
 #define _STMT_H
 
+#include <string.h>
 #include "Token.h"
 #include "Object.h"
 #include "ReturnResult.h"
 #include "Expr.h"
 
+#ifndef _STMTARRAY
+#define _STMTARRAY
+	typedef struct _StmtArray StmtArray;
+	extern void deleteStmtArray(StmtArray* array);
+#endif
 
 typedef struct _Stmt Stmt;
 typedef struct _StmtVisitor StmtVisitor;
@@ -20,6 +26,7 @@ struct _Stmt_vtable {
 
 typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
+	ReturnResult (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
@@ -33,11 +40,22 @@ struct _StmtVisitor {
 static short int Stmtcounter=0;
     
 struct _Stmt {
-	short int id;
-	short int owner_references;
-	Stmt_vtable vtable;
+
+                 char instanceOf[20];
+                 short int id;
+                 short int owner_references;
+                 Stmt_vtable vtable;
 
 };
+typedef struct _Block  Block ;
+struct _Block  {
+	Stmt super;
+	StmtArray* statements;
+
+};
+void new_Block (Block * inObj,StmtArray* statementsparam);
+void delete_Block (Stmt* arg);
+ReturnResult acceptBlock(Stmt* arg, StmtVisitor* visitor);
 typedef struct _Expression  Expression ;
 struct _Expression  {
 	Stmt super;
