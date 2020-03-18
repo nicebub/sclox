@@ -6,18 +6,17 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void deleteStmtArray(StmtArray* array);
+    extern void delete_StmtArray(StmtArray* array);
+#endif
+#ifndef _EXPRARRAY
+#define _EXPRARRAY
+    typedef struct _ExprArray ExprArray;
+    extern void delete_ExprArray(ExprArray* array);
 #endif
 #include "Expr.h"
 #include "Stmt.h"
 
 
-
-static ReturnResult visitBlockStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitBlockStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
-}
 void new_Block (Block * inObj,StmtArray* statementsparam){
     inObj->super.vtable.accept = &acceptBlock;
     
@@ -31,7 +30,7 @@ void delete_Block (Stmt* arg){
 	Block * expr = (Block *)arg;
 
 if(expr->super.owner_references ==1){
-    deleteStmtArray(expr->statements);
+    delete_StmtArray(expr->statements);
     expr->statements=NULL;
 
 	free(expr);
@@ -45,12 +44,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptBlock(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitBlockStmt(visitor,arg);
-}
-
-static ReturnResult visitExpressionStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitExpressionStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_Expression (Expression * inObj,Expr* expressionparam){
     inObj->super.vtable.accept = &acceptExpression;
@@ -79,12 +72,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptExpression(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitExpressionStmt(visitor,arg);
-}
-
-static ReturnResult visitIfStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitIfStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam){
     inObj->super.vtable.accept = &acceptIf;
@@ -120,12 +107,6 @@ if(expr->super.owner_references ==1){
 ReturnResult acceptIf(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitIfStmt(visitor,arg);
 }
-
-static ReturnResult visitPrintStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitPrintStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
-}
 void new_Print (Print * inObj,Expr* expressionparam){
     inObj->super.vtable.accept = &acceptPrint;
     
@@ -153,12 +134,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptPrint(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitPrintStmt(visitor,arg);
-}
-
-static ReturnResult visitVarStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitVarStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam){
     inObj->super.vtable.accept = &acceptVar;
@@ -190,12 +165,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptVar(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitVarStmt(visitor,arg);
-}
-
-static ReturnResult visitWhileStmt( StmtVisitor* visitor,Stmt* arg);
-
-static ReturnResult visitWhileStmt(StmtVisitor* visitor,Stmt* stmt){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam){
     inObj->super.vtable.accept = &acceptWhile;

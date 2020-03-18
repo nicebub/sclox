@@ -9,7 +9,12 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void deleteStmtArray(StmtArray* array);
+    extern void delete_StmtArray(StmtArray* array);
+#endif
+#ifndef _EXPRARRAY
+#define _EXPRARRAY
+    typedef struct _ExprArray ExprArray;
+    extern void delete_ExprArray(ExprArray* array);
 #endif
 
 
@@ -27,6 +32,7 @@ typedef struct _ExprVisitor_vtable ExprVisitor_vtable;
 struct _ExprVisitor_vtable {
 	ReturnResult (*visitAssignExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
+	ReturnResult (*visitCallExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
 	ReturnResult (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
@@ -71,6 +77,17 @@ struct _Binary  {
 void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam);
 void delete_Binary (Expr* arg);
 ReturnResult acceptBinary(Expr* arg, ExprVisitor* visitor);
+typedef struct _Call  Call ;
+struct _Call  {
+	Expr super;
+	Expr* callee;
+	Token* paren;
+	ExprArray* arguments;
+
+};
+void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argumentsparam);
+void delete_Call (Expr* arg);
+ReturnResult acceptCall(Expr* arg, ExprVisitor* visitor);
 typedef struct _Grouping  Grouping ;
 struct _Grouping  {
 	Expr super;

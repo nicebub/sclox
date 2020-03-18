@@ -5,5 +5,6 @@
 #include "Stmt.h"
 
 void initializeStmtElement(Stmt** statement, void* values);
-
+void initializeExprElement(Expr** exprs, void * values);
+void initializeReturnResultElement(ReturnResult* exprs, void * values);
 #endif

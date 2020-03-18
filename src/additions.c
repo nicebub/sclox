@@ -9,3 +9,18 @@ void initializeStmtElement(Stmt** statement, void* values){
     *statement = (Stmt*) values;
 }
 
+void initializeExprElement(Expr** exprs, void * values){
+	if(!values){
+		exprs = NULL;
+		return;
+	}
+	*exprs = (Expr*) values;
+}
+void initializeReturnResultElement(ReturnResult* results, void * values){
+	if(!values){
+		results = NULL;
+		return;
+	}
+	*results = *(ReturnResult*)values;
+
+}

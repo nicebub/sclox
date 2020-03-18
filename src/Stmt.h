@@ -9,7 +9,12 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void deleteStmtArray(StmtArray* array);
+    extern void delete_StmtArray(StmtArray* array);
+#endif
+#ifndef _EXPRARRAY
+#define _EXPRARRAY
+    typedef struct _ExprArray ExprArray;
+    extern void delete_ExprArray(ExprArray* array);
 #endif
 #include "Expr.h"
 

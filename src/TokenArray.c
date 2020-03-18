@@ -9,7 +9,7 @@ void init_TokenArray(TokenArray* array){
         array->size = 0;
         array->used = 0;
         array->addElementToArray = &addElementToTokenArray;
-        array->deleteArray = &deleteTokenArray;
+        array->deleteArray = &delete_TokenArray;
         array->getElementInArrayAt =&getTokeninArrayAt;
     }
             
@@ -32,7 +32,7 @@ void addElementToTokenArray(TokenArray* array,Token* element){
             initializeTokenElement(&array->Tokens[array->used],element);
             array->used++;
     }
-void deleteTokenArray(TokenArray* array){
+void delete_TokenArray(TokenArray* array){
     if(array){
         int i;
         for(i =0; i <array->used;i++){

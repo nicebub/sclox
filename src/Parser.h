@@ -17,6 +17,8 @@
 #include "Stmt.h"
 #include "additions.h"
 #include "TokenArray.h"
+#include "StmtArray.h"
+#include "ExprArray.h"
 typedef struct _Parser Parser;
 /*
 typedef struct _Parser_vtable Parser_vtable;
@@ -43,7 +45,8 @@ struct _Parser {
 void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
 volatile StmtArray* parse(Parser* parser);
-
+Expr* call(Parser* parser);
+Expr* finishCall(Parser* parser, Expr* expr);
 Expr* or(Parser* parser);
 Stmt* whileStatement(Parser* parser);
 Stmt* ifStatement(Parser* parser);

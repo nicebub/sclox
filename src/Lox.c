@@ -53,12 +53,12 @@ void init_lox(Lox* lox){
 	    	return;
 	   lox->interpreter.interpret(&lox->interpreter,statements);
 	    /* TODO need to delete expression potentially after printing */
-	    deleteStmtArray(statements);
+	    delete_StmtArray(statements);
 	    statements = NULL;
 /*	    init_StmtArray(statements);*/
 /*	    delete_Expr(expression);
 	    expression = NULL;*/
-	    deleteTokenArray(&scanner.tokens);
+	    delete_TokenArray(&scanner.tokens);
 	    init_TokenArray(&scanner.tokens);
 }
 

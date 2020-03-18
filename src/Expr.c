@@ -6,17 +6,16 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void deleteStmtArray(StmtArray* array);
+    extern void delete_StmtArray(StmtArray* array);
+#endif
+#ifndef _EXPRARRAY
+#define _EXPRARRAY
+    typedef struct _ExprArray ExprArray;
+    extern void delete_ExprArray(ExprArray* array);
 #endif
 #include "Expr.h"
 
 
-
-static ReturnResult visitAssignExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitAssignExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
-}
 void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam){
     inObj->super.vtable.accept = &acceptAssign;
     
@@ -47,12 +46,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptAssign(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitAssignExpr(visitor,arg);
-}
-
-static ReturnResult visitBinaryExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitBinaryExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.accept = &acceptBinary;
@@ -88,11 +81,39 @@ if(expr->super.owner_references ==1){
 ReturnResult acceptBinary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitBinaryExpr(visitor,arg);
 }
+void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argumentsparam){
+    inObj->super.vtable.accept = &acceptCall;
+    
+    inObj->super.vtable.delete_Expr = &delete_Call ;
+	inObj->callee = calleeparam;
+	inObj->paren = parenparam;
+	inObj->arguments = argumentsparam;
+	strcpy((char*)&inObj->super.instanceOf,"Call");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoExprCounter();
+}
+void delete_Call (Expr* arg){
+	Call * expr = (Call *)arg;
 
-static ReturnResult visitGroupingExpr( ExprVisitor* visitor,Expr* arg);
+if(expr->super.owner_references ==1){
+    delete_Expr(expr->callee);
+    expr->callee=NULL;
+    delete_Token(expr->paren);
+    expr->paren=NULL;
+    delete_ExprArray(expr->arguments);
+    expr->arguments=NULL;
 
-static ReturnResult visitGroupingExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+ReturnResult acceptCall(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitCallExpr(visitor,arg);
 }
 void new_Grouping (Grouping * inObj,Expr* expressionparam){
     inObj->super.vtable.accept = &acceptGrouping;
@@ -122,12 +143,6 @@ if(expr->super.owner_references ==1){
 ReturnResult acceptGrouping(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitGroupingExpr(visitor,arg);
 }
-
-static ReturnResult visitLiteralExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitLiteralExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
-}
 void new_Literal (Literal * inObj,Object* valueparam){
     inObj->super.vtable.accept = &acceptLiteral;
     
@@ -155,12 +170,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptLiteral(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitLiteralExpr(visitor,arg);
-}
-
-static ReturnResult visitLogicalExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitLogicalExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.accept = &acceptLogical;
@@ -196,12 +205,6 @@ if(expr->super.owner_references ==1){
 ReturnResult acceptLogical(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitLogicalExpr(visitor,arg);
 }
-
-static ReturnResult visitUnaryExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitUnaryExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
-}
 void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.accept = &acceptUnary;
     
@@ -232,12 +235,6 @@ if(expr->super.owner_references ==1){
 
 ReturnResult acceptUnary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitUnaryExpr(visitor,arg);
-}
-
-static ReturnResult visitVariableExpr( ExprVisitor* visitor,Expr* arg);
-
-static ReturnResult visitVariableExpr(ExprVisitor* visitor,Expr* expr){
-    ReturnResult r; r.value.string=NULL; return r;
 }
 void new_Variable (Variable * inObj,Token* nameparam){
     inObj->super.vtable.accept = &acceptVariable;

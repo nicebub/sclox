@@ -14,7 +14,7 @@ struct _TokenArray {
 };
 void init_TokenArray(TokenArray* array);
 void addElementToTokenArray(TokenArray* array,Token* element);
-void deleteTokenArray(TokenArray* array);
+void delete_TokenArray(TokenArray* array);
 Token* getTokeninArrayAt(TokenArray* array,size_t index);
 void initializeTokenElement(Token* arg, void* values);
 #endif

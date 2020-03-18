@@ -57,7 +57,7 @@ void delete_scanner(Scanner* scanner){
 			free(scanner->source);
 			scanner->source = NULL;
 		}
-		deleteTokenArray(&scanner->tokens);
+		delete_TokenArray(&scanner->tokens);
 /*		scanner->tokens = NULL;*/
 	}
 }

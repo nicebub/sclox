@@ -1,12 +1,6 @@
 
 #include <stdio.h>
 #include "Token.h"
-#ifndef _STMTARRAY
-#define _STMTARRAY
-	typedef struct _StmtArray StmtArray;
-	extern void deleteStmtArray(StmtArray* array);
-#endif
-
 #include "StmtArray.h"
 #define INIT_SIZE 5
 
@@ -15,7 +9,7 @@ void init_StmtArray(StmtArray* array){
         array->size = 0;
         array->used = 0;
         array->addElementToArray = &addElementToStmtArray;
-        array->deleteArray = &deleteStmtArray;
+        array->deleteArray = &delete_StmtArray;
         array->getElementInArrayAt =&getStmtinArrayAt;
     }
             
@@ -38,7 +32,7 @@ void addElementToStmtArray(StmtArray* array,Stmt* element){
             initializeStmtElement(&array->Stmts[array->used],element);
             array->used++;
     }
-void deleteStmtArray(StmtArray* array){
+void delete_StmtArray(StmtArray* array){
     if(array){
         int i;
         for(i =0; i <array->used;i++){

@@ -17,6 +17,7 @@
 #include "additions.h"
 #include "TokenArray.h"
 #include "StmtArray.h"
+#include "ExprArray.h"
 void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
@@ -356,7 +357,43 @@ Expr* unary(Parser* parser){
 		new_Unary(un,operator,right);
 		return (Expr*)un;
 	}
-	return primary(parser);
+	return 	call(parser);
+}
+
+Expr* call(Parser* parser){
+	Expr* expr;
+	TokenType toks[] = { LEFT_PAREN, KNULL };
+	expr = (Expr*)primary(parser);
+	while(1){
+		if(parser->match(parser,toks)){
+			expr = finishCall(parser,expr);
+		}
+		else{
+			break;
+		}
+	}
+	return expr;
+}
+Expr* finishCall(Parser* parser, Expr* callee){
+	ExprArray * arguments;
+	Token* paren;
+	Call* caller;
+	TokenType toks[] = { COMMA, KNULL };
+	arguments = malloc(sizeof(ExprArray));
+	init_ExprArray(arguments);
+	if(!check(parser,RIGHT_PAREN)) {
+		do {
+			if(arguments->size >= 255) {
+				parser->error(parser,parser->peek(parser),"Cannot have more than 255 arguments.");
+			}
+			arguments->addElementToArray(arguments,expression(parser));
+
+		}while (parser->match(parser,toks));
+	}
+	paren = consume(parser,RIGHT_PAREN, "Expect ')' after arguments.");
+	caller = malloc(sizeof(Call));
+	new_Call(caller,callee,paren,arguments);
+	return (Expr*)caller;
 }
 
 Expr* primary(Parser* parser){

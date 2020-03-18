@@ -23,13 +23,19 @@ typedef struct _exception{
 #include "Object.h"
 #include "additions.h"
 #include "Environment.h"
+#include "StmtArray.h"
+#include "ExprArray.h"
+#include "TokenArray.h"
+#include "ReturnResultArray.h"
+#include "LoxCallable.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
-	extern deleteStmtArray(StmtArray* array);
+	extern delete_StmtArray(StmtArray* array);
 #endif
 
 	#include "StmtArray.h"
+static ReturnResult visitCallExpr(ExprVisitor* visitor, Expr* stmt);
 static ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
 static ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
 static ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr);
@@ -109,6 +115,31 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	intrprtr->environment = previous;
 }
+
+static ReturnResult visitCallExpr(ExprVisitor* visitor, Expr* expr){
+    ReturnResultArray *arguments;
+    ReturnResult *r,callee;
+    int i;
+    LoxCallable function;
+    Expr* argument;
+    callee = evaluate(visitor,((Call*)expr)->callee);
+    arguments = malloc(sizeof(ReturnResultArray));
+    init_ReturnResultArray(arguments);
+   /* argument = ((Call*)expr)->arguments->getElementInArrayAt(arguments,0);*/
+    for(i = 0;i<((Call*)expr)->arguments->used;i++){
+    	argument = ((Call*)expr)->arguments->getElementInArrayAt(((Call*)expr)->arguments,i);
+    	r = malloc(sizeof(ReturnResult));
+    	r->type = KNULL;
+    	r->value.string = NULL;
+
+    	*r = evaluate(visitor,argument);
+    	arguments->addElementToArray(arguments,r);
+    }
+/*    if(!(callee))*/
+   function = *((LoxCallable*)(callee.value.string));
+    return function.call((Interpreter*)visitor,arguments);
+}
+
 
 ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
 	ReturnResult r;
