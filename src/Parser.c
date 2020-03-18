@@ -71,15 +71,107 @@ Stmt* varDeclaration(Parser* parser){
 	new_Var(result,name,initializer);
 	return (Stmt*)result;
 }
+Stmt* whileStatement(Parser* parser){
+	Expr* condition;
+	Stmt* body;
+	While* w;
+	consume(parser,LEFT_PAREN,"Expect '(' after 'while'.");
+	condition = expression(parser);
+	consume(parser,RIGHT_PAREN,"Expect ')' after condition.");
+	body = statement(parser);
+	w = malloc(sizeof(While));
+	new_While(w,condition,body);
+	return (Stmt*)w;
+}
 
+Stmt* forStatement(Parser* parser){
+    Stmt* initializer, *body;
+	Expr* condition, *increment;
+	StmtArray * array;
+	While* wstmt;
+    TokenType p[] = {SEMICOLON, KNULL };
+	consume(parser,LEFT_PAREN,"Expect '('  after 'for'.");
+    if(parser->match(parser,p)){
+    	initializer = NULL;
+    }
+    else{
+    	p[0] = VAR;
+    	if(parser->match(parser,p)){
+    		initializer = varDeclaration(parser);
+    	}
+    	else{
+    		initializer = expressionStatement(parser);
+    	}
+    }
+    condition = NULL;
+    if(!check(parser,SEMICOLON)){
+    	condition = expression(parser);
+    }
+    consume(parser,SEMICOLON,"Expect ';' after loop condition.");
+    increment = NULL;
+    if(!check(parser,RIGHT_PAREN)){
+    	increment = expression(parser);
+    }
+    consume(parser,RIGHT_PAREN,"Expect ')' after for clauses.");
+    body = statement(parser);
+    if(increment != NULL){
+    	Block* block;
+    	Expression* expression;
+    	array = malloc(sizeof(StmtArray));
+    	init_StmtArray(array);
+    	expression = malloc(sizeof(Expression));
+    	new_Expression(expression,increment);
+    	array->addElementToArray(array,body);
+    	array->addElementToArray(array,(Stmt*)expression);
+    	block = malloc(sizeof(Block));
+    	new_Block(block,array);
+    	body = (Stmt*)block;
+    }
+    if(condition == NULL){
+    	Literal* lit;
+    	Object* obj;
+	   int * num;
+    	lit = malloc(sizeof(Literal));
+    	obj = malloc(sizeof(Object));
+	   num = malloc(sizeof(int));
+	   *num = 1;
+    	init_Object(obj,num,TRUE);
+    	new_Literal(lit,obj);
+
+    	condition = (Expr*)lit;
+    }
+    wstmt = malloc(sizeof(While));
+    new_While(wstmt,condition,body);
+    body = (Stmt*)wstmt;
+    if(initializer != NULL){
+    	Block* block;
+    	StmtArray *array;
+    	array = (StmtArray*)malloc(sizeof(StmtArray));
+    	init_StmtArray(array);
+    	array->addElementToArray(array,initializer);
+    	array->addElementToArray(array,body);
+    	block = malloc(sizeof(Block));
+    	new_Block(block,array);
+    	body = (Stmt*)block;
+    }
+	return body;
+}
 Stmt* statement(Parser* parser){
-    TokenType p[] = {IF, KNULL };
+    TokenType p[] = {FOR, KNULL };
+    if(parser->match(parser,p)){
+    	return forStatement(parser);
+    }
+    p[0] = IF;
     if(parser->match(parser,p)){
     	return ifStatement(parser);
     }
     p[0] = PRINT;
 	if(parser->match(parser,p)){
 		return printStatement(parser);
+	}
+    p[0] = WHILE;
+	if(parser->match(parser,p)){
+		return whileStatement(parser);
 	}
 	p[0] = LEFT_BRACE;
 	if(parser->match(parser,p)){
@@ -95,7 +187,7 @@ Stmt* ifStatement(Parser* parser){
 	Expr* condition;
 	Stmt* thenBranch;
 	Stmt* elseBranch;
-	Stmt* r;
+	If* r;
 	TokenType tok[] = { ELSE, KNULL };
 	consume(parser,LEFT_PAREN, "Expect '(' after  'if'.");
 	condition = expression(parser);
@@ -107,7 +199,7 @@ Stmt* ifStatement(Parser* parser){
 	}
 	r = malloc(sizeof(If));
 	new_If((If*)r,condition,thenBranch,elseBranch);
-	return r;
+	return (Stmt*)r;
 }
 
 StmtArray* block(Parser* parser){

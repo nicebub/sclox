@@ -48,6 +48,7 @@ void* get(Environment* env,Token* name){
     }
 	temp = NULL;
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
+    e.id = 9;
 	e.token = name;
 	e.message = temp;
 	Throw(e);
@@ -66,6 +67,12 @@ void init_Environment(Environment* env){
     env->get = &get;
     env->Enclosing = NULL;
 }
+void deleteEnvironment(Environment* env){
+    delete_hashmap((struct _HASH*)env->hashMap);
+    env->hashMap = NULL;
+    env->Enclosing = NULL;
+}
+
 void init_EnvironmentwithEnclosing(Environment* env,Environment* enclosing){
     init_Environment(env);
     env->Enclosing = enclosing;
@@ -86,6 +93,7 @@ void assign(Environment* env, Token* name, ReturnResult* value){
     }
 	temp = NULL;
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
+    e.id = 10;
 	e.token = name;
 	e.message = temp;
 	Throw(e);

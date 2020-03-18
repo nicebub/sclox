@@ -51,14 +51,13 @@ void init_lox(Lox* lox){
 
 	    if(lox->hadError)
 	    	return;
-	lox->interpreter.interpret(&lox->interpreter,statements);
+	   lox->interpreter.interpret(&lox->interpreter,statements);
 	    /* TODO need to delete expression potentially after printing */
 	    deleteStmtArray(statements);
 	    statements = NULL;
 /*	    init_StmtArray(statements);*/
 /*	    delete_Expr(expression);
 	    expression = NULL;*/
-
 	    deleteTokenArray(&scanner.tokens);
 	    init_TokenArray(&scanner.tokens);
 }
@@ -68,11 +67,12 @@ void init_lox(Lox* lox){
 /*	char c;*/
 	char* line;
 	char* templine;
-	ssize_t lread;
+/*	ssize_t lread;*/
 	size_t capp;
 	inFile = NULL;
 	line = NULL;
-	lread = capp = 0;
+/*	lread = 0 ;*/
+	capp = 0;
 
 	if(!file){
 		printf("file not given\n");
@@ -85,7 +85,7 @@ void init_lox(Lox* lox){
 	}
 	templine = malloc(sizeof(char)*2);
 	memset(templine,0,sizeof(char)*2);
-	while((lread = getline(&line,&capp,inFile)) > 0){
+	while((getline(&line,&capp,inFile)) > 0){
 	    templine = realloc(templine,sizeof(char)*(strlen(templine)+strlen(line)+1));
 	    strncat(templine,line,strlen(line));
 	}
@@ -94,6 +94,7 @@ void init_lox(Lox* lox){
 	 run(lox,line);
 	 free(line);
 	 line = NULL;
+	
 	 if(lox->hadError)
 	   exit(65);
 	if(lox->hadRuntimeError)
@@ -102,12 +103,12 @@ void init_lox(Lox* lox){
 
  void runPrompt(Lox* lox){
 	char* line = NULL;
-	size_t written = 0;
+/*	size_t written = 0;*/
 	size_t lcap = 0;
 	for(;;){
 		printf("> ");
-		written = getline(&line,&lcap,stdin);
-	    if(line){
+	    getline(&line,&lcap,stdin);
+	    if(line && strcmp(line,"") != 0){
 /*		   line[written-1] = '\0';
 		   if(line[written-2] == '\r')
 			  line[written-2] = '\0';*/
@@ -115,6 +116,12 @@ void init_lox(Lox* lox){
 		   free(line);
 		   line = NULL;
 		   lox->hadError = 0;
+	    }
+	    else{
+		   free(line);
+		   line = NULL;
+		   deleteEnvironment(lox->interpreter.environment);
+		   break;
 	    }
 	}
 }

@@ -25,5 +25,5 @@ Environment* create_Environment(void);
 void defineEnv(Environment* env,char* name, ReturnResult *value);
 void* get(Environment* env,Token* name);
 void assign(Environment* env, Token* name, ReturnResult* value);
-
+void deleteEnvironment(Environment* env);
 #endif /* ENVIRONMENT_H_ */

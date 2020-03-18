@@ -191,6 +191,43 @@ if(expr->super.owner_references ==1){
 ReturnResult acceptVar(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitVarStmt(visitor,arg);
 }
+
+static ReturnResult visitWhileStmt( StmtVisitor* visitor,Stmt* arg);
+
+static ReturnResult visitWhileStmt(StmtVisitor* visitor,Stmt* stmt){
+    ReturnResult r; r.value.string=NULL; return r;
+}
+void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam){
+    inObj->super.vtable.accept = &acceptWhile;
+    
+    inObj->super.vtable.delete_Stmt = &delete_While      ;
+	inObj->condition = conditionparam;
+	inObj->body = bodyparam;
+	strcpy((char*)&inObj->super.instanceOf,"While");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoStmtCounter();
+}
+void delete_While      (Stmt* arg){
+	While      * expr = (While      *)arg;
+
+if(expr->super.owner_references ==1){
+    delete_Expr(expr->condition);
+    expr->condition=NULL;
+    delete_Stmt(expr->body);
+    expr->body=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+ReturnResult acceptWhile(Stmt *arg, StmtVisitor* visitor){
+    return visitor->vtable.visitWhileStmt(visitor,arg);
+}
 void delete_Stmt(Stmt* expr){
 	if(expr)		expr->vtable.delete_Stmt(expr);
 }

@@ -30,21 +30,21 @@ typedef struct _exception{
 #endif
 
 	#include "StmtArray.h"
-
-ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr);
-ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
-ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr);
-ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
-ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
+static ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
+static ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
+static ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr);
+static ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
+static ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr);
+static ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
+static ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
+static ReturnResult visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
+static ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
 ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
 ReturnResult isTruthy(ReturnResult obj);
-ReturnResult visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
-ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
 
 void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->lox = lox;
@@ -58,6 +58,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExpr;
     intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExpr;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
+    intprtr->super.vtable.visitWhileStmt = &visitWhileStmt;
     intprtr->super.vtable.visitIfStmt = &visitIfStmt;
     intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
     intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
@@ -84,6 +85,7 @@ void interpret(Interpreter* intprtr, StmtArray* array){
     Catch(e){
 	   ((Lox*)intprtr->lox)->runtimeError(intprtr->lox,e);
     }
+    
 }
 
 void execute(Interpreter* intprtr, Stmt* stmt){
@@ -107,6 +109,17 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	intrprtr->environment = previous;
 }
+
+ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
+	ReturnResult r;
+	while(isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition)).value.number){
+		execute((Interpreter*)visitor,((While*)stmt)->body);
+	}
+
+	r.type = KNULL;
+	return r;
+}
+
 ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	Block* temp;
 	Interpreter* intrprtr;
@@ -117,6 +130,8 @@ ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	env = malloc(sizeof(Environment));
 	init_EnvironmentwithEnclosing(env,intrprtr->environment);
 	executeBlock(intrprtr ,temp->statements,env);
+    deleteEnvironment(env);
+    env = NULL;
 	r.type = KNULL;
 	return r;
 }
@@ -437,8 +452,14 @@ ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
 
 ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
 	ReturnResult r,result;
+    char * val;
 	r = evaluate(&visitor->expr,((Print*)stmt)->expression);
-	printf("%s\n",stringify(r));
+    val = stringify(r);
+	printf("%s\n",val);
+    if(r.type == NUMBER){
+		  free(val);
+		  val = NULL;
+    }
 	result.type = KNULL;
 	return result;
 }

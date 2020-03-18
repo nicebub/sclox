@@ -91,9 +91,9 @@ ReturnResult parenthesize(ExprVisitor* visitor,char* name, Expr** expr_array){
 	Expr* temp;
 	int counter;
 	builder = NULL;
-	temp = expr_array[0];
+/*	temp = expr_array[0];*/
 	asprintf(&builder, "(%s ", name);
-	for(counter =0; expr_array[counter]!=NULL;counter++){
+	for(counter =0,temp = expr_array[0]; expr_array[counter]!=NULL;counter++){
 		ReturnResult other;
 		other.value.string= NULL;
 		temp = expr_array[counter];

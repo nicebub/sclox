@@ -31,6 +31,7 @@ struct _StmtVisitor_vtable {
 	ReturnResult (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
 	ReturnResult (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
+	ReturnResult (*visitWhileStmt)(StmtVisitor* visitor,Stmt* stmt);
 
 };
 struct _StmtVisitor {
@@ -97,6 +98,16 @@ struct _Var  {
 void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam);
 void delete_Var (Stmt* arg);
 ReturnResult acceptVar(Stmt* arg, StmtVisitor* visitor);
+typedef struct _While       While      ;
+struct _While       {
+	Stmt super;
+	Expr* condition;
+	Stmt* body;
+
+};
+void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam);
+void delete_While      (Stmt* arg);
+ReturnResult acceptWhile(Stmt* arg, StmtVisitor* visitor);
 void delete_Stmt(Stmt* expr);
 short int addtoStmtCounter(void);
 

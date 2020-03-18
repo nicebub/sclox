@@ -37,9 +37,11 @@ struct _HASH *create_hashmap(int size,char*(*func)(void* value)){
 
     HashMap *m;
     int i;
+    HashMapNode** buck;
     m = malloc(sizeof(HashMap));
     m->super.vtable = hashmap_vtable;
-    m->super.Buckets =malloc(sizeof(HashMapNode*)*size);
+    buck=malloc(sizeof(HashMapNode*)*size);
+    m->super.Buckets = (struct _Hashnode**)buck;
     for(i =0;i<size;i++)
 	   m->super.Buckets[i] = NULL;
     m->super.vtable.add_to_hash = &add_to_hashmap;
@@ -66,7 +68,6 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
     HashMap *hm;
     if(h && key){
 
-	   hm = (HashMap*) h;
 	   if(get_value_for_keymap(h,key)!=NULL){
 		   HashMapNode* ex;
 		   ex = (HashMapNode*)get_node_for_keymap(h,key);
@@ -76,7 +77,7 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
 	   }
 	   hm = (HashMap*)h;
 	   hn = (HashMapNode*) create_hashnodemap(key,value,h->vtable.func );
-	   res = compute_hash_valuemap((struct _HASH*)hm,key);
+	   res = compute_hash_valuemap(h,key);
 	   if(hm->super.Buckets[res] == NULL){
 		  hm->super.Buckets[res] = (struct _Hashnode*) hn;
 	   }

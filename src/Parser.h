@@ -45,6 +45,7 @@ void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 volatile StmtArray* parse(Parser* parser);
 
 Expr* or(Parser* parser);
+Stmt* whileStatement(Parser* parser);
 Stmt* ifStatement(Parser* parser);
 StmtArray* block(Parser* parser);
 Stmt* declaration(Parser* parser);
