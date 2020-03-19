@@ -24,29 +24,28 @@ static void runtimeError(Lox* lox, CEXCEPTION_T e);
 
 
 void init_lox(Lox* lox){
-	lox->hadError = 0;
-     lox->hadRuntimeError = 0;
     init_Interpreter(&lox->interpreter,lox);
+	lox->hadError = 0;
+    lox->hadRuntimeError = 0;
 	lox->run = &run;
 	lox->runPrompt =&runPrompt;
 	lox->runFile = &runFile;
 	lox->report = &report;
 	lox->error = &error;
 	lox->parse_error = &lparse_error;
-     lox->runtimeError = &runtimeError;
+    lox->runtimeError = &runtimeError;
 }
  void run(Lox* lox,char * source){
 	    Scanner scanner;
 	    Parser parser;
-/*	    Expr *expression;*/
-	    StmtArray* statements;
 	    AstPrinter printer;
+	    StmtArray* statements;
 
 	    init_printer(&printer);
 	    init_scanner(&scanner, source,lox);
 	    scanTokens(&scanner);
 	    init_parser(&parser,&scanner.tokens,lox);
-/*	    init_StmtArray(statements);*/
+
 	    statements = (StmtArray*)parse(&parser);
 
 	    if(lox->hadError)
@@ -55,27 +54,23 @@ void init_lox(Lox* lox){
 	    /* TODO need to delete expression potentially after printing */
 	    delete_StmtArray(statements);
 	    statements = NULL;
-/*	    init_StmtArray(statements);*/
-/*	    delete_Expr(expression);
-	    expression = NULL;*/
-	    delete_TokenArray(&scanner.tokens);
+	    delete_scanner(&scanner);
+	    delete_parser(&parser);
+/*	    init_scanner(&scanner, source,lox);*/
+/*	    delete_TokenArray(&scanner.tokens);*/
 	    init_TokenArray(&scanner.tokens);
 }
 
  void runFile(Lox* lox,const char * file){
 	FILE* inFile;
-/*	char c;*/
-	char* line;
-	char* templine;
-/*	ssize_t lread;*/
+	char* line, *templine;
 	size_t capp;
 	inFile = NULL;
 	line = NULL;
-/*	lread = 0 ;*/
 	capp = 0;
 
 	if(!file){
-		printf("file not given\n");
+		fprintf(stderr,"file not given\n");
 		exit( EXIT_FAILURE);
 	}
 	inFile = fopen(file, "r");
@@ -102,16 +97,13 @@ void init_lox(Lox* lox){
 }
 
  void runPrompt(Lox* lox){
-	char* line = NULL;
-/*	size_t written = 0;*/
+	char* line;
 	size_t lcap = 0;
+	line = NULL;
 	for(;;){
 		printf("> ");
 	    getline(&line,&lcap,stdin);
 	    if(line && strcmp(line,"") != 0){
-/*		   line[written-1] = '\0';
-		   if(line[written-2] == '\r')
-			  line[written-2] = '\0';*/
 		   run(lox,line);
 		   free(line);
 		   line = NULL;
@@ -120,7 +112,6 @@ void init_lox(Lox* lox){
 	    else{
 		   free(line);
 		   line = NULL;
-		   deleteEnvironment(lox->interpreter.environment);
 		   break;
 	    }
 	}

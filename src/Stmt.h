@@ -5,7 +5,6 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
-#include "ReturnResult.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
@@ -24,19 +23,19 @@ typedef struct _StmtVisitor StmtVisitor;
 
 typedef struct _Stmt_vtable Stmt_vtable;
 struct _Stmt_vtable {
-    ReturnResult (*accept)(Stmt* arg,StmtVisitor* visitor);
+    Object* (*accept)(Stmt* arg,StmtVisitor* visitor);
     void (*delete_Stmt)(Stmt* arg);
 
 };
 
 typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
-	ReturnResult (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
-	ReturnResult (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
-	ReturnResult (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
-	ReturnResult (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
-	ReturnResult (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
-	ReturnResult (*visitWhileStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitWhileStmt)(StmtVisitor* visitor,Stmt* stmt);
 
 };
 struct _StmtVisitor {
@@ -63,7 +62,7 @@ struct _Block  {
 };
 void new_Block (Block * inObj,StmtArray* statementsparam);
 void delete_Block (Stmt* arg);
-ReturnResult acceptBlock(Stmt* arg, StmtVisitor* visitor);
+Object* acceptBlock(Stmt* arg, StmtVisitor* visitor);
 typedef struct _Expression  Expression ;
 struct _Expression  {
 	Stmt super;
@@ -72,7 +71,7 @@ struct _Expression  {
 };
 void new_Expression (Expression * inObj,Expr* expressionparam);
 void delete_Expression (Stmt* arg);
-ReturnResult acceptExpression(Stmt* arg, StmtVisitor* visitor);
+Object* acceptExpression(Stmt* arg, StmtVisitor* visitor);
 typedef struct _If          If         ;
 struct _If          {
 	Stmt super;
@@ -83,7 +82,7 @@ struct _If          {
 };
 void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam);
 void delete_If         (Stmt* arg);
-ReturnResult acceptIf(Stmt* arg, StmtVisitor* visitor);
+Object* acceptIf(Stmt* arg, StmtVisitor* visitor);
 typedef struct _Print  Print ;
 struct _Print  {
 	Stmt super;
@@ -92,7 +91,7 @@ struct _Print  {
 };
 void new_Print (Print * inObj,Expr* expressionparam);
 void delete_Print (Stmt* arg);
-ReturnResult acceptPrint(Stmt* arg, StmtVisitor* visitor);
+Object* acceptPrint(Stmt* arg, StmtVisitor* visitor);
 typedef struct _Var  Var ;
 struct _Var  {
 	Stmt super;
@@ -102,7 +101,7 @@ struct _Var  {
 };
 void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam);
 void delete_Var (Stmt* arg);
-ReturnResult acceptVar(Stmt* arg, StmtVisitor* visitor);
+Object* acceptVar(Stmt* arg, StmtVisitor* visitor);
 typedef struct _While       While      ;
 struct _While       {
 	Stmt super;
@@ -112,7 +111,7 @@ struct _While       {
 };
 void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam);
 void delete_While      (Stmt* arg);
-ReturnResult acceptWhile(Stmt* arg, StmtVisitor* visitor);
+Object* acceptWhile(Stmt* arg, StmtVisitor* visitor);
 void delete_Stmt(Stmt* expr);
 short int addtoStmtCounter(void);
 

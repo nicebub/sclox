@@ -9,7 +9,6 @@
 #define INTERPRETER_H_
 
 #include "Expr.h"
-#include "ReturnResult.h"
 #include "Object.h"
 #include "Stmt.h"
 #include "additions.h"
@@ -28,12 +27,12 @@ struct _Interpreter {
 	Environment* environment;
     void* lox;
     void (*interpret)(Interpreter*, StmtArray* );
-    ReturnResult (*evaluate)(ExprVisitor*, Expr*);
-    ReturnResult (*isTruthy)(ReturnResult);
-    int (*isEqual)(ReturnResult left, ReturnResult right);
-    void (*checkNumberOperand)(Token* operator,ReturnResult right);
-    void (*checkNumberOperands)(Token* operator, ReturnResult left, ReturnResult right);
-    char* (*stringify)(ReturnResult);
+    Object* (*evaluate)(ExprVisitor*, Expr*);
+    Object* (*isTruthy)(Object*);
+    int (*isEqual)(Object* left, Object* right);
+    void (*checkNumberOperand)(Token* operator,Object* right);
+    void (*checkNumberOperands)(Token* operator, Object* left, Object* right);
+    char* (*stringify)(Object*);
 
 };
 
@@ -44,9 +43,9 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
 
 
 
-int isEqual(ReturnResult left, ReturnResult right);
-void checkNumberOperand(Token* operator,ReturnResult right);
-void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right);
-char* stringify(ReturnResult obj);
+int isEqual(Object* left, Object* right);
+void checkNumberOperand(Token* operator,Object* right);
+void checkNumberOperands(Token* operator, Object* left, Object* right);
+char* stringify(Object* obj);
 
 #endif /* INTERPRETER_H_ */

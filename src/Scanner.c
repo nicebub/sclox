@@ -13,9 +13,8 @@
 #include "Lox.h"
 
 void init_scanner(Scanner* scanner, const char * source, Lox* lox){
-/*	asprintf(&scanner->source,"%s", source);*/
-	scanner->source = strdup(source);
 	init_TokenArray(&scanner->tokens);
+	scanner->source = strdup(source);
 	scanner->lox = lox;
 	scanner->start = scanner->current = 0;
 	scanner->line=1;
@@ -44,7 +43,6 @@ TokenArray * scanTokens(Scanner* scanner){
 		scanner->start = scanner->current;
 		scanToken(scanner);
 	}
-/*	temp_token = malloc(sizeof(Token));*/
 	init_Token(&temp_token,EEOF,"",NULL,scanner->line);
 
 	addElementToTokenArray(&scanner->tokens,&temp_token);
@@ -76,20 +74,39 @@ void scanToken(Scanner* scanner){
 		case '\n':
 					scanner->line++;
 					break;
-      	case '(': addToken(scanner,LEFT_PAREN); break;
-		case ')': addToken(scanner,RIGHT_PAREN); break;
-		case '{': addToken(scanner,LEFT_BRACE); break;
-		case '}': addToken(scanner,RIGHT_BRACE); break;
-		case ',': addToken(scanner,COMMA); break;
-		case '.': addToken(scanner,DOT); break;
-		case '-': addToken(scanner,MINUS); break;
-		case '+': addToken(scanner,PLUS); break;
-		case ';': addToken(scanner,SEMICOLON); break;
-		case '*': addToken(scanner,STAR); break;
-		case '!': addToken(scanner,match(scanner,'=') ? BANG_EQUAL : BANG); break;
-	    case '=': addToken(scanner,match(scanner,'=') ? EQUAL_EQUAL : EQUAL); break;
-	    case '<': addToken(scanner,match(scanner,'=') ? LESS_EQUAL : LESS); break;
-	    case '>': addToken(scanner,match(scanner,'=') ? GREATER_EQUAL : GREATER); break;
+      	case '(': addToken(scanner,LEFT_PAREN,"("); break;
+		case ')': addToken(scanner,RIGHT_PAREN,")"); break;
+		case '{': addToken(scanner,LEFT_BRACE,"{"); break;
+		case '}': addToken(scanner,RIGHT_BRACE,"}"); break;
+		case ',': addToken(scanner,COMMA,","); break;
+		case '.': addToken(scanner,DOT,"."); break;
+		case '-': addToken(scanner,MINUS,"-"); break;
+		case '+': addToken(scanner,PLUS,"+"); break;
+		case ';': addToken(scanner,SEMICOLON,";"); break;
+		case '*': addToken(scanner,STAR,"*"); break;
+		case '!': if(match(scanner,'='))
+					addToken(scanner,BANG_EQUAL,"!=");
+		else
+			addToken(scanner,BANG,"!");
+			break;
+	    case '=':
+	    	if(match(scanner,'='))
+	    		addToken(scanner, EQUAL_EQUAL,"==");
+	    	else
+	    		addToken(scanner, EQUAL,"=");
+	    		break;
+	    case '<':
+	    	if(match(scanner,'='))
+				addToken(scanner, LESS_EQUAL,"<=");
+	    	else
+	    		addToken(scanner,LESS, "<");
+	    	break;
+	    case '>':
+	    	if(match(scanner,'='))
+	    		addToken(scanner,GREATER_EQUAL,">=");
+	    	else
+	    		addToken(scanner,GREATER,">");
+	    	break;
 	    case '/':
 	        if (match(scanner,'/')) {
 	          while (peek(scanner) != '\n' && !isAtEnd(scanner))
@@ -99,7 +116,7 @@ void scanToken(Scanner* scanner){
 	        	cComment(scanner);
 	        }
 	        else
-	          addToken(scanner,SLASH);
+	          addToken(scanner,SLASH,"/");
 	        break;
 	    case '"': string(scanner); break;
 	    default:
@@ -128,7 +145,7 @@ void identifier(Scanner* scanner){
 	type = getTokenTypeFromString(new_str);
 	if(type == KNULL)
 		type = IDENTIFIER;
-		addToken(scanner,type);
+		addToken(scanner,type,new_str);
     free(new_str);
     new_str = NULL;
 }
@@ -147,23 +164,21 @@ char advance(Scanner* scanner){
 	return scanner->source[ scanner->current - 1 ];
 }
 
-void addToken(Scanner* scanner, TokenType type){
-	addTokenWithObject(scanner,type,NULL);
+void addToken(Scanner* scanner, TokenType type,char* lexeme){
+	addTokenWithObject(scanner,type,lexeme,NULL);
 }
-void addTokenWithObject(Scanner* scanner, TokenType type, Object* literal){
-	char * text;
+void addTokenWithObject(Scanner* scanner, TokenType type, char* lexeme,Object* literal){
+/*	char * text;*/
 	Token temp_token;
-/*	Token* temp_token;*/
-	text = NULL;
-/*	temp_token = NULL; */
+/*	text = NULL;
 	text = calloc((scanner->current-scanner->start)+1,sizeof(char));
 	strncpy(text,&scanner->source[scanner->start],scanner->current-scanner->start);
-    text[scanner->current-scanner->start] = '\0';
-/*	temp_token = malloc(sizeof(Token));*/
-	init_Token(&temp_token,type,text,literal,scanner->line);
+    text[scanner->current-scanner->start] = '\0';*/
+	init_Token(&temp_token,type,lexeme,literal,scanner->line);
 	addElementToTokenArray(&scanner->tokens,&temp_token);
-	free(text);
-	text = NULL;
+	lexeme = NULL;
+/*	free(text);
+	text = NULL;*/
 }
 
 int match(Scanner* scanner, const char expected){
@@ -199,9 +214,9 @@ void string(Scanner* scanner){
     new_str[(scanner->current-1)-(scanner->start +1)]='\0';
 	obj = malloc(sizeof(Object));
 	init_Object(obj,new_str,STRING);
-	addTokenWithObject(scanner,STRING,obj);
-/*	free(new_str);
-	new_str = NULL;*/
+	addTokenWithObject(scanner,STRING,new_str,obj);
+	free(new_str);
+	new_str = NULL;
 
 }
 
@@ -213,9 +228,6 @@ void number(Scanner* scanner){
 	double *x;
 	char * new_str;
 	Object* obj;
-/*	double y = 0;
-	double mult = 10;
-	double * worker = NULL;*/
 	while(isDigit(peek(scanner)))
 		advance(scanner);
 	if((peek(scanner) == '.' && isDigit(peekNext(scanner)))){
@@ -223,28 +235,18 @@ void number(Scanner* scanner){
 		while(isDigit(peek(scanner)))
 			advance(scanner);
 	}
-/*	char * str_ptr;*/
 	new_str = calloc((scanner->current-scanner->start)+1,sizeof(char));
 	strncpy(new_str,&scanner->source[scanner->start],scanner->current - scanner->start);
     new_str[scanner->current-scanner->start]='\0';
-/*	str_ptr = new_str;*/
-/*	x = atof(new_str);*/
-/*	worker = x;
-	while(str_ptr++){
-		if(str_ptr == '.'){
-			worker = y;
-			mult = (doube)1/(double)10;
-			continue;
-		}
-		*worker +=
-	}*/
 	x = malloc(sizeof(double));
 	sscanf(new_str,"%lf",x);
 	obj = malloc(sizeof(Object));
 	init_Object(obj,x, NUMBER);
-	addTokenWithObject(scanner,NUMBER,obj);
+	addTokenWithObject(scanner,NUMBER,new_str,obj);
 	free(new_str);
 	new_str = NULL;
+	free(x);
+	x = NULL;
 }
 
 char peekNext(Scanner* scanner){
@@ -261,7 +263,6 @@ TokenType getTokenTypeFromString(const char * inString){
 		   length = strlen(kmap[which-1].keywordName);
 		if(strncmp(kmap[which-1].keywordName,inString,length)==0)
 			return kmap[which-1].keyword;
-/*		printf("%s\n",kmap[which-1].keywordName);*/
 	}
 	return KNULL;
 }
@@ -273,7 +274,6 @@ void cComment(Scanner* scanner){
     	   if(peek(scanner) == '\n')
     		   scanner->line++;
     	   else if(peek(scanner) == '/' && peekNext(scanner) == '*'){
- /*   		   printf("found nested \/\*\n"); */
     		   nested++;
     		   advance(scanner);
     		   advance(scanner);
@@ -281,12 +281,10 @@ void cComment(Scanner* scanner){
     	   }
     	   advance(scanner);
        }
-/*       printf("lookahead 1 : %c\n",peek(scanner));*/
        advance(scanner);
        if(isAtEnd(scanner))
     		   return;
     	if(peek(scanner) == '/'){
-/*           printf("lookahead 2 : %c\n",peek(scanner));*/
            advance(scanner);
            nested--;
            if(!nested)

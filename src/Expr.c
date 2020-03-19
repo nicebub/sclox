@@ -2,7 +2,6 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
-#include "ReturnResult.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
@@ -20,7 +19,7 @@ void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam){
     inObj->super.vtable.accept = &acceptAssign;
     
     inObj->super.vtable.delete_Expr = &delete_Assign   ;
-	inObj->name = nameparam;
+	inObj->name = getTokenReference(nameparam);
 	inObj->value = valueparam;
 	strcpy((char*)&inObj->super.instanceOf,"Assign");
 	inObj->super.owner_references=1;
@@ -44,7 +43,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptAssign(Expr *arg, ExprVisitor* visitor){
+Object* acceptAssign(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitAssignExpr(visitor,arg);
 }
 void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
@@ -52,7 +51,7 @@ void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* right
     
     inObj->super.vtable.delete_Expr = &delete_Binary ;
 	inObj->left = leftparam;
-	inObj->operator = operatorparam;
+	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
 	strcpy((char*)&inObj->super.instanceOf,"Binary");
 	inObj->super.owner_references=1;
@@ -78,7 +77,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptBinary(Expr *arg, ExprVisitor* visitor){
+Object* acceptBinary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitBinaryExpr(visitor,arg);
 }
 void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argumentsparam){
@@ -86,7 +85,7 @@ void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argum
     
     inObj->super.vtable.delete_Expr = &delete_Call ;
 	inObj->callee = calleeparam;
-	inObj->paren = parenparam;
+	inObj->paren = getTokenReference(parenparam);
 	inObj->arguments = argumentsparam;
 	strcpy((char*)&inObj->super.instanceOf,"Call");
 	inObj->super.owner_references=1;
@@ -112,7 +111,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptCall(Expr *arg, ExprVisitor* visitor){
+Object* acceptCall(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitCallExpr(visitor,arg);
 }
 void new_Grouping (Grouping * inObj,Expr* expressionparam){
@@ -140,14 +139,14 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptGrouping(Expr *arg, ExprVisitor* visitor){
+Object* acceptGrouping(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitGroupingExpr(visitor,arg);
 }
 void new_Literal (Literal * inObj,Object* valueparam){
     inObj->super.vtable.accept = &acceptLiteral;
     
     inObj->super.vtable.delete_Expr = &delete_Literal ;
-	inObj->value = valueparam;
+	inObj->value = getObjectReference(valueparam);
 	strcpy((char*)&inObj->super.instanceOf,"Literal");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -168,7 +167,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptLiteral(Expr *arg, ExprVisitor* visitor){
+Object* acceptLiteral(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitLiteralExpr(visitor,arg);
 }
 void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
@@ -176,7 +175,7 @@ void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* r
     
     inObj->super.vtable.delete_Expr = &delete_Logical  ;
 	inObj->left = leftparam;
-	inObj->operator = operatorparam;
+	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
 	strcpy((char*)&inObj->super.instanceOf,"Logical");
 	inObj->super.owner_references=1;
@@ -202,14 +201,14 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptLogical(Expr *arg, ExprVisitor* visitor){
+Object* acceptLogical(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitLogicalExpr(visitor,arg);
 }
 void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.accept = &acceptUnary;
     
     inObj->super.vtable.delete_Expr = &delete_Unary ;
-	inObj->operator = operatorparam;
+	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
 	strcpy((char*)&inObj->super.instanceOf,"Unary");
 	inObj->super.owner_references=1;
@@ -233,14 +232,14 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptUnary(Expr *arg, ExprVisitor* visitor){
+Object* acceptUnary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitUnaryExpr(visitor,arg);
 }
 void new_Variable (Variable * inObj,Token* nameparam){
     inObj->super.vtable.accept = &acceptVariable;
     
     inObj->super.vtable.delete_Expr = &delete_Variable ;
-	inObj->name = nameparam;
+	inObj->name = getTokenReference(nameparam);
 	strcpy((char*)&inObj->super.instanceOf,"Variable");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -261,7 +260,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptVariable(Expr *arg, ExprVisitor* visitor){
+Object* acceptVariable(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitVariableExpr(visitor,arg);
 }
 void delete_Expr(Expr* expr){

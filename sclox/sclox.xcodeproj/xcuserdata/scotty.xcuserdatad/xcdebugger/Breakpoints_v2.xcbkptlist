@@ -16,8 +16,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "31"
             endingLineNumber = "31"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "init_parser(parser, tokens, lox)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -30,8 +30,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "runFile(lox, file)"
             landmarkType = "9">
          </BreakpointContent>
@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "126"
             endingLineNumber = "126"
-            landmarkName = "identifier(scanner)"
+            landmarkName = "scanToken(scanner)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "128"
             endingLineNumber = "128"
-            landmarkName = "identifier(scanner)"
+            landmarkName = "scanToken(scanner)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -96,7 +96,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "109"
             endingLineNumber = "109"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "whileStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -126,8 +126,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
             landmarkName = "runFile(lox, file)"
             landmarkType = "9">
          </BreakpointContent>
@@ -256,7 +256,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "166"
             endingLineNumber = "166"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -272,7 +272,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "175"
             endingLineNumber = "175"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -288,7 +288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "105"
             endingLineNumber = "105"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "whileStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -304,7 +304,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
             endingLineNumber = "84"
-            landmarkName = "whileStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -320,7 +320,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "91"
             endingLineNumber = "91"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -336,7 +336,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "77"
             endingLineNumber = "77"
-            landmarkName = "whileStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -574,8 +574,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
             landmarkName = "run(lox, source)"
             landmarkType = "9">
          </BreakpointContent>
@@ -656,7 +656,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "106"
             endingLineNumber = "106"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "whileStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -672,7 +672,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "92"
             endingLineNumber = "92"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -704,7 +704,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
             endingLineNumber = "112"
-            landmarkName = "forStatement(parser)"
+            landmarkName = "whileStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -736,7 +736,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "160"
             endingLineNumber = "160"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -766,8 +766,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
             landmarkName = "run(lox, source)"
             landmarkType = "9">
          </BreakpointContent>
@@ -784,7 +784,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "183"
             endingLineNumber = "183"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -910,8 +910,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
             landmarkName = "run(lox, source)"
             landmarkType = "9">
          </BreakpointContent>
@@ -944,7 +944,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "252"
             endingLineNumber = "252"
-            landmarkName = "and(parser)"
+            landmarkName = "or(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1432,7 +1432,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "03236258-64E0-4BE8-BB01-7D4A4DDD0A21"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/HashMap.c"
@@ -1454,9 +1454,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
-            landmarkName = "stringify(obj)"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
+            landmarkName = "checkNumberOperands(operator, left, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1470,8 +1470,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "371"
-            endingLineNumber = "371"
+            startingLineNumber = "372"
+            endingLineNumber = "372"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1486,8 +1486,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "381"
-            endingLineNumber = "381"
+            startingLineNumber = "382"
+            endingLineNumber = "382"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1518,8 +1518,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "425"
-            endingLineNumber = "425"
+            startingLineNumber = "426"
+            endingLineNumber = "426"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1550,9 +1550,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "390"
-            endingLineNumber = "390"
-            landmarkName = "checkNumberOperand(operator, right)"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
+            landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1566,8 +1566,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "426"
-            endingLineNumber = "426"
+            startingLineNumber = "427"
+            endingLineNumber = "427"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1584,7 +1584,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "79"
             endingLineNumber = "79"
-            landmarkName = "whileStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1630,8 +1630,8 @@
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "run(lox, source)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1648,8 +1648,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "336"
             endingLineNumber = "336"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "addition(parser)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1680,7 +1680,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "76"
             endingLineNumber = "76"
-            landmarkName = "whileStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1696,7 +1696,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "81"
             endingLineNumber = "81"
-            landmarkName = "whileStatement(parser)"
+            landmarkName = "statement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1776,7 +1776,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "165"
             endingLineNumber = "165"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1808,7 +1808,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "164"
             endingLineNumber = "164"
-            landmarkName = "statement(parser)"
+            landmarkName = "forStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1840,7 +1840,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "228"
             endingLineNumber = "228"
-            landmarkName = "expressionStatement(parser)"
+            landmarkName = "printStatement(parser)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1880,7 +1880,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "3330744E-0820-4912-B2B7-2250961D32C9"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Parser.c"
@@ -1902,9 +1902,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "407"
-            endingLineNumber = "407"
-            landmarkName = "stringify(obj)"
+            startingLineNumber = "408"
+            endingLineNumber = "408"
+            landmarkName = "checkNumberOperands(operator, left, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1998,9 +1998,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "461"
-            endingLineNumber = "461"
-            landmarkName = "visitIfStmt(visitor, expr)"
+            startingLineNumber = "462"
+            endingLineNumber = "462"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2014,17 +2014,17 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "461"
+            endingLineNumber = "461"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "10466024-ABAA-4573-8E0C-FA4760AC9027"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Environment.c"
@@ -2040,14 +2040,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "092B0120-75FD-4A36-9337-7BE77B459976"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
             landmarkName = "runPrompt(lox)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2056,15 +2056,47 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "4235DA0E-B351-4E03-A998-64625BE4BCF4"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Lox.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "runPrompt(lox)"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "report(lox, line, where, message)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8B6231D0-7464-4A92-9FDC-FBA9E1339AB3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Interpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "478"
+            endingLineNumber = "478"
+            landmarkName = "visitIfStmt(visitor, expr)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6FACF851-FB88-44C4-8CB1-8C19C4DDC9F0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Interpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "477"
+            endingLineNumber = "477"
+            landmarkName = "visitIfStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

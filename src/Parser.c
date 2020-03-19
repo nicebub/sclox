@@ -25,7 +25,8 @@ void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->peek = &parser_peek;
 	parser->advance = &parser_advance;
 	parser->error = &parse_error;
-	parser->tokens = tokens;
+	parser->tokens = getTokenArrayReference(tokens);
+
 	parser->current = 0;
 }
 
@@ -63,7 +64,7 @@ Stmt* varDeclaration(Parser* parser){
 	Var* result;
 	TokenType toks[] = { EQUAL, KNULL };
 	initializer = NULL;
-	name = consume(parser,IDENTIFIER, "Expect variable name.");
+	name =consume(parser,IDENTIFIER, "Expect variable name.");
 
 	if(parser->match(parser,toks))
 		initializer = expression(parser);
@@ -72,6 +73,34 @@ Stmt* varDeclaration(Parser* parser){
 	new_Var(result,name,initializer);
 	return (Stmt*)result;
 }
+Stmt* statement(Parser* parser){
+    TokenType p[] = {FOR, KNULL };
+    if(parser->match(parser,p)){
+    	return forStatement(parser);
+    }
+    p[0] = IF;
+    if(parser->match(parser,p)){
+    	return ifStatement(parser);
+    }
+    p[0] = PRINT;
+	if(parser->match(parser,p)){
+		return printStatement(parser);
+	}
+    p[0] = WHILE;
+	if(parser->match(parser,p)){
+		return whileStatement(parser);
+	}
+	p[0] = LEFT_BRACE;
+	if(parser->match(parser,p)){
+		Block* tempblock;
+		tempblock = malloc(sizeof(Block));
+		new_Block(tempblock,block(parser));
+	    return (Stmt*)tempblock;
+	}
+	return expressionStatement(parser);
+
+}
+
 Stmt* whileStatement(Parser* parser){
 	Expr* condition;
 	Stmt* body;
@@ -138,6 +167,8 @@ Stmt* forStatement(Parser* parser){
 	   *num = 1;
     	init_Object(obj,num,TRUE);
     	new_Literal(lit,obj);
+    	free(num);
+    	num=NULL;
 
     	condition = (Expr*)lit;
     }
@@ -156,33 +187,6 @@ Stmt* forStatement(Parser* parser){
     	body = (Stmt*)block;
     }
 	return body;
-}
-Stmt* statement(Parser* parser){
-    TokenType p[] = {FOR, KNULL };
-    if(parser->match(parser,p)){
-    	return forStatement(parser);
-    }
-    p[0] = IF;
-    if(parser->match(parser,p)){
-    	return ifStatement(parser);
-    }
-    p[0] = PRINT;
-	if(parser->match(parser,p)){
-		return printStatement(parser);
-	}
-    p[0] = WHILE;
-	if(parser->match(parser,p)){
-		return whileStatement(parser);
-	}
-	p[0] = LEFT_BRACE;
-	if(parser->match(parser,p)){
-		Block* tempblock;
-		tempblock = malloc(sizeof(Block));
-		new_Block(tempblock,block(parser));
-	    return (Stmt*)tempblock;
-	}
-	return expressionStatement(parser);
-
 }
 Stmt* ifStatement(Parser* parser){
 	Expr* condition;
@@ -205,7 +209,6 @@ Stmt* ifStatement(Parser* parser){
 
 StmtArray* block(Parser* parser){
 	StmtArray* array;
-/*	TokenType p[] = {RIGHT_BRACE, KNULL };*/
 	array = malloc(sizeof(StmtArray));
 	init_StmtArray(array);
 	while(!check(parser,RIGHT_BRACE) && !parser->isAtEnd(parser)){
@@ -386,7 +389,8 @@ Expr* finishCall(Parser* parser, Expr* callee){
 			if(arguments->size >= 255) {
 				parser->error(parser,parser->peek(parser),"Cannot have more than 255 arguments.");
 			}
-			arguments->addElementToArray(arguments,expression(parser));
+		    else
+			   arguments->addElementToArray(arguments,expression(parser));
 
 		}while (parser->match(parser,toks));
 	}
@@ -406,8 +410,9 @@ Expr* primary(Parser* parser){
 	    val = malloc(sizeof(double));
 	    *val = 0;
 		init_Object(obj,val,FALSE);
-/*		init_Object(obj,strdup("false"),FALSE);*/
 		new_Literal(lit,obj);
+		free(val);
+		val = NULL;
 		return (Expr*)lit;
 	}
 	types[0] = TRUE;
@@ -418,39 +423,34 @@ Expr* primary(Parser* parser){
 	     val = malloc(sizeof(double));
 	     *val = 1;
 	     init_Object(obj,val,TRUE);
-/*		init_Object(obj,strdup("true"),TRUE);*/
-		new_Literal(lit,obj);
+	     new_Literal(lit,obj);
+	     free(val);
+	     val = NULL;
 		return (Expr*)lit;
 	}
 	types[0] = NIL;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
 		obj = malloc(sizeof(Object));
-		init_Object(obj,strdup("nil"),NIL);
+		init_Object(obj,"nil",NIL);
 		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = NUMBER;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-/*		obj = malloc(sizeof(Object));*/
-/*		init_Object(obj,previous(parser)->literal-> ,NUMBER);*/
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = STRING;
 	if(parser->match(parser,types)){
 		Literal* lit = malloc(sizeof(Literal));
-/*		obj = malloc(sizeof(Object));*/
-/*		init_Object(obj,previous(parser)->literal,STRING);*/
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = IDENTIFIER;
 	if(parser->match(parser,types)){
 		Variable* var = malloc(sizeof(Variable));
-/*		obj = malloc(sizeof(Object));*/
-/*		init_Object(obj,previous(parser)->literal,STRING);*/
 		new_Variable(var,previous(parser));
 		return (Expr*)var;
 	}
@@ -467,7 +467,6 @@ Expr* primary(Parser* parser){
 	Throw(parser->error(parser,parser->peek(parser),"Expect expression."));
 	/* shouldn't reach this return statement */
     return NULL;
-/*	 throw error(peek(parser), "Expect expression.");*/
 
 }
 
@@ -476,7 +475,6 @@ Token* consume(Parser* parser, TokenType type, const char* message){
 		return parser->advance(parser);
 
     Throw(parser->error(parser,parser->peek(parser),message));
-/*	 otherwise throw error(peek(),message);*/
     return NULL;
 }
 
@@ -546,4 +544,12 @@ Token* parser_peek(Parser* parser){
 
 Token* previous(Parser* parser){
 	return getTokeninArrayAt(parser->tokens,parser->current-1);
+}
+
+
+void delete_parser(Parser* parser){
+	if(parser){
+		delete_TokenArray(parser->tokens);
+		parser->tokens = NULL;
+	}
 }

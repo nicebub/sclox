@@ -17,6 +17,6 @@ struct _AstPrinter {
 void init_printer(AstPrinter* printer);
 char* print(AstPrinter* printer,Expr* expression);
 
-ReturnResult parenthesize(ExprVisitor* visitor,char* name, Expr** expr_array);
+Object* parenthesize(ExprVisitor* visitor,char* name, Expr** expr_array);
 
 #endif /* ASTPRINTER_H_ */

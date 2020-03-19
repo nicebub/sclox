@@ -19,7 +19,7 @@ int main(int argc, const char* argv[] ) {
 		runFile(&lox,argv[1]);
 	else
 		runPrompt(&lox);
-
+    deleteEnvironment(lox.interpreter.environment);
 	return EXIT_SUCCESS;
 }
 

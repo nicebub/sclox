@@ -33,7 +33,7 @@ void delete_Token(Token* token);
 short int getNextTokenID(void);
 
 Token* getTokenReference(Token* tok);
-void releaseTokenReference(Token* tok);
-
+Token* releaseTokenReference(Token* tok);
+Token copyToken(Token*);
 
 #endif /* TOKEN_H_ */

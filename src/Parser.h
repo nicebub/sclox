@@ -20,17 +20,7 @@
 #include "StmtArray.h"
 #include "ExprArray.h"
 typedef struct _Parser Parser;
-/*
-typedef struct _Parser_vtable Parser_vtable;
-struct _Parser_vtable{
-	int (*match)(Parser* parser,TokenType* types);
-	int (*isAtEnd)(Parser* parser);
-	int (*peek)(Parser* parser);
-	int (*error)(Parser* parser, Token* token, const char* message);
-};
-*/
 struct _Parser {
-/*	Parser_vtable vtable;*/
 	TokenArray* tokens;
 	Lox* lox;
 	int current;
@@ -49,6 +39,7 @@ Expr* call(Parser* parser);
 Expr* finishCall(Parser* parser, Expr* expr);
 Expr* or(Parser* parser);
 Stmt* whileStatement(Parser* parser);
+Stmt* forStatement(Parser* parser);
 Stmt* ifStatement(Parser* parser);
 StmtArray* block(Parser* parser);
 Stmt* declaration(Parser* parser);
@@ -78,5 +69,6 @@ void synchronize(Parser* parser);
 Token* consume(Parser* parser, TokenType type, const char* message);
 CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message);
 
+void delete_parser(Parser* parser);
 
 #endif /* PARSER_H_ */

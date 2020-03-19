@@ -6,6 +6,7 @@
 typedef struct _TokenArray TokenArray;
 struct _TokenArray {
     Token * Tokens;
+    int owner_references;
     int size;
     int used;
     void (*addElementToArray)(TokenArray* array,Token* element);

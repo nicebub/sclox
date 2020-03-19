@@ -117,7 +117,7 @@ void test_add_to_hash(void){
     b = malloc(sizeof(int));
     *b = 9;
     add_to_hashmap((struct _HASH*)m,strdup("nothe  again"),b);
-    TEST_ASSERT_EQUAL_INT(3,m->super.used);
+    TEST_ASSERT_EQUAL_INT(4,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
 

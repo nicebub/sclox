@@ -15,7 +15,7 @@
 char* func(void* value){
 	if(value){
 	    char* num ;
-	    ReturnResult * val = (ReturnResult*)value;
+	    Object * val = (Object*)value;
 	    if(val->type == NUMBER){
 		   num = NULL;
 		   asprintf(&num,"%f",val->value.number);
@@ -56,7 +56,7 @@ void* get(Environment* env,Token* name){
 /*	Throw(runtimeError(name,);*/
 }
 
-void defineEnv(Environment* env,char* name, ReturnResult *value){
+void defineEnv(Environment* env,char* name, Object *value){
 	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
 }
 
@@ -80,7 +80,7 @@ void init_EnvironmentwithEnclosing(Environment* env,Environment* enclosing){
 Environment* create_Environment(void){
 	return NULL;
 }
-void assign(Environment* env, Token* name, ReturnResult* value){
+void assign(Environment* env, Token* name, Object* value){
 	CEXCEPTION_T e;
 	char * temp;
 	if(env->hashMap->super.vtable.get_node_for_key((struct _HASH*)env->hashMap,name->lexeme)){

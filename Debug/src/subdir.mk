@@ -12,8 +12,8 @@ C_SRCS += \
 ../src/Interpreter.c \
 ../src/Lox.c \
 ../src/Object.c \
+../src/ObjectArray.c \
 ../src/Parser.c \
-../src/ReturnResultArray.c \
 ../src/Scanner.c \
 ../src/Stmt.c \
 ../src/StmtArray.c \
@@ -32,8 +32,8 @@ OBJS += \
 ./src/Interpreter.o \
 ./src/Lox.o \
 ./src/Object.o \
+./src/ObjectArray.o \
 ./src/Parser.o \
-./src/ReturnResultArray.o \
 ./src/Scanner.o \
 ./src/Stmt.o \
 ./src/StmtArray.o \
@@ -52,8 +52,8 @@ C_DEPS += \
 ./src/Interpreter.d \
 ./src/Lox.d \
 ./src/Object.d \
+./src/ObjectArray.d \
 ./src/Parser.d \
-./src/ReturnResultArray.d \
 ./src/Scanner.d \
 ./src/Stmt.d \
 ./src/StmtArray.d \

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
-#include "ReturnResult.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
@@ -42,7 +41,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptBlock(Stmt *arg, StmtVisitor* visitor){
+Object* acceptBlock(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitBlockStmt(visitor,arg);
 }
 void new_Expression (Expression * inObj,Expr* expressionparam){
@@ -70,7 +69,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptExpression(Stmt *arg, StmtVisitor* visitor){
+Object* acceptExpression(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitExpressionStmt(visitor,arg);
 }
 void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam){
@@ -104,7 +103,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptIf(Stmt *arg, StmtVisitor* visitor){
+Object* acceptIf(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitIfStmt(visitor,arg);
 }
 void new_Print (Print * inObj,Expr* expressionparam){
@@ -132,14 +131,14 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptPrint(Stmt *arg, StmtVisitor* visitor){
+Object* acceptPrint(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitPrintStmt(visitor,arg);
 }
 void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam){
     inObj->super.vtable.accept = &acceptVar;
     
     inObj->super.vtable.delete_Stmt = &delete_Var ;
-	inObj->name = nameparam;
+	inObj->name = getTokenReference(nameparam);
 	inObj->initializer = initializerparam;
 	strcpy((char*)&inObj->super.instanceOf,"Var");
 	inObj->super.owner_references=1;
@@ -163,7 +162,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptVar(Stmt *arg, StmtVisitor* visitor){
+Object* acceptVar(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitVarStmt(visitor,arg);
 }
 void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam){
@@ -194,7 +193,7 @@ if(expr->super.owner_references ==1){
     }
 }
 
-ReturnResult acceptWhile(Stmt *arg, StmtVisitor* visitor){
+Object* acceptWhile(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitWhileStmt(visitor,arg);
 }
 void delete_Stmt(Stmt* expr){

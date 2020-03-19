@@ -38,8 +38,8 @@ struct _Loxfuncs{
 
 struct _Lox {
 
-	int hadError;
-     int hadRuntimeError;
+	short int hadError;
+    short int hadRuntimeError;
 	Interpreter interpreter;
 	void (*run)(Lox* lox,char*);
 	void (*runPrompt)(Lox* lox);

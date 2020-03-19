@@ -2,12 +2,15 @@
 #include <stdio.h>
 #include "Token.h"
 #include "TokenArray.h"
+
+extern TokenArray* releaseTokenArrayReference(TokenArray*);
 #define INIT_SIZE 5
 
 void init_TokenArray(TokenArray* array){
         array->Tokens = NULL;
         array->size = 0;
         array->used = 0;
+        array->owner_references =1;
         array->addElementToArray = &addElementToTokenArray;
         array->deleteArray = &delete_TokenArray;
         array->getElementInArrayAt =&getTokeninArrayAt;
@@ -35,8 +38,13 @@ void addElementToTokenArray(TokenArray* array,Token* element){
 void delete_TokenArray(TokenArray* array){
     if(array){
         int i;
-        for(i =0; i <array->used;i++){
-            delete_Token(&array->Tokens[i]);
+        if(array->owner_references<=1){
+        	for(i =0; i <array->used;i++){
+        		delete_Token(&array->Tokens[i]);
+        	}
+        }
+        else{
+        	releaseTokenArrayReference(array);
         }
     }
 }

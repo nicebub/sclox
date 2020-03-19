@@ -5,7 +5,6 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
-#include "ReturnResult.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
@@ -23,21 +22,21 @@ typedef struct _ExprVisitor ExprVisitor;
 
 typedef struct _Expr_vtable Expr_vtable;
 struct _Expr_vtable {
-    ReturnResult (*accept)(Expr* arg,ExprVisitor* visitor);
+    Object* (*accept)(Expr* arg,ExprVisitor* visitor);
     void (*delete_Expr)(Expr* arg);
 
 };
 
 typedef struct _ExprVisitor_vtable ExprVisitor_vtable;
 struct _ExprVisitor_vtable {
-	ReturnResult (*visitAssignExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitCallExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
-	ReturnResult (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitAssignExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitCallExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
+	Object* (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
 
 };
 struct _ExprVisitor {
@@ -65,7 +64,7 @@ struct _Assign    {
 };
 void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam);
 void delete_Assign   (Expr* arg);
-ReturnResult acceptAssign(Expr* arg, ExprVisitor* visitor);
+Object* acceptAssign(Expr* arg, ExprVisitor* visitor);
 typedef struct _Binary  Binary ;
 struct _Binary  {
 	Expr super;
@@ -76,7 +75,7 @@ struct _Binary  {
 };
 void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam);
 void delete_Binary (Expr* arg);
-ReturnResult acceptBinary(Expr* arg, ExprVisitor* visitor);
+Object* acceptBinary(Expr* arg, ExprVisitor* visitor);
 typedef struct _Call  Call ;
 struct _Call  {
 	Expr super;
@@ -87,7 +86,7 @@ struct _Call  {
 };
 void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argumentsparam);
 void delete_Call (Expr* arg);
-ReturnResult acceptCall(Expr* arg, ExprVisitor* visitor);
+Object* acceptCall(Expr* arg, ExprVisitor* visitor);
 typedef struct _Grouping  Grouping ;
 struct _Grouping  {
 	Expr super;
@@ -96,7 +95,7 @@ struct _Grouping  {
 };
 void new_Grouping (Grouping * inObj,Expr* expressionparam);
 void delete_Grouping (Expr* arg);
-ReturnResult acceptGrouping(Expr* arg, ExprVisitor* visitor);
+Object* acceptGrouping(Expr* arg, ExprVisitor* visitor);
 typedef struct _Literal  Literal ;
 struct _Literal  {
 	Expr super;
@@ -105,7 +104,7 @@ struct _Literal  {
 };
 void new_Literal (Literal * inObj,Object* valueparam);
 void delete_Literal (Expr* arg);
-ReturnResult acceptLiteral(Expr* arg, ExprVisitor* visitor);
+Object* acceptLiteral(Expr* arg, ExprVisitor* visitor);
 typedef struct _Logical   Logical  ;
 struct _Logical   {
 	Expr super;
@@ -116,7 +115,7 @@ struct _Logical   {
 };
 void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam);
 void delete_Logical  (Expr* arg);
-ReturnResult acceptLogical(Expr* arg, ExprVisitor* visitor);
+Object* acceptLogical(Expr* arg, ExprVisitor* visitor);
 typedef struct _Unary  Unary ;
 struct _Unary  {
 	Expr super;
@@ -126,7 +125,7 @@ struct _Unary  {
 };
 void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam);
 void delete_Unary (Expr* arg);
-ReturnResult acceptUnary(Expr* arg, ExprVisitor* visitor);
+Object* acceptUnary(Expr* arg, ExprVisitor* visitor);
 typedef struct _Variable  Variable ;
 struct _Variable  {
 	Expr super;
@@ -135,7 +134,7 @@ struct _Variable  {
 };
 void new_Variable (Variable * inObj,Token* nameparam);
 void delete_Variable (Expr* arg);
-ReturnResult acceptVariable(Expr* arg, ExprVisitor* visitor);
+Object* acceptVariable(Expr* arg, ExprVisitor* visitor);
 void delete_Expr(Expr* expr);
 short int addtoExprCounter(void);
 

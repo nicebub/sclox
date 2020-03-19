@@ -19,14 +19,13 @@ typedef struct _exception{
 #include "Interpreter.h"
 #include "Expr.h"
 #include "TokenType.h"
-#include "ReturnResult.h"
 #include "Object.h"
 #include "additions.h"
 #include "Environment.h"
 #include "StmtArray.h"
 #include "ExprArray.h"
 #include "TokenArray.h"
-#include "ReturnResultArray.h"
+#include "ObjectArray.h"
 #include "LoxCallable.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
@@ -35,22 +34,22 @@ typedef struct _exception{
 #endif
 
 	#include "StmtArray.h"
-static ReturnResult visitCallExpr(ExprVisitor* visitor, Expr* stmt);
-static ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
-static ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
-static ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr);
-static ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
-static ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
-static ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
-static ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-static ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-static ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr);
-static ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
-static ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
-static ReturnResult visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
-static ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
-ReturnResult evaluate(ExprVisitor* visitor, Expr* expr);
-ReturnResult isTruthy(ReturnResult obj);
+static Object* visitCallExpr(ExprVisitor* visitor, Expr* stmt);
+static Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
+static Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr);
+static Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
+static Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr);
+static Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
+static Object* visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
+Object* evaluate(ExprVisitor* visitor, Expr* expr);
+Object* isTruthy(Object* obj);
 
 void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->lox = lox;
@@ -64,6 +63,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExpr;
     intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExpr;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
+    intprtr->super.expr.vtable.visitCallExpr = &visitCallExpr;
     intprtr->super.vtable.visitWhileStmt = &visitWhileStmt;
     intprtr->super.vtable.visitIfStmt = &visitIfStmt;
     intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
@@ -82,7 +82,7 @@ void interpret(Interpreter* intprtr, StmtArray* array){
     CEXCEPTION_T e;
     Try{
         int i;
-/*	   volatile ReturnResult value;*/
+/*	   volatile Object* value;*/
 	   for(i=0;i<array->used;i++){
 		  Stmt* stmt = getStmtinArrayAt(array,i);
 		   execute(intprtr,stmt);
@@ -116,46 +116,43 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	intrprtr->environment = previous;
 }
 
-static ReturnResult visitCallExpr(ExprVisitor* visitor, Expr* expr){
-    ReturnResultArray *arguments;
-    ReturnResult *r,callee;
+static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
+    ObjectArray *arguments;
+    Object* r,*callee;
     int i;
-    LoxCallable function;
+    LoxCallable *function;
     Expr* argument;
     callee = evaluate(visitor,((Call*)expr)->callee);
-    arguments = malloc(sizeof(ReturnResultArray));
-    init_ReturnResultArray(arguments);
+    arguments = malloc(sizeof(ObjectArray));
+    init_ObjectArray(arguments);
    /* argument = ((Call*)expr)->arguments->getElementInArrayAt(arguments,0);*/
     for(i = 0;i<((Call*)expr)->arguments->used;i++){
     	argument = ((Call*)expr)->arguments->getElementInArrayAt(((Call*)expr)->arguments,i);
-    	r = malloc(sizeof(ReturnResult));
-    	r->type = KNULL;
-    	r->value.string = NULL;
 
-    	*r = evaluate(visitor,argument);
+    	r = getObjectReference(evaluate(visitor,argument));
     	arguments->addElementToArray(arguments,r);
     }
 /*    if(!(callee))*/
-   function = *((LoxCallable*)(callee.value.string));
-    return function.call((Interpreter*)visitor,arguments);
+   function = ((LoxCallable*)(callee->value.callable));
+    return function->call((Interpreter*)visitor,arguments);
 }
 
 
-ReturnResult visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
-	ReturnResult r;
-	while(isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition)).value.number){
+Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
+/*    Object* r = NULL;*/
+	while(isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition))->value.number){
 		execute((Interpreter*)visitor,((While*)stmt)->body);
 	}
 
-	r.type = KNULL;
-	return r;
+/*	r->type = KNULL;*/
+	return NULL;
 }
 
-ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
+Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	Block* temp;
 	Interpreter* intrprtr;
 	Environment* env;
-	ReturnResult r;
+/*  Object* r = NULL;*/
 	temp= (Block*)expr;
 	intrprtr = (Interpreter*) visitor;
 	env = malloc(sizeof(Environment));
@@ -163,109 +160,116 @@ ReturnResult visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	executeBlock(intrprtr ,temp->statements,env);
     deleteEnvironment(env);
     env = NULL;
-	r.type = KNULL;
-	return r;
+/*	r->type = KNULL;*/
+	return NULL;
 }
-ReturnResult visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
-	ReturnResult r;
-    r.type = ((Literal*)expr)->value->type;
-	switch(r.type){
+Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
+    Object* r = NULL;
+    r = copyObject(((Literal*)expr)->value);
+/*    r->type = ((Literal*)expr)->value->type;
+	switch(r->type){
 	case TRUE:
 	case FALSE:
 	case NUMBER:
-		r.value.number = *(double*)((Literal*)expr)->value->value;
+		   r->value.number = (double)((Literal*)expr)->value->value.number;
 		break;
 	case NIL:
 	case STRING:
-		r.value.string = ((Literal*)expr)->value->value;
+		r->value.string = ((Literal*)expr)->value->value.string;
 		break;
 	default: break;
-	}
+	}*/
 	return r;
 }
-ReturnResult visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr){
+Object* visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	return evaluate(visitor,((Grouping*)expr)->expression);
 }
-ReturnResult visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
-	ReturnResult right,result;
+Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
+    Object* right,*result;
 	right = evaluate(visitor,((Unary*)expr)->right);
-
+	result = NULL;
+	result = malloc(sizeof(Object));
+	init_Object(result,NULL,KNULL);
 	switch(((Unary*)expr)->operator->type){
 		case BANG:
-		   result.type = BOOLEAN;
-		   result.value.number = ! isTruthy(right).value.number;
+		   result->type = BOOLEAN;
+		   result->value.number = ! (double)isTruthy(right)->value.number;
 		   return result;
 		case MINUS:
 		   checkNumberOperand(((Unary*)expr)->operator,right);
-		   result.type = NUMBER;
-   		   result.value.number = - (double) right.value.number;
-/*		   result.value.number = - * (double*) ((Literal*)((Unary*)expr)->right)->value->value;*/
+		   result->type = NUMBER;
+   		   result->value.number = - (double) right->value.number;
 			return  result;
 	    default: break;
 	}
-    result.type = KNULL;
 	return result;
 }
 
-ReturnResult evaluate(ExprVisitor* visitor, Expr* expr){
+Object* evaluate(ExprVisitor* visitor, Expr* expr){
 	return expr->vtable.accept(expr,visitor);
 }
-ReturnResult isTruthy(ReturnResult obj){
-	ReturnResult r;
-    if(obj.type == BOOLEAN || obj.type == FALSE || obj.type == TRUE || obj.type == NUMBER){
-	   r.type = BOOLEAN;
-	   r.value.number = (double)obj.value.number;
+Object* isTruthy(Object* obj){
+    Object* r;
+    r = NULL;
+    r = malloc(sizeof(Object));
+    init_Object(r,"",KNULL);
+    if(obj->type == BOOLEAN || obj->type == FALSE || obj->type == TRUE || obj->type == NUMBER){
+	   r->type = BOOLEAN;
+	   r->value.number = (double)obj->value.number;
     }
-    else if(obj.type == NIL){
- 	   r.type = BOOLEAN;
- 	   r.value.number = 0;
+    else if(obj->type == NIL){
+ 	   r->type = BOOLEAN;
+ 	   r->value.number = 0;
     }
     else{
-	   r.type = BOOLEAN;
-	   r.value.number = 1;
+	   r->type = BOOLEAN;
+	   r->value.number = 1;
     }
     return r;
 }
 
-ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
+Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
     CEXCEPTION_T e;
-    ReturnResult left, right, result;
+    Object* left, *right, *result;
     left = evaluate(visitor,((Binary*)expr)->left);
     right = evaluate(visitor,((Binary*)expr)->right);
+    result = NULL;
+    result =malloc(sizeof(Object));
+    init_Object(result,"",KNULL);
     switch(((Binary*)expr)->operator->type){
 	  case MINUS:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = NUMBER;
-		  result.value.number = (double)left.value.number - (double)right.value.number;
+		  result->type = NUMBER;
+		  result->value.number = (double)left->value.number - (double)right->value.number;
 		  return result;
 	   case PLUS:
-		  if(left.type == NUMBER && right.type == NUMBER){
-			 result.type = NUMBER;
-			 result.value.number = (double)left.value.number + (double)right.value.number;
+		  if(left->type == NUMBER && right->type == NUMBER){
+			 result->type = NUMBER;
+			 result->value.number = (double)left->value.number + (double)right->value.number;
 			 return result;
 		  }
-		  if((left.type == STRING && right.type == STRING) ||(left.type == STRING && right.type == NUMBER) ||
-			(left.type == NUMBER && right.type == STRING)){
+		  if((left->type == STRING && right->type == STRING) ||(left->type == STRING && right->type == NUMBER) ||
+			(left->type == NUMBER && right->type == STRING)){
 			 char* new_str, *num_str;
 			 new_str = NULL;
-			 result.type = STRING;
-			 switch(left.type){
+			 result->type = STRING;
+			 switch(left->type){
 				case STRING:
-				    switch(right.type){
+				    switch(right->type){
 					   case STRING:
-						  new_str = malloc(sizeof(char)*(strlen(left.value.string)+strlen(right.value.string)+1));
-						  memset(new_str,0,strlen(left.value.string)+strlen(right.value.string)+1);
-						  strncpy(new_str,left.value.string,strlen(left.value.string));
-						  strncat(new_str,right.value.string,strlen(right.value.string));
-						  result.value.string = new_str;
+						  new_str = malloc(sizeof(char)*(strlen(left->value.string)+strlen(right->value.string)+1));
+						  memset(new_str,0,strlen(left->value.string)+strlen(right->value.string)+1);
+						  strncpy(new_str,left->value.string,strlen(left->value.string));
+						  strncat(new_str,right->value.string,strlen(right->value.string));
+						  result->value.string = new_str;
 						  break;
 					   default:
 						  num_str = stringify(right);
-						  new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(left.value.string)+1));
-						  memset(new_str,0,strlen(num_str)+strlen(left.value.string)+1);
-						  strncpy(new_str,left.value.string,strlen(left.value.string));
+						  new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(left->value.string)+1));
+						  memset(new_str,0,strlen(num_str)+strlen(left->value.string)+1);
+						  strncpy(new_str,left->value.string,strlen(left->value.string));
 						  strncat(new_str,num_str,strlen(num_str));
-						  result.value.string = new_str;
+						  result->value.string = new_str;
 						  free(num_str);
 						  num_str = NULL;
 						  break;
@@ -273,11 +277,11 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				    break;
 				default:
 				    num_str = stringify(left);
-				    new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(right.value.string)+1));
-				    memset(new_str,0,strlen(num_str)+strlen(right.value.string)+1);
+				    new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(right->value.string)+1));
+				    memset(new_str,0,strlen(num_str)+strlen(right->value.string)+1);
 				    strncpy(new_str,num_str,strlen(num_str));
-				    strncat(new_str,right.value.string,strlen(right.value.string));
-				    result.value.string = new_str;
+				    strncat(new_str,right->value.string,strlen(right->value.string));
+				    result->value.string = new_str;
 				    free(num_str);
 				    num_str = NULL;
 				    break;
@@ -287,92 +291,96 @@ ReturnResult visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  e.id = 4;
 		  e.token = ((Binary*)expr)->operator;
 		  e.message = "Operands must be two numbers, two strings, or one of each";
+		  delete_Object(&result);
+		  result = NULL;
 		  Throw(e);
 		  break;
 	   case SLASH:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  if(right.value.number == (double)0){
+		  if(right->value.number == (double)0){
 			 e.id = 5;
 			 e.token = ((Binary*)expr)->operator;
 			 e.message = "Cannot divide by Zero";
+			  delete_Object(&result);
+			  result = NULL;
 			 Throw(e);
+			 return result;
 		  }
-		  result.type = NUMBER;
-		  result.value.number = (double)left.value.number / (double)right.value.number;
+		  result->type = NUMBER;
+		  result->value.number = (double)left->value.number / (double)right->value.number;
 		  return result;
 	   case STAR:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = NUMBER;
-		  result.value.number = (double)left.value.number * (double)right.value.number;
+		  result->type = NUMBER;
+		  result->value.number = (double)left->value.number * (double)right->value.number;
 		  return result;
 	   case GREATER:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = BOOLEAN;
-		  result.value.number = (double)left.value.number > (double)right.value.number;
+		  result->type = BOOLEAN;
+		  result->value.number = (double)left->value.number > (double)right->value.number;
 		  return result;
 	   case GREATER_EQUAL:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = BOOLEAN;
-		  result.value.number = (double)left.value.number >= (double)right.value.number;
+		  result->type = BOOLEAN;
+		  result->value.number = (double)left->value.number >= (double)right->value.number;
 		  return result;
 	   case LESS:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = BOOLEAN;
-		  result.value.number = (double)left.value.number < (double)right.value.number;
+		  result->type = BOOLEAN;
+		  result->value.number = (double)left->value.number < (double)right->value.number;
 		  return result;
 	   case LESS_EQUAL:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
-		  result.type = BOOLEAN;
-		  result.value.number = (double)left.value.number <= (double)right.value.number;
+		  result->type = BOOLEAN;
+		  result->value.number = (double)left->value.number <= (double)right->value.number;
 		  return result;
 	   case BANG_EQUAL:
-		  result.type = BOOLEAN;
-		  result.value.number = !isEqual(left,right);
+		  result->type = BOOLEAN;
+		  result->value.number = !isEqual(left,right);
 		  return result;
 	   case EQUAL_EQUAL:
-		  result.type = BOOLEAN;
-		  result.value.number = isEqual(left,right);
+		  result->type = BOOLEAN;
+		  result->value.number = isEqual(left,right);
 		  return result;
 	   default: break;
     }
-    result.type = KNULL;
     return result;
 }
 
-int isEqual(ReturnResult left, ReturnResult right){
-    if(left.type == KNULL && right.type == KNULL)
+int isEqual(Object* left, Object* right){
+    if(left->type == KNULL && right->type == KNULL)
 	   return 1;
-    if(left.type == NIL && right.type == NIL)
+    if(left->type == NIL && right->type == NIL)
 	   return 1;
-    if(left.type == KNULL || left.type == NIL)
+    if(left->type == KNULL || left->type == NIL)
 	   return 0;
-    if(right.type == KNULL || right.type == NIL)
+    if(right->type == KNULL || right->type == NIL)
 	   return 0;
 /*    if((left.type == FALSE || left.type==TRUE) && (right.type == FALSE || right.type==TRUE))
 	   return strncmp(left.value.string,right.value.string,strlen(left.value.string)) == 0;*/
-    switch(left.type){
+    switch(left->type){
 	   case NUMBER:
 	   case BOOLEAN:
 	   case TRUE:
 	   case FALSE:
-		  switch(right.type){
+		  switch(right->type){
 			 case NUMBER:
 			 case BOOLEAN:
 			 case FALSE:
 			 case TRUE:
-				    return left.value.number == right.value.number;
+				    return left->value.number == right->value.number;
 				break;
 			 default: return 0;break;
 		  }
 		  break;
 	   case STRING:
-		  switch(right.type){
+		  switch(right->type){
 			 case STRING:
 				{
-					size_t length = strlen(left.value.string);
-					if(length < strlen(right.value.string))
-							length = strlen(right.value.string);
-				    return strncmp(left.value.string,right.value.string,length) == 0;
+					size_t length = strlen(left->value.string);
+					if(length < strlen(right->value.string))
+							length = strlen(right->value.string);
+				    return strncmp(left->value.string,right->value.string,length) == 0;
 				}
 				break;
 			 
@@ -383,17 +391,17 @@ int isEqual(ReturnResult left, ReturnResult right){
     }
     return 0;
 }
-void checkNumberOperand(Token* operator,ReturnResult right){
+void checkNumberOperand(Token* operator,Object* right){
     CEXCEPTION_T e;
-    if(right.type == NUMBER) return;
+    if(right->type == NUMBER) return;
     e.id = 2;
     e.token = operator;
     e.message = "Operand must be a number";
     Throw(e);
 }
-void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right){
+void checkNumberOperands(Token* operator, Object* left, Object* right){
     CEXCEPTION_T e;
-    if(left.type == NUMBER && right.type == NUMBER)
+    if(left->type == NUMBER && right->type == NUMBER)
 		  return;
     e.id = 3;
     e.token = operator;
@@ -402,17 +410,17 @@ void checkNumberOperands(Token* operator, ReturnResult left, ReturnResult right)
 }
 const static char* nil = "nil";
 
-char* stringify(ReturnResult obj){
+char* stringify(Object* obj){
     char* text;
     text = NULL;
-    if( obj.type == KNULL)
+    if( obj->type == KNULL)
 	   return (char*)nil;
-    if(obj.type == FALSE)
+    if(obj->type == FALSE)
 	   return "false";
-    if(obj.type == TRUE)
+    if(obj->type == TRUE)
 	   return "true";
-    if(obj.type == BOOLEAN){
-	   switch((int)obj.value.number){
+    if(obj->type == BOOLEAN){
+	   switch((int)obj->value.number){
 		  case 1:
 			 return "true";
 		  case 0:
@@ -421,138 +429,159 @@ char* stringify(ReturnResult obj){
 			 return "boolean error";
 	   }
     }
-    if(obj.type == NUMBER){
+    if(obj->type == NUMBER){
 	   char* text;
 	   text = NULL;
-	   asprintf(&text,"%.1lf",(double)obj.value.number);
+	   asprintf(&text,"%.1lf",(double)obj->value.number);
 	   if(strlen(text)>=2 && text[strlen(text)-1]== '0'
 		 && text[strlen(text)-2] == '.'){
 		  free(text);
 		  text = NULL;
-		  asprintf(&text,"%.0lf",(double)obj.value.number);
+		  asprintf(&text,"%.0lf",(double)obj->value.number);
 		  return text;
 	   }
 	   free(text);
 	   text = NULL;
-	   asprintf(&text,"%lf",(double)obj.value.number);
+	   asprintf(&text,"%lf",(double)obj->value.number);
 
 	   return text;
     }
 /*    asprintf(&text,"%lf",(double)obj.value.number);*/
 
-    return obj.value.string;
+    return obj->value.string;
 }
-ReturnResult visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
-	ReturnResult left;
+Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
+	Object* left;
 	Logical* log;
 	log = (Logical*) expr;
 	left = evaluate(visitor,log->left);
 	if(log->operator->type == OR){
-		if(isTruthy(left).value.number)
+		if(isTruthy(left)->value.number)
 		    return left;
 	       }
 	else{
-	    if(!isTruthy(left).value.number){
+	    if(!isTruthy(left)->value.number){
 			return left;
 		}
 	}
 	return evaluate(visitor,log->right);
 }
 
-ReturnResult visitIfStmt(StmtVisitor * visitor, Stmt* expr){
-	ReturnResult r,a;
-	If* stmt = (If*) expr;
+Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
+    Object* r,*a;
+    If* stmt;
+    r = NULL;
+    r = malloc(sizeof(Object));
+    init_Object(r,"",KNULL);
+    stmt = (If*) expr;
     a = evaluate(&visitor->expr,stmt->condition);
-    if(isTruthy(a).value.number){
+    if(isTruthy(a)->value.number ){
 		execute((Interpreter*)visitor,stmt->thenBranch);
 	}
 	else if(stmt->elseBranch != NULL){
 		execute((Interpreter*)visitor,stmt->elseBranch);
 	}
-	r.type = KNULL;
 	return r;
 }
 
 
-ReturnResult visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
-	ReturnResult result;
-	result.type = KNULL;
+Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
+    Object* result = NULL;
+    result = malloc(sizeof(Object));
+    init_Object(result,"",KNULL);
 	evaluate(&visitor->expr,((Expression*)stmt)->expression);
 	return result;
 }
 
-ReturnResult visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
-	ReturnResult r,result;
+Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
+    Object* result;
     char * val;
-	r = evaluate(&visitor->expr,((Print*)stmt)->expression);
-    val = stringify(r);
+    result = NULL;
+    result = evaluate(&visitor->expr,((Print*)stmt)->expression);
+    val = stringify(result);
 	printf("%s\n",val);
-    if(r.type == NUMBER){
+    if(result->type == NUMBER){
 		  free(val);
 		  val = NULL;
     }
-	result.type = KNULL;
-	return result;
+	result->type = KNULL;
+	return getObjectReference(result);
 }
 
-ReturnResult visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
+Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
 	Interpreter* intprtr;
-	ReturnResult *r,a;
+    Object* r,*a;
 	Var* vstmt;
 	intprtr = (Interpreter*) visitor;
-	r = NULL;
 	vstmt = (Var*)stmt;
+	a = NULL;
+	r = NULL;
+    r = malloc(sizeof(Object));
+	init_Object(r,"",KNULL);
 	if(vstmt->initializer != NULL){
-		r = malloc(sizeof(ReturnResult));
 		a = evaluate(&visitor->expr,vstmt->initializer);
-		r->type = a.type;
+		r->type = a->type;
 		 if(r->type == NUMBER)
-			    memcpy(&r->value,&a.value,sizeof(double));
-		 else{
-			r->value.string = strdup(a.value.string);
-/*			r->value.string = malloc(sizeof(char)*(strlen(a.value.string)+1));
-			memcpy(r->value.string,&a.value.string,strlen(a.value.string)+1);*/
+			 r->value.number = a->value.number;
+		 else if(r->type == STRING){
+			r->value.string = strdup(a->value.string);
+		 }
+		 else {
+			 r->value.callable = memcpy(malloc(sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
 		 }
 	}
-	intprtr->environment->defineEnv(intprtr->environment,strdup(vstmt->name->lexeme),r);
-	a.type = NIL;
+    intprtr->environment->defineEnv(intprtr->environment,strdup(vstmt->name->lexeme),r);
+	a = malloc(sizeof(Object));
+    init_Object(a,"nil",NIL);
+	a->type = NIL;
 	return a;
 }
-ReturnResult visitAssignExpr(ExprVisitor * visitor,Expr* expr){
-	Assign* assign = (Assign*) expr;
-	ReturnResult *r,a;
+Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
+	Assign* assign;
+	Object* r,*a;
 	Interpreter* intprtr;
-	r = malloc(sizeof(ReturnResult));
+	assign = (Assign*) expr;
+	r = malloc(sizeof(Object));
+	init_Object(r,"",KNULL);
 	intprtr= (Interpreter*)visitor;
 	a = evaluate(visitor,assign->value);
-	r->type = a.type;
+	r->type = a->type;
     if(r->type == NUMBER)
-		  memcpy(&r->value,&a.value,sizeof(double));
-    else{
-	   r->value.string = strdup(a.value.string);
+ 	   r->value.number = a->value.number;
+    else if(r->type == STRING){
+	   r->value.string = strdup(a->value.string);
 	   /*	   memcpy(&r->value.string,&a.value.string,strlen(a.value.string)+1);*/
     }
-	r->value = a.value;
-	intprtr->environment->assign(intprtr->environment,assign->name,r);
-	return a;
+    else{
+    	r->value.callable = memcpy(malloc(sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
+    }
+
+/*	r->value = a->value;*/
+    intprtr->environment->assign(intprtr->environment,assign->name,r);
+	return getObjectReference(a);
 }
 
-ReturnResult visitVariableExpr(ExprVisitor* visitor, Expr* expr){
+Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
-	ReturnResult *r,a;
+    Object* r,*a;
+    a = r = NULL;
+    a = malloc(sizeof(Object));
+    init_Object(a,"",KNULL);
 	env = (((Interpreter*)visitor)->environment);
 	r = (env->get(env,((Variable*)expr)->name ));
     if(r){
-	a.type = r->type;
-	if(a.type == NUMBER)
-	    memcpy(&a.value,&r->value,sizeof(double));
-	else{
-	    a.value.string = strdup(r->value.string);
-/*	    memcpy(&a.value.string,&r->value.string,strlen(r->value.string)+1);*/
-	}
-	   return a;
+    	a->type = r->type;
+    	if(a->type == NUMBER)
+    		a->value.number = r->value.number;
+    	else if(a->type == STRING){
+    		a->value.string = strdup(r->value.string);
+    	}
+    	else {
+    		a->value.callable = memcpy(malloc(sizeof(LoxCallable)),r->value.callable,sizeof(LoxCallable));
+    	}
+    	return a;
     }
-    a.type = KNULL;
-    a.value.number=0;
+    a->type = KNULL;
+    a->value.number=0;
 	return a;
 }
