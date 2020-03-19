@@ -8,9 +8,14 @@ void init_ObjectArray(ObjectArray* array){
         array->Objects = NULL;
         array->size = 0;
         array->used = 0;
+        array->owner_references =1;
         array->addElementToArray = &addElementToObjectArray;
         array->deleteArray = &delete_ObjectArray;
         array->getElementInArrayAt =&getObjectinArrayAt;
+        array->deleteArray = &delete_ObjectArray;
+        array->getArrayReference = &getObjectArrayReference;
+        array->releaseArrayReference = &releaseObjectArrayReference;
+        array->copyArray = &copyObjectArray;
     }
             
 void addElementToObjectArray(ObjectArray* array,Object* element){
@@ -35,8 +40,13 @@ void addElementToObjectArray(ObjectArray* array,Object* element){
 void delete_ObjectArray(ObjectArray* array){
     if(array){
         int i;
-        for(i =0; i <array->used;i++){
-            delete_Object(&array->Objects[i]);
+        if(array->owner_references<=1){
+            for(i =0; i <array->used;i++){
+                delete_Object(&array->Objects[i]);
+            }
+        }
+        else{
+            releaseObjectArrayReference(array);
         }
     }
 }
@@ -45,3 +55,23 @@ Object* getObjectinArrayAt(ObjectArray* array,size_t index){
         return array->Objects[index];
     return NULL;
 }
+ObjectArray*  copyObjectArray(ObjectArray * arr){
+    ObjectArray* newarr;
+    int i;
+    newarr = malloc(sizeof(ObjectArray));
+    init_ObjectArray(newarr);
+    for(i=0;i<arr->used;i++){
+        newarr->addElementToArray(newarr, getObjectinArrayAt(arr,i));
+    }
+    return newarr;
+}
+ObjectArray* getObjectArrayReference(ObjectArray* arr){
+    arr->owner_references++;
+    return arr;
+}
+ObjectArray* releaseObjectArrayReference(ObjectArray* arr){
+    arr->owner_references--;
+    return NULL;
+}
+
+

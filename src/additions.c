@@ -24,22 +24,3 @@ void initializeObjectElement(Object** results, void * values){
 	*results = (Object*)values;
 
 }
-
-TokenArray*  copyTokenArray(TokenArray * arr){
-	TokenArray* newarr;
-	int i;
-	newarr = malloc(sizeof(TokenArray));
-	init_TokenArray(newarr);
-	for(i=0;i<arr->used;i++){
-		newarr->addElementToArray(newarr, getTokeninArrayAt(arr,i));
-	}
-	return newarr;
-}
-TokenArray* getTokenArrayReference(TokenArray* arr){
-	arr->owner_references++;
-	return arr;
-}
-TokenArray* releaseTokenArrayReference(TokenArray* arr){
-	arr->owner_references--;
-	return NULL;
-}

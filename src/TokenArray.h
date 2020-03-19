@@ -4,6 +4,7 @@
 #include "Token.h"
 
 typedef struct _TokenArray TokenArray;
+
 struct _TokenArray {
     Token * Tokens;
     int owner_references;
@@ -12,10 +13,17 @@ struct _TokenArray {
     void (*addElementToArray)(TokenArray* array,Token* element);
     void (*deleteArray)(TokenArray* array);
     Token* (*getElementInArrayAt)(TokenArray* array,size_t index);
+    TokenArray*  (*copyArray)(TokenArray * arr);
+    TokenArray* (*getArrayReference)(TokenArray* arr);
+    TokenArray* (*releaseArrayReference)(TokenArray* arr);
+    
 };
 void init_TokenArray(TokenArray* array);
 void addElementToTokenArray(TokenArray* array,Token* element);
 void delete_TokenArray(TokenArray* array);
 Token* getTokeninArrayAt(TokenArray* array,size_t index);
 void initializeTokenElement(Token* arg, void* values);
+TokenArray*  copyTokenArray(TokenArray * arr);
+TokenArray* getTokenArrayReference(TokenArray* arr);
+TokenArray* releaseTokenArrayReference(TokenArray* arr);
 #endif

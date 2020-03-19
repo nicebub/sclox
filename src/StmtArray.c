@@ -8,9 +8,14 @@ void init_StmtArray(StmtArray* array){
         array->Stmts = NULL;
         array->size = 0;
         array->used = 0;
+        array->owner_references =1;
         array->addElementToArray = &addElementToStmtArray;
         array->deleteArray = &delete_StmtArray;
         array->getElementInArrayAt =&getStmtinArrayAt;
+        array->deleteArray = &delete_StmtArray;
+        array->getArrayReference = &getStmtArrayReference;
+        array->releaseArrayReference = &releaseStmtArrayReference;
+        array->copyArray = &copyStmtArray;
     }
             
 void addElementToStmtArray(StmtArray* array,Stmt* element){
@@ -35,8 +40,13 @@ void addElementToStmtArray(StmtArray* array,Stmt* element){
 void delete_StmtArray(StmtArray* array){
     if(array){
         int i;
-        for(i =0; i <array->used;i++){
-            delete_Stmt(array->Stmts[i]);
+        if(array->owner_references<=1){
+            for(i =0; i <array->used;i++){
+                delete_Stmt(array->Stmts[i]);
+            }
+        }
+        else{
+            releaseStmtArrayReference(array);
         }
     }
 }
@@ -45,3 +55,23 @@ Stmt* getStmtinArrayAt(StmtArray* array,size_t index){
         return array->Stmts[index];
     return NULL;
 }
+StmtArray*  copyStmtArray(StmtArray * arr){
+    StmtArray* newarr;
+    int i;
+    newarr = malloc(sizeof(StmtArray));
+    init_StmtArray(newarr);
+    for(i=0;i<arr->used;i++){
+        newarr->addElementToArray(newarr, getStmtinArrayAt(arr,i));
+    }
+    return newarr;
+}
+StmtArray* getStmtArrayReference(StmtArray* arr){
+    arr->owner_references++;
+    return arr;
+}
+StmtArray* releaseStmtArrayReference(StmtArray* arr){
+    arr->owner_references--;
+    return NULL;
+}
+
+

@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "Token.h"
 #include "TokenArray.h"
-
-extern TokenArray* releaseTokenArrayReference(TokenArray*);
 #define INIT_SIZE 5
 
 void init_TokenArray(TokenArray* array){
@@ -14,6 +12,10 @@ void init_TokenArray(TokenArray* array){
         array->addElementToArray = &addElementToTokenArray;
         array->deleteArray = &delete_TokenArray;
         array->getElementInArrayAt =&getTokeninArrayAt;
+        array->deleteArray = &delete_TokenArray;
+        array->getArrayReference = &getTokenArrayReference;
+        array->releaseArrayReference = &releaseTokenArrayReference;
+        array->copyArray = &copyTokenArray;
     }
             
 void addElementToTokenArray(TokenArray* array,Token* element){
@@ -39,12 +41,12 @@ void delete_TokenArray(TokenArray* array){
     if(array){
         int i;
         if(array->owner_references<=1){
-        	for(i =0; i <array->used;i++){
-        		delete_Token(&array->Tokens[i]);
-        	}
+            for(i =0; i <array->used;i++){
+                delete_Token(&array->Tokens[i]);
+            }
         }
         else{
-        	releaseTokenArrayReference(array);
+            releaseTokenArrayReference(array);
         }
     }
 }
@@ -53,3 +55,23 @@ Token* getTokeninArrayAt(TokenArray* array,size_t index){
         return &array->Tokens[index];
     return NULL;
 }
+TokenArray*  copyTokenArray(TokenArray * arr){
+    TokenArray* newarr;
+    int i;
+    newarr = malloc(sizeof(TokenArray));
+    init_TokenArray(newarr);
+    for(i=0;i<arr->used;i++){
+        newarr->addElementToArray(newarr, getTokeninArrayAt(arr,i));
+    }
+    return newarr;
+}
+TokenArray* getTokenArrayReference(TokenArray* arr){
+    arr->owner_references++;
+    return arr;
+}
+TokenArray* releaseTokenArrayReference(TokenArray* arr){
+    arr->owner_references--;
+    return NULL;
+}
+
+
