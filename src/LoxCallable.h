@@ -12,7 +12,10 @@
 #include "Interpreter.h"
 typedef struct _LoxCallable LoxCallable;
 struct _LoxCallable{
-	Object* (*call)(Interpreter* intrprtr, ObjectArray* arguments);
+    Object super;
+	Object* (*call)(LoxCallable* inloxcall,Interpreter* intrprtr, ObjectArray* arguments);
+    int (*arity)(LoxCallable* loxcall);
+    char* (*toString)(LoxCallable* inloxcall);
 };
 
 #endif /* LOXCALLABLE_H_ */

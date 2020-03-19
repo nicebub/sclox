@@ -11,10 +11,11 @@ typedef struct _exception{
 #define CEXCEPTION_T exception
 */
 #define CEXCEPTION_USE_CONFIG_FILE
-
+#include "CExceptionConfig.h"
 #include "CException.h"
 #include <string.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include "Lox.h"
 #include "Interpreter.h"
 #include "Expr.h"
@@ -51,10 +52,30 @@ static Object* visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
 Object* evaluate(ExprVisitor* visitor, Expr* expr);
 Object* isTruthy(Object* obj);
 
+static int global_clock_arity(LoxCallable* inloxcall){
+    return 0;
+}
+static Object* global_clock_call(LoxCallable* inLoxcall,Interpreter* intprtr, ObjectArray* arguments){
+    Object* obj;
+    struct timeval tv;
+    struct timezone tz;
+    double x;
+    gettimeofday(&tv,&tz);
+    x =  ((double)tv.tv_sec)+ (((double)tv.tv_usec / (double)1000.0)/ (double)1000.0);
+    obj = malloc(sizeof(Object));
+    init_Object(obj,&x,NUMBER);
+    return obj;
+    /*    return (double)system currentime in millisceons / 1000.0  */
+}
+static char* global_toString(LoxCallable* inloxcall){
+    return "<native fn>";
+}
 void init_Interpreter(Interpreter* intprtr, void* lox){
+    LoxCallable* lcall;
     intprtr->lox = lox;
-    intprtr->environment = malloc(sizeof(Environment));
-    init_Environment(intprtr->environment);
+    intprtr->globals = malloc(sizeof(Environment));
+    init_Environment(intprtr->globals);
+    intprtr->environment = intprtr->globals;
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
@@ -76,6 +97,13 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->isEqual = &isEqual;
     intprtr->isTruthy = &isTruthy;
     intprtr->stringify = &stringify;
+    lcall = malloc(sizeof(LoxCallable));
+    init_Object(&lcall->super,"clock",FUN);
+    strcpy((char*)&lcall->super.instanceOf,"LoxCallable");
+    lcall->arity = &global_clock_arity;
+    lcall->call = &global_clock_call;
+    lcall->toString = &global_toString;
+    intprtr->globals->defineEnv(intprtr->globals,"clock", (Object*)lcall);
 }
 
 void interpret(Interpreter* intprtr, StmtArray* array){
@@ -111,7 +139,8 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 		}
 	}
 	Catch(e){
-		fprintf(stderr,"RuntimeError: caught in executeBlock.\n");
+	    ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
+/*		fprintf(stderr,"RuntimeError: caught in executeBlock.: %s\n",e.message);*/
 	}
 	intrprtr->environment = previous;
 }
@@ -132,9 +161,22 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
     	r = getObjectReference(evaluate(visitor,argument));
     	arguments->addElementToArray(arguments,r);
     }
-/*    if(!(callee))*/
-   function = ((LoxCallable*)(callee->value.callable));
-    return function->call((Interpreter*)visitor,arguments);
+    if(!(strcmp(callee->instanceOf,"LoxCallable")==0)){
+	   CEXCEPTION_T e;
+	   e.id=20;
+	   e.message = "Can only call functions and classes.";
+	   e.token = ((Call*)expr)->paren;
+	   Throw(e);
+    }
+   function = ((LoxCallable*)(callee));
+    if(arguments->size != function->arity(function)){
+	   CEXCEPTION_T e;
+	   e.id= 21;
+	   e.message = "Expected function.arity(function) arguments but got arguments.size.";
+	   e.token = ((Call*)expr)->paren;
+	   Throw(e);
+    }
+    return function->call(function,(Interpreter*)visitor,arguments);
 }
 
 

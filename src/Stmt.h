@@ -48,7 +48,7 @@ static short int Stmtcounter=0;
     
 struct _Stmt {
 
-                 char instanceOf[20];
+                 char instanceOf[30];
                  short int id;
                  short int owner_references;
                  Stmt_vtable vtable;

@@ -26,6 +26,7 @@ struct _Object {
 	ResultValue value;
 	int isBool;
 	TokenType type;
+    char instanceOf[30];
 
 
 };

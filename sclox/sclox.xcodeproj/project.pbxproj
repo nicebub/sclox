@@ -164,16 +164,6 @@
 		E213C69C2417242E00141F63 /* sclox */ = {
 			isa = PBXGroup;
 			children = (
-				E2D9C9042423468B00165220 /* ObjectArray.c */,
-				E2D9C9032423468B00165220 /* ObjectArray.h */,
-				E2E335E42422D906003165FF /* LoxCallable.h */,
-				E2E335DF2422C87B003165FF /* ExprArray.c */,
-				E2E335E02422C87C003165FF /* ExprArray.h */,
-				E28E714424204B5D0067DC82 /* Environment.c */,
-				E28E714524204B5D0067DC82 /* Environment.h */,
-				E2EB4200241FC6FE00A3E77B /* unity_internals.h */,
-				E2EB41FF241FC6FE00A3E77B /* unity.c */,
-				E2EB4201241FC6FE00A3E77B /* unity.h */,
 				E2022368241C906900C67976 /* additions.c */,
 				E2022367241C906900C67976 /* additions.h */,
 				E213C6A72417244F00141F63 /* AstPrinter.c */,
@@ -181,8 +171,12 @@
 				E2BC49172418CBA200F8F14C /* CException.c */,
 				E2BC49162418CBA200F8F14C /* CException.h */,
 				E24DC44F241B4C7600A569CA /* CExceptionConfig.h */,
+				E28E714424204B5D0067DC82 /* Environment.c */,
+				E28E714524204B5D0067DC82 /* Environment.h */,
 				E213C6AF2417244F00141F63 /* Expr.c */,
 				E213C6AB2417244F00141F63 /* Expr.h */,
+				E2E335DF2422C87B003165FF /* ExprArray.c */,
+				E2E335E02422C87C003165FF /* ExprArray.h */,
 				E2EB41ED241F425C00A3E77B /* hash.c */,
 				E2EB41EA241F425B00A3E77B /* hash.h */,
 				E2EB41EB241F425C00A3E77B /* HashMap.c */,
@@ -191,8 +185,11 @@
 				E2BC49112418CB8300F8F14C /* Interpreter.h */,
 				E213C6A52417244F00141F63 /* Lox.c */,
 				E213C6AD2417244F00141F63 /* Lox.h */,
+				E2E335E42422D906003165FF /* LoxCallable.h */,
 				E2BC49102418CB8300F8F14C /* Object.c */,
 				E2BC49122418CB8400F8F14C /* Object.h */,
+				E2D9C9042423468B00165220 /* ObjectArray.c */,
+				E2D9C9032423468B00165220 /* ObjectArray.h */,
 				E213C6A82417244F00141F63 /* Parser.c */,
 				E213C6A92417244F00141F63 /* Parser.h */,
 				E213C6B02417244F00141F63 /* Scanner.c */,
@@ -208,6 +205,9 @@
 				E26CB631241CADB40067C811 /* TokenArray.c */,
 				E26CB634241CADB50067C811 /* TokenArray.h */,
 				E213C6A42417244F00141F63 /* TokenType.h */,
+				E2EB4200241FC6FE00A3E77B /* unity_internals.h */,
+				E2EB41FF241FC6FE00A3E77B /* unity.c */,
+				E2EB4201241FC6FE00A3E77B /* unity.h */,
 			);
 			path = sclox;
 			sourceTree = "<group>";

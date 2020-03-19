@@ -24,7 +24,8 @@ typedef struct _Interpreter Interpreter;
 typedef struct _SuperVisitor SuperVisitor;
 struct _Interpreter {
 	StmtVisitor super;
-	Environment* environment;
+    Environment* globals;
+    Environment* environment;
     void* lox;
     void (*interpret)(Interpreter*, StmtArray* );
     Object* (*evaluate)(ExprVisitor*, Expr*);

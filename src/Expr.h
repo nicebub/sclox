@@ -49,7 +49,7 @@ static short int Exprcounter=0;
     
 struct _Expr {
 
-                 char instanceOf[20];
+                 char instanceOf[30];
                  short int id;
                  short int owner_references;
                  Expr_vtable vtable;
