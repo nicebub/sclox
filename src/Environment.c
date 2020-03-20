@@ -57,7 +57,7 @@ void* get(Environment* env,Token* name){
 }
 
 void defineEnv(Environment* env,char* name, Object *value){
-	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
+	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,strdup(name),value);
 }
 
 void init_Environment(Environment* env){

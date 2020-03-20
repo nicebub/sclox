@@ -28,7 +28,7 @@ void init_Object(Object* object, void* value, TokenType type){
 	}
 	object->type = type;
 	object->isBool = type==FALSE||type==TRUE||type==NIL?1:0;
-
+    strcpy((char*)&object->instanceOf,"Object");
 }
 Object* getObjectReference(Object* obj){
 	obj->owner_references += 1;
@@ -75,6 +75,8 @@ Object* copyObject(Object* inobj){
 	Object* newobj;
 	newobj = malloc(sizeof(Object));
 	newobj->owner_references = 1;
+    memset(&newobj->instanceOf,0,30);
+    strcpy((char*)&newobj->instanceOf,inobj->instanceOf);
 	newobj->id = inobj->id;
 	newobj->isBool = inobj->isBool;
 	newobj->type = inobj->type;

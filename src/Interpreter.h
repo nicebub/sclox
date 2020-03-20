@@ -34,6 +34,7 @@ struct _Interpreter {
     void (*checkNumberOperand)(Token* operator,Object* right);
     void (*checkNumberOperands)(Token* operator, Object* left, Object* right);
     char* (*stringify)(Object*);
+    void (*executeBlock)(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
 
 };
 

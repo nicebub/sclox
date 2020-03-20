@@ -35,6 +35,7 @@ struct _Parser {
 void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
 volatile StmtArray* parse(Parser* parser);
+Stmt* function(Parser* parser, char* kind);
 Expr* call(Parser* parser);
 Expr* finishCall(Parser* parser, Expr* expr);
 Expr* or(Parser* parser);

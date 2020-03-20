@@ -21,6 +21,7 @@ void new_Block (Block * inObj,StmtArray* statementsparam){
     
     inObj->super.vtable.delete_Stmt = &delete_Block ;
 	inObj->statements = statementsparam;
+    memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Block");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
@@ -49,6 +50,7 @@ void new_Expression (Expression * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Stmt = &delete_Expression ;
 	inObj->expression = expressionparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Expression");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
@@ -72,6 +74,41 @@ if(expr->super.owner_references ==1){
 Object* acceptExpression(Stmt *arg, StmtVisitor* visitor){
     return visitor->vtable.visitExpressionStmt(visitor,arg);
 }
+void new_Function   (Function   * inObj,Token* nameparam,TokenArray* paramsparam,StmtArray* bodyparam){
+    inObj->super.vtable.accept = &acceptFunction;
+    
+    inObj->super.vtable.delete_Stmt = &delete_Function   ;
+	inObj->name = getTokenReference(nameparam);
+	inObj->params = paramsparam;
+	inObj->body = bodyparam;
+	memset(&inObj->super.instanceOf,0,30);
+	strcpy((char*)&inObj->super.instanceOf,"Function");
+	inObj->super.owner_references=1;
+	inObj->super.id = addtoStmtCounter();
+}
+void delete_Function   (Stmt* arg){
+	Function   * expr = (Function   *)arg;
+
+if(expr->super.owner_references ==1){
+    delete_Token(expr->name);
+    expr->name=NULL;
+    delete_TokenArray(expr->params);
+    expr->params=NULL;
+    delete_StmtArray(expr->body);
+    expr->body=NULL;
+
+	free(expr);
+	expr=NULL;
+}
+
+    else{
+        expr->super.owner_references--;
+    }
+}
+
+Object* acceptFunction(Stmt *arg, StmtVisitor* visitor){
+    return visitor->vtable.visitFunctionStmt(visitor,arg);
+}
 void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchparam,Stmt* elseBranchparam){
     inObj->super.vtable.accept = &acceptIf;
     
@@ -79,6 +116,7 @@ void new_If         (If         * inObj,Expr* conditionparam,Stmt* thenBranchpar
 	inObj->condition = conditionparam;
 	inObj->thenBranch = thenBranchparam;
 	inObj->elseBranch = elseBranchparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"If");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
@@ -111,6 +149,7 @@ void new_Print (Print * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Stmt = &delete_Print ;
 	inObj->expression = expressionparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Print");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
@@ -140,6 +179,7 @@ void new_Var (Var * inObj,Token* nameparam,Expr* initializerparam){
     inObj->super.vtable.delete_Stmt = &delete_Var ;
 	inObj->name = getTokenReference(nameparam);
 	inObj->initializer = initializerparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Var");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();
@@ -171,6 +211,7 @@ void new_While      (While      * inObj,Expr* conditionparam,Stmt* bodyparam){
     inObj->super.vtable.delete_Stmt = &delete_While      ;
 	inObj->condition = conditionparam;
 	inObj->body = bodyparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"While");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoStmtCounter();

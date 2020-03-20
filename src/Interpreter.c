@@ -28,13 +28,16 @@ typedef struct _exception{
 #include "TokenArray.h"
 #include "ObjectArray.h"
 #include "LoxCallable.h"
+#include "LoxFunction.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
 	extern delete_StmtArray(StmtArray* array);
 #endif
 
-	#include "StmtArray.h"
+#include "StmtArray.h"
+
+static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitCallExpr(ExprVisitor* visitor, Expr* stmt);
 static Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
@@ -71,12 +74,14 @@ static char* global_toString(LoxCallable* inloxcall){
     return "<native fn>";
 }
 void init_Interpreter(Interpreter* intprtr, void* lox){
-    LoxCallable* lcall;
+    LoxFunction* lcall;
     intprtr->lox = lox;
     intprtr->globals = malloc(sizeof(Environment));
     init_Environment(intprtr->globals);
     intprtr->environment = intprtr->globals;
+    intprtr->executeBlock = &executeBlock;
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
+	intprtr->super.vtable.visitFunctionStmt = &visitFunctionStmt;
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
@@ -97,12 +102,14 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->isEqual = &isEqual;
     intprtr->isTruthy = &isTruthy;
     intprtr->stringify = &stringify;
-    lcall = malloc(sizeof(LoxCallable));
-    init_Object(&lcall->super,"clock",FUN);
-    strcpy((char*)&lcall->super.instanceOf,"LoxCallable");
-    lcall->arity = &global_clock_arity;
-    lcall->call = &global_clock_call;
-    lcall->toString = &global_toString;
+    lcall = malloc(sizeof(LoxFunction));
+    init_LoxFunction(lcall,NULL);
+    init_Object(&lcall->super.super,"clock",FUN);
+    memset(&lcall->super.super.instanceOf,0,30);
+    strcpy((char*)&lcall->super.super.instanceOf,"LoxCallable");
+    lcall->super.vtable.arity = &global_clock_arity;
+    lcall->super.vtable.call = &global_clock_call;
+    lcall->super.vtable.toString = &global_toString;
     intprtr->globals->defineEnv(intprtr->globals,"clock", (Object*)lcall);
 }
 
@@ -144,12 +151,26 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	intrprtr->environment = previous;
 }
+static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt){
+	LoxFunction * func;
+	Environment* env;
+	Function* function;
+	Interpreter* intprtr;
+	func = malloc(sizeof(LoxFunction));
+	function = (Function*) stmt;
+	intprtr = (Interpreter*) visitor;
+	env = intprtr->environment;
+	init_LoxFunction(func,function);
+	env->defineEnv(env,function->name->lexeme,(Object*)func);
+	return NULL;
+
+}
 
 static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
     ObjectArray *arguments;
     Object* r,*callee;
     int i;
-    LoxCallable *function;
+    LoxFunction *function;
     Expr* argument;
     callee = evaluate(visitor,((Call*)expr)->callee);
     arguments = malloc(sizeof(ObjectArray));
@@ -168,15 +189,18 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 	   e.token = ((Call*)expr)->paren;
 	   Throw(e);
     }
-   function = ((LoxCallable*)(callee));
-    if(arguments->size != function->arity(function)){
+   function = ((LoxFunction*)(callee));
+    if(arguments->used != function->super.vtable.arity((LoxCallable*)function)){
 	   CEXCEPTION_T e;
+	   char * new_str;
+	   new_str = NULL;
 	   e.id= 21;
-	   e.message = "Expected function.arity(function) arguments but got arguments.size.";
+	   asprintf(&new_str,"Expected %d arguments but got %d.",function->super.vtable.arity((LoxCallable*)function),arguments->size);
+	   e.message = new_str;
 	   e.token = ((Call*)expr)->paren;
 	   Throw(e);
     }
-    return function->call(function,(Interpreter*)visitor,arguments);
+    return function->super.vtable.call((LoxCallable*)function,(Interpreter*)visitor,arguments);
 }
 
 
@@ -455,6 +479,8 @@ const static char* nil = "nil";
 char* stringify(Object* obj){
     char* text;
     text = NULL;
+    if(obj == NULL)
+	   return (char*)nil;
     if( obj->type == KNULL)
 	   return (char*)nil;
     if(obj->type == FALSE)
@@ -470,6 +496,9 @@ char* stringify(Object* obj){
 		  default:
 			 return "boolean error";
 	   }
+    }
+    if(obj->type == FUN){
+	   return ((LoxFunction*)obj)->super.vtable.toString((LoxCallable*)((LoxFunction*)obj)) ;
     }
     if(obj->type == NUMBER){
 	   char* text;
@@ -536,18 +565,22 @@ Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
 }
 
 Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
-    Object* result;
+    Object* result, *a;
     char * val;
     result = NULL;
     result = evaluate(&visitor->expr,((Print*)stmt)->expression);
     val = stringify(result);
 	printf("%s\n",val);
-    if(result->type == NUMBER){
+    if(result && result->type == NUMBER){
 		  free(val);
 		  val = NULL;
     }
-	result->type = KNULL;
-	return getObjectReference(result);
+    a = malloc(sizeof(Object));
+    init_Object(a,"",KNULL);
+	a->type = KNULL;
+    if(result)
+	   return getObjectReference(result);
+    return a;
 }
 
 Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
@@ -606,13 +639,15 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
     Object* r,*a;
-    a = r = NULL;
+    a = NULL;
+    r = NULL;
     a = malloc(sizeof(Object));
     init_Object(a,"",KNULL);
 	env = (((Interpreter*)visitor)->environment);
 	r = (env->get(env,((Variable*)expr)->name ));
     if(r){
-    	a->type = r->type;
+	   r = getObjectReference(r);
+/*    	a->type = r->type;
     	if(a->type == NUMBER)
     		a->value.number = r->value.number;
     	else if(a->type == STRING){
@@ -620,8 +655,8 @@ Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
     	}
     	else {
     		a->value.callable = memcpy(malloc(sizeof(LoxCallable)),r->value.callable,sizeof(LoxCallable));
-    	}
-    	return a;
+    	}*/
+    	return r;
     }
     a->type = KNULL;
     a->value.number=0;

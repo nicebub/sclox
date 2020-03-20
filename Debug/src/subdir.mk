@@ -11,6 +11,8 @@ C_SRCS += \
 ../src/HashMap.c \
 ../src/Interpreter.c \
 ../src/Lox.c \
+../src/LoxCallable.c \
+../src/LoxFunction.c \
 ../src/Object.c \
 ../src/ObjectArray.c \
 ../src/Parser.c \
@@ -31,6 +33,8 @@ OBJS += \
 ./src/HashMap.o \
 ./src/Interpreter.o \
 ./src/Lox.o \
+./src/LoxCallable.o \
+./src/LoxFunction.o \
 ./src/Object.o \
 ./src/ObjectArray.o \
 ./src/Parser.o \
@@ -51,6 +55,8 @@ C_DEPS += \
 ./src/HashMap.d \
 ./src/Interpreter.d \
 ./src/Lox.d \
+./src/LoxCallable.d \
+./src/LoxFunction.d \
 ./src/Object.d \
 ./src/ObjectArray.d \
 ./src/Parser.d \

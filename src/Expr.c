@@ -21,6 +21,7 @@ void new_Assign   (Assign   * inObj,Token* nameparam,Expr* valueparam){
     inObj->super.vtable.delete_Expr = &delete_Assign   ;
 	inObj->name = getTokenReference(nameparam);
 	inObj->value = valueparam;
+    memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Assign");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -53,6 +54,7 @@ void new_Binary (Binary * inObj,Expr* leftparam,Token* operatorparam,Expr* right
 	inObj->left = leftparam;
 	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Binary");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -87,6 +89,8 @@ void new_Call (Call * inObj,Expr* calleeparam,Token* parenparam,ExprArray* argum
 	inObj->callee = calleeparam;
 	inObj->paren = getTokenReference(parenparam);
 	inObj->arguments = argumentsparam;
+    memset(&inObj->super.instanceOf,0,30);
+
 	strcpy((char*)&inObj->super.instanceOf,"Call");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -119,6 +123,8 @@ void new_Grouping (Grouping * inObj,Expr* expressionparam){
     
     inObj->super.vtable.delete_Expr = &delete_Grouping ;
 	inObj->expression = expressionparam;
+    memset(&inObj->super.instanceOf,0,30);
+
 	strcpy((char*)&inObj->super.instanceOf,"Grouping");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -147,6 +153,7 @@ void new_Literal (Literal * inObj,Object* valueparam){
     
     inObj->super.vtable.delete_Expr = &delete_Literal ;
 	inObj->value = getObjectReference(valueparam);
+    memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Literal");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -177,6 +184,7 @@ void new_Logical  (Logical  * inObj,Expr* leftparam,Token* operatorparam,Expr* r
 	inObj->left = leftparam;
 	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Logical");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -210,6 +218,7 @@ void new_Unary (Unary * inObj,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.delete_Expr = &delete_Unary ;
 	inObj->operator = getTokenReference(operatorparam);
 	inObj->right = rightparam;
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Unary");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();
@@ -240,6 +249,7 @@ void new_Variable (Variable * inObj,Token* nameparam){
     
     inObj->super.vtable.delete_Expr = &delete_Variable ;
 	inObj->name = getTokenReference(nameparam);
+	memset(&inObj->super.instanceOf,0,30);
 	strcpy((char*)&inObj->super.instanceOf,"Variable");
 	inObj->super.owner_references=1;
 	inObj->super.id = addtoExprCounter();

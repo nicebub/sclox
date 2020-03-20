@@ -5,6 +5,7 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
+#include "TokenArray.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
@@ -32,6 +33,7 @@ typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
 	Object* (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
 	Object* (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
+	Object* (*visitFunctionStmt)(StmtVisitor* visitor,Stmt* stmt);
 	Object* (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
 	Object* (*visitPrintStmt)(StmtVisitor* visitor,Stmt* stmt);
 	Object* (*visitVarStmt)(StmtVisitor* visitor,Stmt* stmt);
@@ -72,6 +74,17 @@ struct _Expression  {
 void new_Expression (Expression * inObj,Expr* expressionparam);
 void delete_Expression (Stmt* arg);
 Object* acceptExpression(Stmt* arg, StmtVisitor* visitor);
+typedef struct _Function    Function   ;
+struct _Function    {
+	Stmt super;
+	Token* name;
+	TokenArray* params;
+	StmtArray* body;
+
+};
+void new_Function   (Function   * inObj,Token* nameparam,TokenArray* paramsparam,StmtArray* bodyparam);
+void delete_Function   (Stmt* arg);
+Object* acceptFunction(Stmt* arg, StmtVisitor* visitor);
 typedef struct _If          If         ;
 struct _If          {
 	Stmt super;

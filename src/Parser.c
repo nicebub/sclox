@@ -45,8 +45,11 @@ volatile StmtArray* parse(Parser* parser){
 
 Stmt* declaration(Parser* parser){
 	CEXCEPTION_T e;
-	TokenType toks[] = { VAR, KNULL };
+	TokenType toks[] = { FUN, KNULL };
 	Try {
+		if(parser->match(parser,toks))
+			return function(parser,"function");
+		toks[0] = VAR;
 		if(parser->match(parser,toks))
 			return varDeclaration(parser);
 		return statement(parser);
@@ -56,6 +59,43 @@ Stmt* declaration(Parser* parser){
 		return NULL;
 	}
     return NULL;
+}
+
+Stmt* function(Parser* parser, char* kind){
+	Function* func;
+	TokenArray* parameters;
+	StmtArray* body;
+	Token* name;
+	char* str_val;
+	TokenType comma[] = { COMMA, KNULL };
+	str_val = NULL;
+	asprintf(&str_val,"Expect %s name.",kind);
+	name = consume(parser,IDENTIFIER, str_val);
+	free(str_val);
+	str_val = NULL;
+	asprintf(&str_val,"Expect '(' after %s name.",kind);
+	consume(parser,LEFT_PAREN,str_val);
+	free(str_val);
+	str_val = NULL;
+	parameters = malloc(sizeof(TokenArray));
+	init_TokenArray(parameters);
+	if(!check(parser,RIGHT_PAREN)){
+		do{
+			if(parameters->size >= 255){
+				parser->error(parser,parser->peek(parser),"Cannot have more than 255 parameters");
+			}
+			parameters->addElementToArray(parameters,consume(parser,IDENTIFIER,"Expect parameter name."));
+		}while(parser->match(parser,comma));
+	}
+	consume(parser,RIGHT_PAREN,"Expect ')' after parameters.");
+	asprintf(&str_val,"Expect '{' before %s body.",kind);
+	consume(parser,LEFT_BRACE, str_val);
+	free(str_val);
+	str_val = NULL;
+	body = block(parser);
+	func = malloc(sizeof(Function));
+	new_Function(func,name,parameters,body);
+	return (Stmt*)func;
 }
 
 Stmt* varDeclaration(Parser* parser){
@@ -381,7 +421,7 @@ Expr* finishCall(Parser* parser, Expr* callee){
 	ExprArray * arguments;
 	Token* paren;
 	Call* caller;
-	TokenType toks[] = { COMMA, KNULL };
+	TokenType comma[] = { COMMA, KNULL };
 	arguments = malloc(sizeof(ExprArray));
 	init_ExprArray(arguments);
 	if(!check(parser,RIGHT_PAREN)) {
@@ -389,10 +429,9 @@ Expr* finishCall(Parser* parser, Expr* callee){
 			if(arguments->size >= 255) {
 				parser->error(parser,parser->peek(parser),"Cannot have more than 255 arguments.");
 			}
-		    else
-			   arguments->addElementToArray(arguments,expression(parser));
+		    arguments->addElementToArray(arguments,expression(parser));
 
-		}while (parser->match(parser,toks));
+		}while (parser->match(parser,comma));
 	}
 	paren = consume(parser,RIGHT_PAREN, "Expect ')' after arguments.");
 	caller = malloc(sizeof(Call));
