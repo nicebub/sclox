@@ -31,7 +31,11 @@ void* releaseReference(void* obj){
 	}
 	return (void*)obj;
 }
-
+void* init(void* chunk, void* arguments){
+    mem_footer * footer;
+    footer= get_footer(chunk);
+    return footer->functions.init(chunk,arguments);
+}
 void* init_memory(void* chunk, enum MEM_TYPE type, size_t size){
 /*    char c;*/
     mem_header * header;
@@ -51,6 +55,12 @@ void* init_memory(void* chunk, enum MEM_TYPE type, size_t size){
     footer->functions.delete = &delete;
     footer->functions.new = &new;
     footer->functions.copy = &copy;
+    footer->functions.getAllocated = &getAllocated;
+    footer->functions.init = &init;
+    footer->functions.setAllocated = &setAllocated;
+    footer->functions.setConstructor = &setConstructor;
+    footer->functions.setCopyConstructor = &setCopyConstructor;
+    footer->functions.setDestructor = &setDestructor;
     footer->functions.owner_references = 1;
     footer->functions.get_header = &get_header;
     footer->functions.get_footer = &get_footer;
@@ -63,12 +73,14 @@ void* new(enum MEM_TYPE type, size_t size){
     void * chunk;
     void * data;
 /*    char c;*/
-    mem_footer* footer;
+/*    mem_footer* footer;*/
     chunk = malloc(sizeof(mem_header)+sizeof(mem_footer)+size+(char)2);
     data = init_memory(chunk,type,size);
-    footer = (mem_footer*)((char*)data+size);
-	footer->functions.allocated = 1;
-/*	printf("in new sizeof mem_header %lu\n",sizeof(mem_header));*/
+    setAllocated(data,1);
+/*    footer = (mem_footer*)((char*)data+size);
+	footer->functions.allocated = 1;*/
+
+    /*	printf("in new sizeof mem_header %lu\n",sizeof(mem_header));*/
 /*	scanf("%c",&c);*/
 	return data;
 
@@ -95,12 +107,12 @@ void delete(void* data){
 			if(footer->functions.delete != &delete){
 				footer->functions.delete((void*)data);
 			}
+		    if(footer->functions.allocated)
+			    free((void*)header);
+			 header = NULL;
 		}
-	    /*
-		if(footer->functions.allocated)
-			free((void*)header);
-		  header = NULL;
-*/
+	    
+
 	}
 	else{
 		releaseReference(data);
@@ -115,8 +127,16 @@ short int getReferenceCount(void* obj){
 
 void* copy(void* data){
     mem_footer* footer;
+    mem_header* header;
+    char* temp;
+    header = get_header(data);
     footer = get_footer(data);
+    if(header->type != RAW)
 	return footer->functions.copy(data);
+    temp = new(RAW,header->size);
+    memcpy(temp,data,header->size);
+    return (void*)temp;
+    
 }
 void* resize(enum MEM_TYPE type, void* data, size_t newsize){
     void* ndata;
@@ -152,4 +172,32 @@ mem_footer* get_footer(void* obj){
     header = (mem_header*)((char*)obj - (2+sizeof(mem_header)));
     footer = (mem_footer*)header->end_canary_address;
     return footer;
+}
+int getAllocated(void* data){
+    mem_footer* footer;
+    footer = get_footer(data);
+    return footer->functions.allocated;
+}
+void setAllocated(void* data,int all){
+    mem_footer* footer;
+    footer = get_footer(data);
+    footer->functions.allocated = all;
+
+}
+
+void setCopyConstructor(void* data,void*(*func)(void*)){
+    mem_footer* footer;
+    footer = get_footer(data);
+    footer->functions.copy = func;
+
+}
+void setDestructor(void* data,void(*func)(void*)){
+    mem_footer* footer;
+    footer = get_footer(data);
+    footer->functions.delete = func;
+}
+void setConstructor(void* data,void*(*func)(void*,void*)){
+    mem_footer* footer;
+    footer = get_footer(data);
+    footer->functions.init = func;
 }

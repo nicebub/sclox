@@ -6,17 +6,15 @@
 #define INIT_SIZE 5
 
 void init_TokenArray(TokenArray* array){
-    mem_footer* footer;
         array->Tokens = NULL;
         array->size = 0;
         array->used = 0;
 /*	   array->memory.allocated = 0;*/
-	   footer = get_footer(array);
-	   footer->functions.copy = &copyTokenArray;
-	   footer->functions.delete = &delete_TokenArray;
 /*	   array->memory.new*/
-    footer->functions.owner_references = 1;
-    footer->functions.resize= &resize;
+    setAllocated(array,0);
+    setCopyConstructor(array,&copyTokenArray);
+    setDestructor(array,&delete_TokenArray);
+
         array->addElementToArray = &addElementToTokenArray;
         array->delete = &delete_TokenArray;
         array->getElementInArrayAt =&getTokeninArrayAt;
@@ -42,12 +40,10 @@ void addElementToTokenArray(TokenArray* array,Token* element){
             array->used++;
     }
 void delete_TokenArray(void* inArray){
-    mem_footer* footer;
     TokenArray* array = (TokenArray*) inArray;
     if(array){
         int i;
-	   footer = get_footer(inArray);
-        if(footer->functions.owner_references<=1){
+        if(getReferenceCount(array)<=1){
             for(i =0; i <array->used;i++){
                 delete(&array->Tokens[i]);
             }
@@ -74,6 +70,7 @@ void*  copyTokenArray(void * inArr){
     for(i=0;i<arr->used;i++){
         newarr->addElementToArray(newarr, copy(getTokeninArrayAt(arr,i)));
     }
+    setAllocated(newarr,1);
     return newarr;
 }
 

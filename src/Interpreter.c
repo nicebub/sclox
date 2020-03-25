@@ -63,9 +63,8 @@ static int global_clock_arity(LoxCallable* inloxcall){
 static Object* global_clock_call(LoxCallable* inLoxcall,Interpreter* intprtr, ObjectArray* arguments){
     Object* obj;
     struct timeval tv;
-    struct timezone tz;
     double x;
-    gettimeofday(&tv,&tz);
+    gettimeofday(&tv,NULL);
     x =  ((double)tv.tv_sec)+ (((double)tv.tv_usec / (double)1000.0)/ (double)1000.0);
     obj = new(OBJECTIVE,sizeof(Object));
     init_Object(obj,&x,NUMBER);
@@ -73,7 +72,11 @@ static Object* global_clock_call(LoxCallable* inLoxcall,Interpreter* intprtr, Ob
     /*    return (double)system currentime in millisceons / 1000.0  */
 }
 static char* global_toString(LoxCallable* inloxcall){
-    return "<native fn>";
+    char * temp;
+    temp = new(RAW,sizeof(char)*(strlen("<native fn>")+1));
+    memset(temp,0,strlen("<native fn>")+1);
+    strncpy(temp,"<native fn>",strlen("<native fn>"));
+    return temp;
 }
 void init_Interpreter(Interpreter* intprtr, void* lox){
     LoxCallable* lcall;
@@ -110,7 +113,9 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     init_Object(NLLOBJ,"",KNULL);
     lcall = new(OBJECTIVE,sizeof(LoxCallable));
     init_LoxCallable(lcall);
-    init_Object(&lcall->super,"clock",FUN);
+    lcall->super.type = FUN;
+    lcall->super.value.string = strncpy(new(RAW,sizeof(char)*(strlen("clock")+1)),"clock",strlen("clock"));
+/*    init_Object(&lcall->super,"clock",FUN);*/
     memset(&lcall->super.instanceOf,0,30);
     strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
     lcall->vtable.arity = &global_clock_arity;
@@ -156,9 +161,9 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
     e.message= NULL;
     e.sub=NULL;
     e.token=NULL;
-	previous = intrprtr->environment;
+	previous = getReference(intrprtr->environment);
 	Try{
-		intrprtr->environment = newenv;
+		intrprtr->environment = getReference(newenv);
 
 		for(i = 0; i<array->used;i++){
 			execute(intrprtr,array->getElementInArrayAt(array,i));
@@ -166,16 +171,19 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	Catch(e){
 	    if(e.id != 50){
-			 intrprtr->environment = previous;
+		   delete(intrprtr->environment);
+			 intrprtr->environment = getReference(previous);
 			 ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
 	    }
 	    else{
-		   intrprtr->environment = previous;
+		   delete(intrprtr->environment);
+		   intrprtr->environment = getReference(previous);
 		   Throw(e);
 	    }
 /*		fprintf(stderr,"RuntimeError: caught in executeBlock.: %s\n",e.message);*/
 	}
-	intrprtr->environment = previous;
+	delete(intrprtr->environment);
+	intrprtr->environment = getReference(previous);
 }
 static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
     CEXCEPTION_T e;
@@ -191,7 +199,7 @@ static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
 	e.message = "";
 	e.token = NULL;
     e.sub = re;
-	e.sub->value = copy(value);
+	e.sub->value = (value);
     Try{
 	Throw(e);
     }
@@ -209,14 +217,15 @@ static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt){
 	intprtr = (Interpreter*) visitor;
 	env = intprtr->environment;
 	init_LoxFunctionWithClosure(func,function,env);
-	env->defineEnv(env,function->name->lexeme,copy(func));
+	env->defineEnv(env,getReference(function->name->lexeme),getReference(func));
+    delete(func);
 	return NULL;
 
 }
 
 static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
     ObjectArray *arguments;
-    Object* r,*callee;
+    Object* r,*callee, *res;
     int i;
     LoxFunction *function;
     Expr* argument;
@@ -256,14 +265,25 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 	   new_str = NULL;
 	   Throw(e);
     }
-    return function->super.vtable.call((LoxCallable*)function,(Interpreter*)visitor,arguments);
+    res = function->super.vtable.call((LoxCallable*)function,(Interpreter*)visitor,getReference(arguments));
+    delete(function);
+    delete(arguments);
+    function = NULL;
+    return res;
 }
 
 
 Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
-/*    Object* r = NULL;*/
-	while(isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition))->value.number){
+    Object *temp;
+   Object* r = NULL;
+    temp = evaluate(&visitor->expr,((While*)stmt)->condition);
+    r = isTruthy(temp);
+	while(r->value.number){
+		delete(temp);
+		delete(r);
 		execute((Interpreter*)visitor,((While*)stmt)->body);
+	    temp = evaluate(&visitor->expr,((While*)stmt)->condition);
+	    r = isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition));
 	}
 
 /*	r->type = KNULL;*/
@@ -280,14 +300,15 @@ Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	env = new(OBJECTIVE,sizeof(Environment));
 	init_EnvironmentwithEnclosing(env,intrprtr->environment);
 	executeBlock(intrprtr ,temp->statements,env);
-/*    deleteEnvironment(env);*/
+   deleteEnvironment(env);
     env = NULL;
 /*	r->type = KNULL;*/
 	return NULL;
 }
 Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
     Object* r = NULL;
-    r = copy(((Literal*)expr)->value);
+/*    r = copy(((Literal*)expr)->value);*/
+    r = getReference(((Literal*)expr)->value);
 /*    r->type = ((Literal*)expr)->value->type;
 	switch(r->type){
 	case TRUE:
@@ -307,7 +328,7 @@ Object* visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	return evaluate(visitor,((Grouping*)expr)->expression);
 }
 Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
-    Object* right,*result;
+    Object* right,*result,*truth;
 	right = evaluate(visitor,((Unary*)expr)->right);
 	result = NULL;
 	result = new(OBJECTIVE,sizeof(Object));
@@ -315,7 +336,9 @@ Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	switch(((Unary*)expr)->operator->super.type){
 		case BANG:
 		   result->type = BOOLEAN;
-		   result->value.number = ! (double)isTruthy(right)->value.number;
+		   truth = isTruthy(right);
+		   result->value.number = ! (double)truth->value.number;
+		   delete(truth);
 		   return result;
 		case MINUS:
 		   checkNumberOperand(((Unary*)expr)->operator,right);
@@ -334,7 +357,7 @@ Object* isTruthy(Object* obj){
     Object* r;
     r = NULL;
     r = new(OBJECTIVE,sizeof(Object));
-    init_Object(r,"",KNULL);
+    init_Object(r,NULL,KNULL);
     if(obj->type == BOOLEAN || obj->type == FALSE || obj->type == TRUE || obj->type == NUMBER){
 	   r->type = BOOLEAN;
 	   r->value.number = (double)obj->value.number;
@@ -392,7 +415,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 						  strncpy(new_str,left->value.string,strlen(left->value.string));
 						  strncat(new_str,num_str,strlen(num_str));
 						  result->value.string = new_str;
-/*						  delete(num_str);*/
+						  delete(num_str);
 						  num_str = NULL;
 						  break;
 				    }
@@ -404,7 +427,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				    strncpy(new_str,num_str,strlen(num_str));
 				    strncat(new_str,right->value.string,strlen(right->value.string));
 				    result->value.string = new_str;
-/*				    delete(num_str);*/
+				    delete(num_str);
 				    num_str = NULL;
 				    break;
 			 }
@@ -414,7 +437,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  e.token = ((Binary*)expr)->operator;
 		  e.message = "Operands must be two numbers, two strings, or one of each";
 		  e.sub = NULL;
-/*		  delete_Object(&result);*/
+		  delete(result);
 		  result = NULL;
 		  Throw(e);
 		  break;
@@ -425,7 +448,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 			 e.token = ((Binary*)expr)->operator;
 			 e.message = "Cannot divide by Zero";
 			  e.sub = NULL;
-/*			  delete_Object(&result);*/
+			  delete(result);
 			  result = NULL;
 			 Throw(e);
 			 return result;
@@ -538,23 +561,43 @@ const static char* nil = "nil";
 
 char* stringify(Object* obj){
     char* text;
+    char* temp;
     text = NULL;
-    if(obj == NULL)
-	   return (char*)nil;
-    if( obj->type == KNULL)
-	   return (char*)nil;
-    if(obj->type == FALSE)
-	   return "false";
-    if(obj->type == TRUE)
-	   return "true";
+    if(obj == NULL || obj->type == KNULL){
+	   temp = new(RAW,sizeof(char)*(strlen(nil)+1));
+	   memset(temp,0,strlen(nil)+1);
+	   strncpy(temp,nil,strlen(nil));
+	   return (char*)temp;
+    }
+    if(obj->type == FALSE){
+	   temp = new(RAW,sizeof(char)*(strlen("false")+1));
+	   memset(temp,0,strlen("false")+1);
+	   strncpy(temp,"false",strlen("false"));
+	   return (char*)temp;
+    }
+    if(obj->type == TRUE){
+	   temp = new(RAW,sizeof(char)*(strlen("true")+1));
+	   memset(temp,0,strlen("true")+1);
+	   strncpy(temp,"true",strlen("true"));
+	   return (char*)temp;
+    }
     if(obj->type == BOOLEAN){
 	   switch((int)obj->value.number){
 		  case 1:
-			 return "true";
+			 temp = new(RAW,sizeof(char)*(strlen("true")+1));
+				memset(temp,0,strlen("true")+1);
+				strncpy(temp,"true",strlen("true"));
+				return (char*)temp;
 		  case 0:
-			 return "false";
+			 temp = new(RAW,sizeof(char)*(strlen("false")+1));
+			 memset(temp,0,strlen("false")+1);
+			 strncpy(temp,"false",strlen("false"));
+			 return (char*)temp;
 		  default:
-			 return "boolean error";
+			 temp = new(RAW,sizeof(char)*(strlen("boolean error")+1));
+			 memset(temp,0,strlen("boolean error")+1);
+			 strncpy(temp,"boolean error",strlen("boolean error"));
+			 return (char*)temp;
 	   }
     }
     if(obj->type == FUN){
@@ -588,19 +631,24 @@ char* stringify(Object* obj){
     }
 /*    asprintf(&text,"%lf",(double)obj.value.number);*/
 
-    return obj->value.string;
+    return copy(obj->value.string);
 }
 Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
-	Object* left;
+	Object* left, *truth;
 	Logical* log;
 	log = (Logical*) expr;
 	left = evaluate(visitor,log->left);
 	if(log->operator->super.type == OR){
-		if(isTruthy(left)->value.number)
+	    truth = isTruthy(left);
+	    if(truth->value.number){
+		   delete(truth);
 		    return left;
+	    }
 	       }
 	else{
-	    if(!isTruthy(left)->value.number){
+	    truth = isTruthy(left);
+	    if(!truth->value.number){
+		   delete(truth);
 			return left;
 		}
 	}
@@ -608,17 +656,22 @@ Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
 }
 
 Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
-    Object* a;
+    Object* a,*truth;
     If* stmt;
 /*    r = NULL;
     r = new(OBJECTIVE,sizeof(Object));
     init_Object(r,"",KNULL);*/
     stmt = (If*) expr;
     a = evaluate(&visitor->expr,stmt->condition);
-    if(isTruthy(a)->value.number ){
+    truth = isTruthy(a);
+    if(truth->value.number ){
+	   delete(a);
+	   delete(truth);
 		execute((Interpreter*)visitor,stmt->thenBranch);
 	}
 	else if(stmt->elseBranch != NULL){
+		delete(a);
+		delete(truth);
 		execute((Interpreter*)visitor,stmt->elseBranch);
 	}
 	return NLLOBJ;
@@ -636,11 +689,9 @@ Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
     result = NULL;
     result = evaluate(&visitor->expr,((Print*)stmt)->expression);
     val = stringify(result);
-	printf("%s\n",val);
-    if(result && result->type == NUMBER){
-		  delete(val);
-		  val = NULL;
-    }
+    printf("%s\n",val);
+    delete(val);
+    val = NULL;
     if(result)
 	   return getReference(result);
     return NLLOBJ;

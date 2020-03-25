@@ -5,15 +5,12 @@
 #define INIT_SIZE 5
 
 void init_StmtArray(StmtArray* array){
-    mem_footer* footer;
         array->Stmts = NULL;
         array->size = 0;
         array->used = 0;
-	   footer = get_footer(array);
-	   footer->functions.owner_references=1;
-	   footer->functions.allocated = 0;
-	   footer->functions.copy = &copyStmtArray;
-	   footer->functions.delete = &delete_StmtArray;
+	   setAllocated(array,0);
+	   setCopyConstructor(array,&copyStmtArray);
+	   setDestructor(array,&delete_StmtArray);
         array->addElementToArray = &addElementToStmtArray;
         array->getElementInArrayAt =&getStmtinArrayAt;
         array->delete = &delete_StmtArray;
@@ -44,9 +41,7 @@ void delete_StmtArray(void* inArray){
     array = (StmtArray*) inArray;
     if(array){
         int i;
-	   mem_footer* footer;
-	   footer = get_footer(array);
-        if(footer->functions.owner_references<=1){
+        if(getReferenceCount(array)<=1){
             for(i =0; i <array->used;i++){
                 delete(array->Stmts[i]);
             }
@@ -64,15 +59,13 @@ Stmt* getStmtinArrayAt(StmtArray* array,size_t index){
 void*  copyStmtArray(void * inArr){
     StmtArray* newarr,*arr;
     int i;
-    mem_footer* footer;
     arr = (StmtArray*)inArr;
     newarr = new(OBJECTIVE,sizeof(StmtArray));
     init_StmtArray(newarr);
     for(i=0;i<arr->used;i++){
         newarr->addElementToArray(newarr, copy(getStmtinArrayAt(arr,i)));
     }
-    footer = get_footer(newarr);
-    footer->functions.allocated = 1;
+    setAllocated(newarr,1);
     return newarr;
 }
 

@@ -88,13 +88,10 @@ void init_Environment(Environment* env){
 }
 void deleteEnvironment(Environment* env){
     if(getReferenceCount(env) <= 1){
-	   mem_footer* footer;
-	   footer = get_footer(env);
 	   delete_hashmap((struct _HASH*)env->hashMap);
 	   env->hashMap = NULL;
 	   env->Enclosing = NULL;
-	   footer = get_footer(env);
-	   if(footer->functions.allocated){
+	   if(getAllocated(env)){
 		  delete(env);
 	   }
     }
@@ -105,7 +102,7 @@ void deleteEnvironment(Environment* env){
 
 void init_EnvironmentwithEnclosing(Environment* env,Environment* enclosing){
     init_Environment(env);
-    env->Enclosing = enclosing;
+    env->Enclosing = getReference(enclosing);
 }
 Environment* create_Environment(void){
 	return NULL;

@@ -5,15 +5,12 @@
 #define INIT_SIZE 5
 
 void init_ObjectArray(ObjectArray* array){
-	   mem_footer* footer;
         array->Objects = NULL;
         array->size = 0;
         array->used = 0;
-	   footer = get_footer(array);
-	   footer->functions.owner_references=1;
-	   footer->functions.allocated = 0;
-	   footer->functions.copy = &copyObjectArray;
-	   footer->functions.delete = &delete_ObjectArray;
+	   setAllocated(array,0);
+	   setCopyConstructor(array,&copyObjectArray);
+	   setDestructor(array,&delete_ObjectArray);
         array->addElementToArray = &addElementToObjectArray;
         array->delete = &delete_ObjectArray;
         array->getElementInArrayAt =&getObjectinArrayAt;
@@ -61,7 +58,6 @@ Object* getObjectinArrayAt(ObjectArray* array,size_t index){
 }
 void*  copyObjectArray(void * inArr){
     ObjectArray* newarr,*arr;
-    mem_footer* footer;
     int i;
     arr = (ObjectArray*)inArr;
     newarr = new(OBJECTIVE,sizeof(ObjectArray));
@@ -69,8 +65,7 @@ void*  copyObjectArray(void * inArr){
     for(i=0;i<arr->used;i++){
         newarr->addElementToArray(newarr, copy(getObjectinArrayAt(arr,i)));
     }
-    footer = get_footer(newarr);
-    footer->functions.allocated = 1;
+    setAllocated(newarr,1);
     return newarr;
 }
 

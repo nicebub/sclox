@@ -15,10 +15,16 @@
 mem_funcs memfuncs = {
 		&delete_Object,
 		NULL,
+	   NULL, /* init */
 		&copy_Object,
-		NULL,
-	   NULL,
-	   NULL
+		&resize,
+    &getAllocated,
+    &setAllocated,
+    &setCopyConstructor,
+    &setDestructor,
+    &setConstructor,
+    &get_header,
+    &get_footer
 };
 
 Object_vtable ovtable = {
@@ -30,16 +36,13 @@ Object_vtable ovtable = {
 };
 void* new_Object(void* value, TokenType type){
 	Object* obj;
-    mem_footer* footer;
 	obj = new(OBJECTIVE,sizeof(Object));
 	init_Object(obj,value,type);
-    footer = get_footer(obj);
-	footer->functions.allocated = 1;
+    setAllocated(obj,1);
 	return obj;
 }
 void init_Object(Object* object, void* value, TokenType type){
 /*    char c;*/
-    mem_footer* footer;
 /*	char c;*/
 	if(!object) return;
 	object->id = getNextObjectId();
@@ -50,6 +53,8 @@ void init_Object(Object* object, void* value, TokenType type){
 	if(value){
 
 		switch(type){
+		    case KNULL:
+			   break;
 			case NUMBER:
 				object->value.number = *(double*)value;
 				break;
@@ -73,19 +78,17 @@ void init_Object(Object* object, void* value, TokenType type){
     memset((char*)&object->instanceOf,0,30);
     strncpy((char*)&object->instanceOf,"Object",strlen("Object"));
     object->vtable = ovtable;
-    footer = get_footer(object);
-    footer->functions.copy = &copy_Object;
-    footer->functions.delete = &delete_Object;
-    footer->functions.owner_references = 1;
+    setCopyConstructor(object,&copy_Object);
+    setDestructor(object,&delete_Object);
 }
 
 void delete_Object(void* inObject){
 /*	char c;*/
-	Object** object;
-	object = (Object**)inObject;
-	if(object && *object){
-		if(getReferenceCount(*object) <= 1){
-				switch((*object)->type){
+	Object* object;
+	object = (Object*)inObject;
+	if(object){
+		if(getReferenceCount(object) <= 1){
+				switch((object)->type){
 				case NUMBER:
 					break;
 				case FUN:
@@ -94,18 +97,18 @@ void delete_Object(void* inObject){
 					break;
 				case STRING:
 				default:
-					   if((*object)->value.string){
+					   if((object)->value.string){
 /*						delete((*object)->value.string)*/;
-						(*object)->value.string = NULL;
+						(object)->value.string = NULL;
 					}
 					break;
 				}
-			free(*object);
-			*object = NULL;
+/*			free(object);*/
+			object = NULL;
 			object = NULL;
 		}
 		else{
-			releaseReference(*object);
+			releaseReference(object);
 		}
 	}
 }
@@ -116,12 +119,9 @@ short int getNextObjectId(void){
 
 void* copy_Object(void* ninobj){
 /*	char c;*/
-    mem_footer* footer,*ofooter;
 	Object* newobj,*inobj;
 	inobj = (Object*)ninobj;
 	newobj = new(OBJECTIVE,sizeof(Object));
-    footer = get_footer(newobj);
-	footer->functions.owner_references = 1;
     memset(&newobj->instanceOf,0,30);
     strncpy((char*)&newobj->instanceOf,inobj->instanceOf,strlen(inobj->instanceOf));
 	newobj->id = inobj->id;
@@ -129,11 +129,7 @@ void* copy_Object(void* ninobj){
 	   printf("waiting on 17\n");
 	   scanf("%c",&c);
     }*/
-	newobj->isBool = inobj->isBool;
-	newobj->type = inobj->type;
-    ofooter = get_footer(inobj);
-	footer->functions.delete = ofooter->functions.delete;
-    footer->functions.copy = ofooter->functions.copy;
+    init_Object(newobj,NULL,inobj->type);
 	switch(inobj->type){
 	case NUMBER:
 		newobj->value.number = inobj->value.number;
@@ -153,5 +149,6 @@ void* copy_Object(void* ninobj){
 /*		newobj->value.string = strdup(inobj->value.string);*/
 		break;
 	}
+    setAllocated(newobj,1);
 	return newobj;
 }

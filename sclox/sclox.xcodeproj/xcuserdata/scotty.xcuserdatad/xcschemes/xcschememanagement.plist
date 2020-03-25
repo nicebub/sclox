@@ -7,7 +7,7 @@
 		<key> fibonacci mem.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>11</integer>
+			<integer>12</integer>
 		</dict>
 		<key> sclox debug2.xcscheme</key>
 		<dict>
@@ -28,6 +28,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>10</integer>
+		</dict>
+		<key>makeCounter.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
 		</dict>
 		<key>sclox debug testfile3 mem profile.xcscheme</key>
 		<dict>

@@ -16,22 +16,19 @@ LoxFunction_vtable lfunc_vtable = {
 };
 
 void init_LoxFunction(LoxFunction* func, Function* declaration) {
-    mem_footer* footer;
 	init_LoxCallable(&func->super);
     func->super.vtable = lfunc_vtable;
     memset(&func->super.super.instanceOf,0,30);
     strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);
 	func->declaration = declaration;
     func->closure = NULL;
-    footer = get_footer(func);
-    footer->functions.allocated = 1;
-    footer->functions.owner_references = 1;
-    footer->functions.copy = &copy_LoxFunction;
-    footer->functions.delete = &delete_LoxFunction;
+    setAllocated(func,1);
+    setCopyConstructor(func,&copy_LoxFunction);
+    setDestructor(func,&delete_LoxFunction);
 }
 void init_LoxFunctionWithClosure(LoxFunction* func, Function* declaration, Environment* closure){
     init_LoxFunction(func,declaration);
-    func->closure = closure;
+    func->closure = getReference(closure);
 }
 
 Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* arguments){
@@ -72,14 +69,18 @@ int LoxFunctionarity(LoxCallable* loxcall){
 	return ((LoxFunction*)loxcall)->declaration->params->used;
 }
 char* toStringLoxFunction(LoxCallable* inloxcall){
-	char * new_str;
+	char * new_str,*temp;
 	new_str=NULL;
+    temp = NULL;
     new_str = new(RAW,sizeof(char)*(strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme)+1));
-	asprintf(&new_str,"<fn %s>",((LoxFunction*)inloxcall)->declaration->name->lexeme);
+    memset(new_str,0,1+strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
+	asprintf(&temp,"<fn %s>",((LoxFunction*)inloxcall)->declaration->name->lexeme);
+    strncpy(new_str,temp,strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
+    free(temp);
+    temp = NULL;
 	return new_str;
 }
 void* copy_LoxFunction(void* inFunc){
-    mem_footer* footer;
     LoxFunction* func, *infunc;
     infunc = (LoxFunction*)inFunc;
     func = new(OBJECTIVE,sizeof(LoxFunction));
@@ -87,13 +88,8 @@ void* copy_LoxFunction(void* inFunc){
     func->super.vtable = lfunc_vtable;
     memset(&func->super.super.instanceOf,0,30);
     strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);
-	func->declaration = copy(infunc->declaration);
-    func->closure = infunc->closure;
-    footer = get_footer(func);
-    footer->functions.allocated = 1;
-    footer->functions.owner_references = 1;
-    footer->functions.copy = &copy_LoxFunction;
-    footer->functions.delete = &delete_LoxFunction;
+    init_LoxFunctionWithClosure(func,copy(infunc->declaration),infunc->closure);
+    setAllocated(func,1);
     return func;
 
 }

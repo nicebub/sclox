@@ -70,7 +70,7 @@ void add_to_hashmap(struct _HASH* h, void * key,void * value){
 		   return;
 	   }
 	   hm = (HashMap*)h;
-	   hn = (HashMapNode*) create_hashnodemap(key,value,h->vtable.func );
+	   hn = (HashMapNode*) create_hashnodemap(getReference(key),getReference(value),h->vtable.func );
 	   res = compute_hash_valuemap(h,key);
 	   if(hm->super.Buckets[res] == NULL){
 		  hm->super.Buckets[res] = (struct _Hashnode*) hn;
@@ -239,7 +239,6 @@ char* toStringMap(struct _HASH* h){
 void delete_hashmap(struct _HASH* h){
     if(h){
 	   if(getReferenceCount(h) <= 1){
-		  mem_footer* footer;
 		  int t;
 		  for(t=0;t<h->size;t++){
 				if(h->Buckets[t]){
@@ -255,8 +254,7 @@ void delete_hashmap(struct _HASH* h){
 				}
 				h->Buckets[t] = NULL;
 		  }
-		  footer = get_footer(h);
-		  if(footer->functions.allocated){
+		  if(getAllocated(h)){
 			 delete(h);
 		  }
 	   }
@@ -279,7 +277,6 @@ void print_hashmap(struct _HASH * h){
     
 }
 void delete_hashnodemap(struct _HASH* h,struct _Hashnode* hn){
-    mem_footer* footer;
     if(hn){
 	   if(getReferenceCount(hn) <= 1 ){
 		  HashMapNode* hnm = (HashMapNode*) hn;
@@ -288,8 +285,7 @@ void delete_hashnodemap(struct _HASH* h,struct _Hashnode* hn){
 		  delete(hnm->super.value);
 		  hnm->super.value = NULL;
 		  hnm->super.next = NULL;
-		  footer = get_footer(hn);
-		  if(footer->functions.allocated){
+		  if(getAllocated(hn)){
 				delete(hnm);
 		  }
 		  hnm = NULL;
@@ -299,7 +295,6 @@ void delete_hashnodemap(struct _HASH* h,struct _Hashnode* hn){
 }
 
 void delete_hashnodelmap(struct _Hashnode* hn){
-    mem_footer* footer;
 	   if(hn){
 		  if(getReferenceCount(hn) <=1){
 			HashMapNode* hnm = (HashMapNode*) hn;
@@ -311,11 +306,9 @@ void delete_hashnodelmap(struct _Hashnode* hn){
 			}
 			delete_hashnodelmap(hn->next);
 			hn->next = NULL;
-			footer = get_footer(hn);
-			if(footer->functions.allocated){
+			if(getAllocated(hn)){
 				delete(hn);
 			}
-			delete(hnm);
 			hnm = NULL;
 			hn = NULL;
 		  }

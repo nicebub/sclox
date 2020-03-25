@@ -2,18 +2,16 @@
 #include <stdio.h>
 #include "Token.h"
 #include "ExprArray.h"
+#include "memory.h"
 #define INIT_SIZE 5
 
 void init_ExprArray(ExprArray* array){
-	   mem_footer* footer;
         array->Exprs = NULL;
         array->size = 0;
         array->used = 0;
-	   footer = get_footer(array);
-	   footer->functions.owner_references=1;
-	   footer->functions.allocated = 0;
-	   footer->functions.copy = &copyExprArray;
-	   footer->functions.delete = &delete_ExprArray;
+	   setAllocated(array,0);
+	   setCopyConstructor(array,&copyExprArray);
+	   setDestructor(array,&delete_ExprArray);
         array->addElementToArray = &addElementToExprArray;
         array->getElementInArrayAt =&getExprinArrayAt;
         array->delete = &delete_ExprArray;

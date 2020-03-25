@@ -70,7 +70,6 @@ Stmt* function(Parser* parser, char* kind){
 	TokenArray* parameters;
 	StmtArray* body;
 	Token* name;
-    mem_footer* footer;
 	char* str_val;
 	TokenType comma[] = { COMMA, KNULL };
 	str_val = NULL;
@@ -103,8 +102,7 @@ Stmt* function(Parser* parser, char* kind){
 	body = (block(parser));
 	func = new(OBJECTIVE,sizeof(Function));
 	new_Function(func,name,parameters,body);
-    footer = get_footer(func);
-	footer->functions.allocated = 1;
+    setAllocated(func,1);
 	return (Stmt*)func;
 }
 
