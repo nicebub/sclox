@@ -14,7 +14,7 @@
 #include "Expr.h"
 #include "Token.h"
 #include "TokenType.h"
-#include "AstPrinter.h"
+/*#include "AstPrinter.h"*/
 #include "Interpreter.h"
 #include "Stmt.h"
 
@@ -36,29 +36,25 @@ void init_lox(Lox* lox){
     lox->runtimeError = &runtimeError;
 }
  void run(Lox* lox,char * source){
-	    Scanner scanner;
-	    Parser parser;
-	    AstPrinter printer;
-	    StmtArray* statements;
 
-	    init_printer(&printer);
-	    init_scanner(&scanner, source,lox);
-	    scanTokens(&scanner);
-	    init_parser(&parser,&scanner.tokens,lox);
+/*	    init_printer(&printer);*/
+	    init_Scanner(&lox->scanner, source,lox);
+	    scanTokens(&lox->scanner);
+	    init_Parser(&lox->parser,lox->scanner.tokens,lox);
 
-	    statements = (StmtArray*)parse(&parser);
+	    lox->statements = (StmtArray*)parse(&lox->parser);
 
 	    if(lox->hadError)
 	    	return;
-	   lox->interpreter.interpret(&lox->interpreter,statements);
+	   lox->interpreter.interpret(&lox->interpreter,lox->statements);
 	    /* TODO need to delete expression potentially after printing */
 /*	    delete_StmtArray(statements);
 	    statements = NULL;*/
-	    delete_scanner(&scanner);
-	    delete_parser(&parser);
+/*	    delete_scanner(&lox->scanner);*/
+/*	    delete_parser(&lox->parser);*/
 /*	    init_scanner(&scanner, source,lox);*/
 /*	    delete_TokenArray(&scanner.tokens);*/
-	    init_TokenArray(&scanner.tokens);
+	    init_TokenArray(lox->scanner.tokens);
 }
 
  void runFile(Lox* lox,const char * file){
@@ -126,7 +122,7 @@ void init_lox(Lox* lox){
 	report(lox,line,"",message);
 }
 static void lparse_error(Lox* lox,Token* token, const char* message){
-	if(token->type == EEOF){
+	if(token->super.type == EEOF){
 		report(lox, token->line, "at end", message);
 	}
 	else{

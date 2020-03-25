@@ -17,6 +17,7 @@ struct _Environment {
 	void (*defineEnv)(Environment* env,char* name, Object* value);
 	void* (*get)(Environment* env,Token* name);
 	void (*assign)(Environment* env, Token* name, Object* value);
+    void* (*copy)(void* environment);
 };
 
 void init_Environment(Environment* env);
@@ -26,4 +27,5 @@ void defineEnv(Environment* env,char* name, Object *value);
 void* get(Environment* env,Token* name);
 void assign(Environment* env, Token* name, Object* value);
 void deleteEnvironment(Environment* env);
+void* copy_Environment(void* in);
 #endif /* ENVIRONMENT_H_ */

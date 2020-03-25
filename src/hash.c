@@ -1,5 +1,5 @@
 #include "hash.h"
-
+#include "memory.h"
 
 void delete_hashnodel(struct _Hashnode* hn);
 
@@ -18,10 +18,11 @@ struct _hr search_cache(struct _hash * s, void * key, int kt);
 static int uniques=0;
 struct _Hashnode *create_hashnode(void * key, void* value,char*(*func)(void* value)){
     struct _Hashnode *h;
-    h = malloc(sizeof(*h));
+    h = new(OBJECTIVE,sizeof(*h));
     h->key = key;
     h->value = value;
     h->next = NULL;
+    h->vtable.copy = &copy_hashnode;
     h->vtable.delete_hashnodel = &delete_hashnodel;
     h->vtable.get_hnode_key = &get_hnode_key;
     h->vtable.get_hnode_key_type = &get_hnode_key_type;
@@ -41,9 +42,17 @@ void add_to_hash(struct _HASH *h, void * key, void* value){
 }
 struct _HASH *copy_hash(struct _HASH * h){
 	if(h)
-	    return h->vtable.copy_hash(h);
+	    return h->vtable.copy(h);
     return NULL;
 }
+void* copy_hashnode(void* in_node){
+    struct _Hashnode *temp;
+    temp = in_node;
+    if(in_node)
+	   return temp->vtable.copy(in_node);
+    return NULL;
+}
+
 void * get_value_for_key(struct _HASH* h, void* key){
 	if(h)
 	    return h->vtable.get_value_for_key(h,key);
@@ -60,7 +69,7 @@ void print_hash(struct _HASH * h){
 }
 void delete_hash(struct _HASH* h){
 	if(h)
-	    h->vtable.delete_hash(h);
+	    h->vtable.delete(h);
 }
 struct _Hashnode *remove_from_hash(struct _HASH* h,void* key){
 	if(h)
@@ -69,7 +78,7 @@ struct _Hashnode *remove_from_hash(struct _HASH* h,void* key){
 }
 void delete_hashnode(struct _HASH* h,struct _Hashnode* n){
 	if(h)
-	    h->vtable.delete_hashnode(h,n);
+	    h->vtable.delete_node(h,n);
 }
 char * toString(struct _HASH* h){
 	if(h)

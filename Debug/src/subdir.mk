@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/AstPrinter.c \
+../src/CExceptionConfig.c \
 ../src/Environment.c \
 ../src/Expr.c \
 ../src/ExprArray.c \
@@ -23,10 +24,13 @@ C_SRCS += \
 ../src/TokenArray.c \
 ../src/additions.c \
 ../src/hash.c \
+../src/memory.c \
+../src/memoryArray.c \
 ../src/sclox.c 
 
 OBJS += \
 ./src/AstPrinter.o \
+./src/CExceptionConfig.o \
 ./src/Environment.o \
 ./src/Expr.o \
 ./src/ExprArray.o \
@@ -45,10 +49,13 @@ OBJS += \
 ./src/TokenArray.o \
 ./src/additions.o \
 ./src/hash.o \
+./src/memory.o \
+./src/memoryArray.o \
 ./src/sclox.o 
 
 C_DEPS += \
 ./src/AstPrinter.d \
+./src/CExceptionConfig.d \
 ./src/Environment.d \
 ./src/Expr.d \
 ./src/ExprArray.d \
@@ -67,6 +74,8 @@ C_DEPS += \
 ./src/TokenArray.d \
 ./src/additions.d \
 ./src/hash.d \
+./src/memory.d \
+./src/memoryArray.d \
 ./src/sclox.d 
 
 

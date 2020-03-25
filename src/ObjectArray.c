@@ -5,29 +5,31 @@
 #define INIT_SIZE 5
 
 void init_ObjectArray(ObjectArray* array){
+	   mem_footer* footer;
         array->Objects = NULL;
         array->size = 0;
         array->used = 0;
-        array->owner_references =1;
+	   footer = get_footer(array);
+	   footer->functions.owner_references=1;
+	   footer->functions.allocated = 0;
+	   footer->functions.copy = &copyObjectArray;
+	   footer->functions.delete = &delete_ObjectArray;
         array->addElementToArray = &addElementToObjectArray;
-        array->deleteArray = &delete_ObjectArray;
+        array->delete = &delete_ObjectArray;
         array->getElementInArrayAt =&getObjectinArrayAt;
-        array->deleteArray = &delete_ObjectArray;
-        array->getArrayReference = &getObjectArrayReference;
-        array->releaseArrayReference = &releaseObjectArrayReference;
-        array->copyArray = &copyObjectArray;
+        array->copy = &copyObjectArray;
     }
             
 void addElementToObjectArray(ObjectArray* array,Object* element){
             int i;
             int init_start=0, init_finish=0;
             if(!array->Objects){
-                array->Objects = malloc(sizeof(Object*) * INIT_SIZE);
+                array->Objects = new(OBJECTIVE,sizeof(Object*) * INIT_SIZE);
                 init_finish = INIT_SIZE;
                 array->size = INIT_SIZE;
             }
             else if(array->used == array->size){
-                array->Objects = realloc(array->Objects, sizeof(Object*)*(array->size+INIT_SIZE));
+                array->Objects = resize(OBJECTIVE,array->Objects, sizeof(Object*)*(array->size+INIT_SIZE));
                 init_start = array->used;
                 init_finish = array->size = array->size+INIT_SIZE;
             }
@@ -37,16 +39,18 @@ void addElementToObjectArray(ObjectArray* array,Object* element){
             initializeObjectElement(&array->Objects[array->used],element);
             array->used++;
     }
-void delete_ObjectArray(ObjectArray* array){
+void delete_ObjectArray(void* inArray){
+    ObjectArray* array;
+    array = (ObjectArray*) inArray;
     if(array){
         int i;
-        if(array->owner_references<=1){
+        if(getReferenceCount(array)<=1){
             for(i =0; i <array->used;i++){
-                delete_Object(&array->Objects[i]);
+                delete(&array->Objects[i]);
             }
         }
         else{
-            releaseObjectArrayReference(array);
+            releaseReference(array);
         }
     }
 }
@@ -55,23 +59,19 @@ Object* getObjectinArrayAt(ObjectArray* array,size_t index){
         return array->Objects[index];
     return NULL;
 }
-ObjectArray*  copyObjectArray(ObjectArray * arr){
-    ObjectArray* newarr;
+void*  copyObjectArray(void * inArr){
+    ObjectArray* newarr,*arr;
+    mem_footer* footer;
     int i;
-    newarr = malloc(sizeof(ObjectArray));
+    arr = (ObjectArray*)inArr;
+    newarr = new(OBJECTIVE,sizeof(ObjectArray));
     init_ObjectArray(newarr);
     for(i=0;i<arr->used;i++){
-        newarr->addElementToArray(newarr, getObjectinArrayAt(arr,i));
+        newarr->addElementToArray(newarr, copy(getObjectinArrayAt(arr,i)));
     }
+    footer = get_footer(newarr);
+    footer->functions.allocated = 1;
     return newarr;
-}
-ObjectArray* getObjectArrayReference(ObjectArray* arr){
-    arr->owner_references++;
-    return arr;
-}
-ObjectArray* releaseObjectArrayReference(ObjectArray* arr){
-    arr->owner_references--;
-    return NULL;
 }
 
 

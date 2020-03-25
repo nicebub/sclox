@@ -5,29 +5,31 @@
 #define INIT_SIZE 5
 
 void init_ExprArray(ExprArray* array){
+	   mem_footer* footer;
         array->Exprs = NULL;
         array->size = 0;
         array->used = 0;
-        array->owner_references =1;
+	   footer = get_footer(array);
+	   footer->functions.owner_references=1;
+	   footer->functions.allocated = 0;
+	   footer->functions.copy = &copyExprArray;
+	   footer->functions.delete = &delete_ExprArray;
         array->addElementToArray = &addElementToExprArray;
-        array->deleteArray = &delete_ExprArray;
         array->getElementInArrayAt =&getExprinArrayAt;
-        array->deleteArray = &delete_ExprArray;
-        array->getArrayReference = &getExprArrayReference;
-        array->releaseArrayReference = &releaseExprArrayReference;
-        array->copyArray = &copyExprArray;
+        array->delete = &delete_ExprArray;
+        array->copy = &copyExprArray;
     }
             
 void addElementToExprArray(ExprArray* array,Expr* element){
             int i;
             int init_start=0, init_finish=0;
             if(!array->Exprs){
-                array->Exprs = malloc(sizeof(Expr*) * INIT_SIZE);
+                array->Exprs = new(OBJECTIVE,sizeof(Expr*) * INIT_SIZE);
                 init_finish = INIT_SIZE;
                 array->size = INIT_SIZE;
             }
             else if(array->used == array->size){
-                array->Exprs = realloc(array->Exprs, sizeof(Expr*)*(array->size+INIT_SIZE));
+                array->Exprs = resize(OBJECTIVE,array->Exprs,sizeof(Expr*)*(array->size+INIT_SIZE));
                 init_start = array->used;
                 init_finish = array->size = array->size+INIT_SIZE;
             }
@@ -37,16 +39,18 @@ void addElementToExprArray(ExprArray* array,Expr* element){
             initializeExprElement(&array->Exprs[array->used],element);
             array->used++;
     }
-void delete_ExprArray(ExprArray* array){
+void delete_ExprArray(void* inArray){
+    ExprArray* array;
+    array = (ExprArray*) inArray;
     if(array){
         int i;
-        if(array->owner_references<=1){
+        if(getReferenceCount(array)<=1){
             for(i =0; i <array->used;i++){
-                delete_Expr(array->Exprs[i]);
+/*                delete(array->Exprs[i]);*/
             }
         }
         else{
-            releaseExprArrayReference(array);
+            releaseReference(array);
         }
     }
 }
@@ -55,23 +59,16 @@ Expr* getExprinArrayAt(ExprArray* array,size_t index){
         return array->Exprs[index];
     return NULL;
 }
-ExprArray*  copyExprArray(ExprArray * arr){
-    ExprArray* newarr;
+void*  copyExprArray(void * inArr){
+    ExprArray* newarr,*arr;
     int i;
-    newarr = malloc(sizeof(ExprArray));
+    arr = (ExprArray*) inArr;
+    newarr = new(OBJECTIVE,sizeof(ExprArray));
     init_ExprArray(newarr);
     for(i=0;i<arr->used;i++){
-        newarr->addElementToArray(newarr, getExprinArrayAt(arr,i));
+        newarr->addElementToArray(newarr, copy(getExprinArrayAt(arr,i)));
     }
     return newarr;
-}
-ExprArray* getExprArrayReference(ExprArray* arr){
-    arr->owner_references++;
-    return arr;
-}
-ExprArray* releaseExprArrayReference(ExprArray* arr){
-    arr->owner_references--;
-    return NULL;
 }
 
 

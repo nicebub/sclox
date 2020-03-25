@@ -13,12 +13,17 @@
 #include "TokenType.h"
 #include "Token.h"
 #include "Expr.h"
-#include "Lox.h"
+/*#include "Lox.h"*/
 #include "Stmt.h"
 #include "additions.h"
 #include "TokenArray.h"
 #include "StmtArray.h"
 #include "ExprArray.h"
+#ifndef _LOX
+#define _LOX
+typedef struct _Lox Lox;
+#endif
+
 typedef struct _Parser Parser;
 struct _Parser {
 	TokenArray* tokens;
@@ -32,9 +37,10 @@ struct _Parser {
 };
 
 
-void init_parser(Parser* parser, TokenArray* tokens,Lox* lox);
+void init_Parser(Parser* parser, TokenArray* tokens,Lox* lox);
 
 volatile StmtArray* parse(Parser* parser);
+Stmt* returnStatement(Parser* parser);
 Stmt* function(Parser* parser, char* kind);
 Expr* call(Parser* parser);
 Expr* finishCall(Parser* parser, Expr* expr);

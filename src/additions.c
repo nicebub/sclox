@@ -6,7 +6,7 @@ void initializeStmtElement(Stmt** statement, void* values){
 	   statement = NULL;
 	   return;
     }
-    *statement = (Stmt*) values;
+    *statement = (Stmt*)getReference((Stmt*) values);
 }
 
 void initializeExprElement(Expr** exprs, void * values){
@@ -14,13 +14,16 @@ void initializeExprElement(Expr** exprs, void * values){
 		exprs = NULL;
 		return;
 	}
-	*exprs = (Expr*) values;
+	*exprs = (Expr*)getReference((Expr*) values);
 }
 void initializeObjectElement(Object** results, void * values){
 	if(!values){
 		results = NULL;
 		return;
 	}
-	*results = (Object*)values;
+	*results = (Object*)getReference((Object*) values);
+
+}
+void initializememoryElement(Object** objs, void * values){
 
 }

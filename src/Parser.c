@@ -18,25 +18,26 @@
 #include "TokenArray.h"
 #include "StmtArray.h"
 #include "ExprArray.h"
-void init_parser(Parser* parser, TokenArray* tokens, Lox* lox){
+#include "Lox.h"
+void init_Parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
 	parser->isAtEnd = &parser_isAtEnd;
 	parser->peek = &parser_peek;
 	parser->advance = &parser_advance;
 	parser->error = &parse_error;
-	parser->tokens = getTokenArrayReference(tokens);
+	parser->tokens = getReference(tokens);
 
 	parser->current = 0;
 }
 
 volatile StmtArray* parse(Parser* parser){
 	StmtArray *statements;
-	statements = malloc(sizeof(StmtArray));
+	statements = new(OBJECTIVE,sizeof(StmtArray));
 	init_StmtArray(statements);
 
 	while(!parser->isAtEnd(parser)){
-		statements->addElementToArray(statements,declaration(parser));
+		statements->addElementToArray(statements,(declaration(parser)));
 	}
 	if(statements)
 		return (StmtArray*)statements;
@@ -44,15 +45,18 @@ volatile StmtArray* parse(Parser* parser){
 }
 
 Stmt* declaration(Parser* parser){
+    char* fun_str;
 	CEXCEPTION_T e;
 	TokenType toks[] = { FUN, KNULL };
+    fun_str = new(RAW,sizeof(char)*(strlen("function") +1));
+    strcpy(fun_str,"function");
 	Try {
 		if(parser->match(parser,toks))
-			return function(parser,"function");
+			return (function(parser,fun_str));
 		toks[0] = VAR;
 		if(parser->match(parser,toks))
-			return varDeclaration(parser);
-		return statement(parser);
+			return (varDeclaration(parser));
+		return (statement(parser));
 	}
 	Catch(e) {
 		synchronize(parser);
@@ -66,35 +70,41 @@ Stmt* function(Parser* parser, char* kind){
 	TokenArray* parameters;
 	StmtArray* body;
 	Token* name;
+    mem_footer* footer;
 	char* str_val;
 	TokenType comma[] = { COMMA, KNULL };
 	str_val = NULL;
+    str_val = new(RAW,sizeof(char)*(strlen("Expect  name.")+strlen(kind)+1));
 	asprintf(&str_val,"Expect %s name.",kind);
-	name = consume(parser,IDENTIFIER, str_val);
-	free(str_val);
+	name = (consume(parser,IDENTIFIER, str_val));
+/*	delete(str_val);*/
 	str_val = NULL;
+	str_val = new(RAW,sizeof(char)*(strlen("Expect '(' after  name.")+strlen(kind)+1));
 	asprintf(&str_val,"Expect '(' after %s name.",kind);
 	consume(parser,LEFT_PAREN,str_val);
-	free(str_val);
+/*	delete(str_val);*/
 	str_val = NULL;
-	parameters = malloc(sizeof(TokenArray));
+	parameters = new(OBJECTIVE,sizeof(TokenArray));
 	init_TokenArray(parameters);
 	if(!check(parser,RIGHT_PAREN)){
 		do{
 			if(parameters->size >= 255){
 				parser->error(parser,parser->peek(parser),"Cannot have more than 255 parameters");
 			}
-			parameters->addElementToArray(parameters,consume(parser,IDENTIFIER,"Expect parameter name."));
+			parameters->addElementToArray(parameters,(consume(parser,IDENTIFIER,"Expect parameter name.")));
 		}while(parser->match(parser,comma));
 	}
 	consume(parser,RIGHT_PAREN,"Expect ')' after parameters.");
+    str_val = new(RAW,sizeof(char)*(strlen("Expect '{' before %s body.")+1));
 	asprintf(&str_val,"Expect '{' before %s body.",kind);
 	consume(parser,LEFT_BRACE, str_val);
-	free(str_val);
+/*	delete(str_val);*/
 	str_val = NULL;
-	body = block(parser);
-	func = malloc(sizeof(Function));
+	body = (block(parser));
+	func = new(OBJECTIVE,sizeof(Function));
 	new_Function(func,name,parameters,body);
+    footer = get_footer(func);
+	footer->functions.allocated = 1;
 	return (Stmt*)func;
 }
 
@@ -104,12 +114,12 @@ Stmt* varDeclaration(Parser* parser){
 	Var* result;
 	TokenType toks[] = { EQUAL, KNULL };
 	initializer = NULL;
-	name =consume(parser,IDENTIFIER, "Expect variable name.");
+	name =(consume(parser,IDENTIFIER, "Expect variable name."));
 
 	if(parser->match(parser,toks))
 		initializer = expression(parser);
 	consume(parser,SEMICOLON, "Expect ';' after variable declaration.");
-	result = malloc(sizeof(Var));
+	result = new(OBJECTIVE,sizeof(Var));
 	new_Var(result,name,initializer);
 	return (Stmt*)result;
 }
@@ -126,6 +136,10 @@ Stmt* statement(Parser* parser){
 	if(parser->match(parser,p)){
 		return printStatement(parser);
 	}
+    p[0] = RETURN;
+	if(parser->match(parser,p)){
+		return returnStatement(parser);
+	}
     p[0] = WHILE;
 	if(parser->match(parser,p)){
 		return whileStatement(parser);
@@ -133,7 +147,7 @@ Stmt* statement(Parser* parser){
 	p[0] = LEFT_BRACE;
 	if(parser->match(parser,p)){
 		Block* tempblock;
-		tempblock = malloc(sizeof(Block));
+		tempblock = new(OBJECTIVE,sizeof(Block));
 		new_Block(tempblock,block(parser));
 	    return (Stmt*)tempblock;
 	}
@@ -149,10 +163,26 @@ Stmt* whileStatement(Parser* parser){
 	condition = expression(parser);
 	consume(parser,RIGHT_PAREN,"Expect ')' after condition.");
 	body = statement(parser);
-	w = malloc(sizeof(While));
+	w = new(OBJECTIVE,sizeof(While));
 	new_While(w,condition,body);
 	return (Stmt*)w;
 }
+
+Stmt* returnStatement(Parser* parser){
+	Token* keyword;
+	Expr* value;
+	Return* ret;
+	keyword = previous(parser);
+	value = NULL;
+	if(!check(parser,SEMICOLON)){
+		value = expression(parser);
+	}
+	consume(parser,SEMICOLON,"Expect ';' after return value.");
+	ret = new(OBJECTIVE,sizeof(Return));
+	new_Return(ret,keyword,value);
+	return (Stmt*)ret;
+}
+
 
 Stmt* forStatement(Parser* parser){
     Stmt* initializer, *body;
@@ -167,10 +197,10 @@ Stmt* forStatement(Parser* parser){
     else{
     	p[0] = VAR;
     	if(parser->match(parser,p)){
-    		initializer = varDeclaration(parser);
+    		initializer = (varDeclaration(parser));
     	}
     	else{
-    		initializer = expressionStatement(parser);
+    		initializer = (expressionStatement(parser));
     	}
     }
     condition = NULL;
@@ -187,13 +217,13 @@ Stmt* forStatement(Parser* parser){
     if(increment != NULL){
     	Block* block;
     	Expression* expression;
-    	array = malloc(sizeof(StmtArray));
+    	array = new(OBJECTIVE,sizeof(StmtArray));
     	init_StmtArray(array);
-    	expression = malloc(sizeof(Expression));
+    	expression = new(OBJECTIVE,sizeof(Expression));
     	new_Expression(expression,increment);
     	array->addElementToArray(array,body);
     	array->addElementToArray(array,(Stmt*)expression);
-    	block = malloc(sizeof(Block));
+    	block = new(OBJECTIVE,sizeof(Block));
     	new_Block(block,array);
     	body = (Stmt*)block;
     }
@@ -201,28 +231,28 @@ Stmt* forStatement(Parser* parser){
     	Literal* lit;
     	Object* obj;
 	   int * num;
-    	lit = malloc(sizeof(Literal));
-    	obj = malloc(sizeof(Object));
-	   num = malloc(sizeof(int));
+    	lit = new(OBJECTIVE,sizeof(Literal));
+    	obj = new(OBJECTIVE,sizeof(Object));
+	   num = new(RAW,sizeof(int));
 	   *num = 1;
     	init_Object(obj,num,TRUE);
     	new_Literal(lit,obj);
-    	free(num);
+/*    	delete(num);*/
     	num=NULL;
 
     	condition = (Expr*)lit;
     }
-    wstmt = malloc(sizeof(While));
+    wstmt = new(OBJECTIVE,sizeof(While));
     new_While(wstmt,condition,body);
     body = (Stmt*)wstmt;
     if(initializer != NULL){
     	Block* block;
     	StmtArray *array;
-    	array = (StmtArray*)malloc(sizeof(StmtArray));
+    	array = (StmtArray*)new(OBJECTIVE,sizeof(StmtArray));
     	init_StmtArray(array);
     	array->addElementToArray(array,initializer);
     	array->addElementToArray(array,body);
-    	block = malloc(sizeof(Block));
+    	block = new(OBJECTIVE,sizeof(Block));
     	new_Block(block,array);
     	body = (Stmt*)block;
     }
@@ -242,17 +272,17 @@ Stmt* ifStatement(Parser* parser){
 	if(parser->match(parser,tok)){
 		elseBranch = statement(parser);
 	}
-	r = malloc(sizeof(If));
+	r = new(OBJECTIVE,sizeof(If));
 	new_If((If*)r,condition,thenBranch,elseBranch);
 	return (Stmt*)r;
 }
 
 StmtArray* block(Parser* parser){
 	StmtArray* array;
-	array = malloc(sizeof(StmtArray));
+	array = new(OBJECTIVE,sizeof(StmtArray));
 	init_StmtArray(array);
 	while(!check(parser,RIGHT_BRACE) && !parser->isAtEnd(parser)){
-		array->addElementToArray(array,declaration(parser));
+		array->addElementToArray(array,(declaration(parser)));
 	}
 	consume(parser,RIGHT_BRACE, "Expect '}' after block.");
 	return array;
@@ -263,7 +293,7 @@ Stmt* printStatement(Parser* parser){
 	Print* result;
 	Expr* value = expression(parser);
 	consume(parser,SEMICOLON, "Expect ';' after value.");
-	result = malloc(sizeof(Print));
+	result = new(OBJECTIVE,sizeof(Print));
 	new_Print(result,value);
 	return (Stmt*)result;
 }
@@ -271,7 +301,7 @@ Stmt* expressionStatement(Parser* parser){
 	Expression* ex;
 	Expr* expr = expression(parser);
 	consume(parser,SEMICOLON, "Expect ';' after expression.");
-	ex = malloc(sizeof(Expression));
+	ex = new(OBJECTIVE,sizeof(Expression));
 	new_Expression(ex,expr);
 	return (Stmt*)ex;
 }
@@ -286,7 +316,7 @@ Expr* or(Parser* parser){
 		Token* operator;
 		operator = previous(parser);
 		right = and(parser);
-		newy = malloc(sizeof(Logical));
+		newy = new(OBJECTIVE,sizeof(Logical));
 		new_Logical(newy,(Expr*)expr,operator,right);
 	    expr = newy;
 	}
@@ -303,7 +333,7 @@ Expr* and(Parser* parser){
 		Logical* newy;
 		operator = previous(parser);
 		right = equality(parser);
-		newy = malloc(sizeof(Logical));
+		newy = new(OBJECTIVE,sizeof(Logical));
 		new_Logical(newy,(Expr*)expr,operator,right);
 	    expr = newy;
 	}
@@ -322,7 +352,7 @@ Expr* assignment(Parser* parser){
 		if(strcmp(expr->instanceOf,"Variable")==0){
 			Token* name = ((Variable*)expr)->name;
 			Assign* assign;
-			assign = malloc(sizeof(Assign));
+			assign = new(OBJECTIVE,sizeof(Assign));
 			new_Assign(assign,name,value);
 			return (Expr*)assign;
 		}
@@ -342,7 +372,7 @@ Expr* equality(Parser* parser){
 	while(parser->match(parser,types)){
 		Token* operator = previous(parser);
 		Expr* right = comparison(parser);
-		Binary* binary = malloc(sizeof(Binary));
+		Binary* binary = new(OBJECTIVE,sizeof(Binary));
 		new_Binary(binary,expr, operator, right);
 		expr = (Expr*)binary;
 	}
@@ -356,7 +386,7 @@ Expr* comparison(Parser* parser){
 	while(parser->match(parser,types)){
 		Token* operator = previous(parser);
 		Expr* right = addition(parser);
-		Binary* binary = malloc(sizeof(Binary));
+		Binary* binary = new(OBJECTIVE,sizeof(Binary));
 		new_Binary(binary,expr,operator,right);
 		expr = (Expr*)binary;
 	}
@@ -370,7 +400,7 @@ Expr* addition(Parser* parser){
 	while(parser->match(parser,types)){
 		Token* operator = previous(parser);
 		Expr* right = multiplication(parser);
-		Binary* binary = malloc(sizeof(Binary));
+		Binary* binary = new(OBJECTIVE,sizeof(Binary));
 		new_Binary(binary,expr,operator,right);
 		expr = (Expr*)binary;
 	}
@@ -384,7 +414,7 @@ Expr* multiplication(Parser* parser){
 	while(parser->match(parser,types)){
 		Token* operator = previous(parser);
 		Expr* right = unary(parser);
-		Binary* binary = malloc(sizeof(Binary));
+		Binary* binary = new(OBJECTIVE,sizeof(Binary));
 		new_Binary(binary,expr,operator,right);
 		expr = (Expr*)binary;
 	}
@@ -396,7 +426,7 @@ Expr* unary(Parser* parser){
 	if(parser->match(parser, types)){
 		Token* operator = previous(parser);
 		Expr* right = unary(parser);
-		Unary* un = malloc(sizeof(Unary));
+		Unary* un = new(OBJECTIVE,sizeof(Unary));
 		new_Unary(un,operator,right);
 		return (Expr*)un;
 	}
@@ -422,19 +452,19 @@ Expr* finishCall(Parser* parser, Expr* callee){
 	Token* paren;
 	Call* caller;
 	TokenType comma[] = { COMMA, KNULL };
-	arguments = malloc(sizeof(ExprArray));
+	arguments = new(OBJECTIVE,sizeof(ExprArray));
 	init_ExprArray(arguments);
 	if(!check(parser,RIGHT_PAREN)) {
 		do {
 			if(arguments->size >= 255) {
 				parser->error(parser,parser->peek(parser),"Cannot have more than 255 arguments.");
 			}
-		    arguments->addElementToArray(arguments,expression(parser));
+		    arguments->addElementToArray(arguments,(expression(parser)));
 
 		}while (parser->match(parser,comma));
 	}
 	paren = consume(parser,RIGHT_PAREN, "Expect ')' after arguments.");
-	caller = malloc(sizeof(Call));
+	caller = new(OBJECTIVE,sizeof(Call));
 	new_Call(caller,callee,paren,arguments);
 	return (Expr*)caller;
 }
@@ -444,52 +474,52 @@ Expr* primary(Parser* parser){
 	TokenType types[] = { FALSE, KNULL };
 	if(parser->match(parser,types)){
 		double* val;
-		Literal* lit = malloc(sizeof(Literal));
-		obj = malloc(sizeof(Object));
-	    val = malloc(sizeof(double));
+		Literal* lit = new(OBJECTIVE,sizeof(Literal));
+		obj = new(OBJECTIVE,sizeof(Object));
+	    val = new(RAW,sizeof(double));
 	    *val = 0;
 		init_Object(obj,val,FALSE);
 		new_Literal(lit,obj);
-		free(val);
+/*		delete(val);*/
 		val = NULL;
 		return (Expr*)lit;
 	}
 	types[0] = TRUE;
 	if(parser->match(parser,types)){
 	    double* val;
-		Literal* lit = malloc(sizeof(Literal));
-		obj = malloc(sizeof(Object));
-	     val = malloc(sizeof(double));
+		Literal* lit = new(OBJECTIVE,sizeof(Literal));
+		obj = new(OBJECTIVE,sizeof(Object));
+	     val = new(RAW,sizeof(double));
 	     *val = 1;
 	     init_Object(obj,val,TRUE);
 	     new_Literal(lit,obj);
-	     free(val);
+/*	     delete(val);*/
 	     val = NULL;
 		return (Expr*)lit;
 	}
 	types[0] = NIL;
 	if(parser->match(parser,types)){
-		Literal* lit = malloc(sizeof(Literal));
-		obj = malloc(sizeof(Object));
+		Literal* lit = new(OBJECTIVE,sizeof(Literal));
+		obj = new(OBJECTIVE,sizeof(Object));
 		init_Object(obj,"nil",NIL);
 		new_Literal(lit,obj);
 		return (Expr*)lit;
 	}
 	types[0] = NUMBER;
 	if(parser->match(parser,types)){
-		Literal* lit = malloc(sizeof(Literal));
+		Literal* lit = new(OBJECTIVE,sizeof(Literal));
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = STRING;
 	if(parser->match(parser,types)){
-		Literal* lit = malloc(sizeof(Literal));
+		Literal* lit = new(OBJECTIVE,sizeof(Literal));
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
 	types[0] = IDENTIFIER;
 	if(parser->match(parser,types)){
-		Variable* var = malloc(sizeof(Variable));
+		Variable* var = new(OBJECTIVE,sizeof(Variable));
 		new_Variable(var,previous(parser));
 		return (Expr*)var;
 	}
@@ -499,7 +529,7 @@ Expr* primary(Parser* parser){
 		Expr* expr = expression(parser);
 		Grouping*  group;
 		consume(parser, RIGHT_PAREN, "Expect ')' after expression.");
-		group = malloc(sizeof(Grouping));
+		group = new(OBJECTIVE,sizeof(Grouping));
 		new_Grouping(group,expr);
 		return (Expr*)group;
 	}
@@ -530,9 +560,9 @@ CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message){
 void synchronize(Parser* parser){
 	parser->advance(parser);
 	while(!parser->isAtEnd(parser)){
-		if(previous(parser)->type == SEMICOLON)
+		if(previous(parser)->super.type == SEMICOLON)
 			return;
-		switch(parser->peek(parser)->type){
+		switch(parser->peek(parser)->super.type){
 		case CLASS:
 		case FUN:
 		case VAR:
@@ -564,7 +594,7 @@ int parser_match(Parser* parser, TokenType* types){
 int check(Parser* parser, TokenType type){
 	if(parser->isAtEnd(parser))
 		return 0;
-	return parser->peek(parser)->type == type;
+	return parser->peek(parser)->super.type == type;
 }
 
 Token* parser_advance(Parser* parser){
@@ -574,7 +604,7 @@ Token* parser_advance(Parser* parser){
 }
 
 int parser_isAtEnd(Parser* parser){
-	return parser->peek(parser)->type == EEOF;
+	return parser->peek(parser)->super.type == EEOF;
 }
 
 Token* parser_peek(Parser* parser){
@@ -588,7 +618,7 @@ Token* previous(Parser* parser){
 
 void delete_parser(Parser* parser){
 	if(parser){
-		delete_TokenArray(parser->tokens);
+		/*delete_TokenArray(parser->tokens);*/
 		parser->tokens = NULL;
 	}
 }

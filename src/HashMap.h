@@ -19,8 +19,8 @@ struct _HashMapNode;
 struct _HASH *create_hashmap(int size,char*(*func)(void* value));
 void add_to_hashmap(struct _HASH*, void * key,void * value);
 
-struct _HASH *copy_hashmap(struct _HASH* h);
-
+void *copy_hashmap(void* h);
+void* copy_hashmapnode(void* node);
 void * get_value_for_keymap(struct _HASH*, void* k);
 struct _Hashnode * get_node_for_keymap(struct _HASH* h, void* key);
 
@@ -50,10 +50,10 @@ short int compute_hash_valuemap(struct _HASH * h,void *key);
 
 struct _HashMap {
 	struct _HASH super;
-};
+} __attribute__((packed));
 struct _HashMapNode{
 	struct _Hashnode super;
 
-};
+} __attribute__((packed));
 
 #endif /* HASHMAP_H_ */

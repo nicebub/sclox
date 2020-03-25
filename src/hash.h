@@ -29,6 +29,7 @@ struct _Hashnode_vtable;
 struct _Hashnode;
 
 struct _Hashnode_vtable {
+    void* (*copy)(void*);
 	void (*delete_hashnodel)(struct _Hashnode* hn);
 	void (*set_hnode_value)(struct _Hashnode*, void * v);
 	void (*set_hnode_key)(struct _Hashnode*, void * k);
@@ -39,29 +40,29 @@ struct _Hashnode_vtable {
     char* (*toString)(struct _Hashnode* node);
     char * (*toStringValue)(struct _Hashnode* nodevalue);
     char*(*func)(void* value);
-};
+} __attribute__((packed));
 
 struct _Hashnode {
 	void* value;
 	void* key;
     struct _Hashnode *next;
 	struct _Hashnode_vtable vtable;
-};
+} __attribute__((packed));
 
 struct _hash_vtable {
 		void (*add_to_hash)(struct _HASH *, void * key, void* value);
-		struct _HASH *(*copy_hash)(struct _HASH * h);
+		void*(*copy)(void * h);
 		void * (*get_value_for_key)(struct _HASH*, void* key);
 		struct _Hashnode * (*get_node_for_key)(struct _HASH* h, void* key);
 		short int (*compute_hash_value)(struct _HASH * s, void * key);
 		struct _HASH* (*combine_hashes)(struct _HASH*, struct _HASH*);
 		void (*print_hash)(struct _HASH * h);
-		void (*delete_hash)(struct _HASH*);
-		void (*delete_hashnode)(struct _HASH*,struct _Hashnode*);
+		void (*delete)(struct _HASH*);
+		void (*delete_node)(struct _HASH*,struct _Hashnode*);
 		struct _Hashnode* (*remove_from_hash)(struct _HASH* h, void*key);
 		char * (*toString)(struct _HASH* h);
 	   char*(*func)(void* value);
-};
+} __attribute__((packed));
 struct _HASH {
 	struct _Hashnode** Buckets;
 	struct _hash_vtable vtable;
@@ -69,7 +70,7 @@ struct _HASH {
     int used;
     int alpha;
 
-};
+} __attribute__((packed));
 struct _Hashnode *create_hashnode(void * key, void* value,char*(*func)(void* value));
 
 struct _HASH *create_hash(int size,char*(*func)(void* value));
@@ -79,6 +80,7 @@ char* toStringNode(struct _Hashnode* node);
 char* toStringNodeValue(struct _Hashnode* node);
 
 struct _HASH *copy_hash(struct _HASH* h);
+void* copy_hashnode(void* in_node);
 
 void * get_value_for_key(struct _HASH*, void* k);
 struct _Hashnode * get_node_for_key(struct _HASH* h, void* key);
@@ -99,7 +101,7 @@ struct _hashnode {
     int uniq;
     int vtype;
     int ktype;
-};
+} __attribute__((packed));
 
 typedef struct _hashnode ** hashbucket_array;
 
@@ -124,6 +126,6 @@ struct _hash {
     int used;
  /*   int lasth;*/
     int alpha;
-};
+} __attribute__((packed));
 
 #endif

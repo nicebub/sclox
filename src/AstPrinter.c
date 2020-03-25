@@ -21,6 +21,12 @@ void init_printer(AstPrinter* printer){
 	printer->super.vtable.visitUnaryExpr = &visitUnaryExprPrinter;
 	printer->super.vtable.visitLiteralExpr = &visitLiteralExprPrinter;
 	printer->super.vtable.visitGroupingExpr = &visitGroupingExprPrinter;
+/*
+	printer->super.vtable.visitAssignExpr
+	printer->super.vtable.visitCallExpr
+	printer->super.vtable.visitLogicalExpr
+	printer->super.vtable.visitVariableExpr
+*/
 }
 
 char* print(AstPrinter* printer, Expr* expression){
@@ -62,7 +68,7 @@ static Object* visitLiteralExprPrinter(ExprVisitor* visitor,Expr* expression){
     Literal * expr = (Literal*) expression;
     r = NULL;
     inString = NULL;
-    r = copyObject(expr->value);
+    r = copy(expr->value);
 /*	if(expr->value == NULL || expr->value->value.string==NULL){
 	    r = copyObject(expr->value);
 		return r;
@@ -92,19 +98,20 @@ Object* parenthesize(ExprVisitor* visitor,char* name, Expr** expr_array){
     int counter;
     r = NULL;
     builder = NULL;
+    builder = new(RAW,sizeof(char)*(strlen("( ")+strlen(name)+1));
     asprintf(&builder, "(%s ", name);
     for(counter =0,temp = expr_array[0]; expr_array[counter]!=NULL;counter++){
 	   Object* other = NULL;
 	   temp = expr_array[counter];
 	   other = temp->vtable.accept(temp,visitor);
-	   builder = realloc(builder, sizeof(char)*(strlen(builder) +strlen(other->value.string)+1));
+	   builder = resize(OBJECTIVE,builder,sizeof(char)*(strlen(builder) +strlen(other->value.string)+1));
 	   strcat(builder,other->value.string);
-	   free(other->value.string);
+/*	   delete(other->value.string);*/
 	   other->value.string = NULL;
 	}
-	builder = realloc(builder,sizeof(char)*(strlen(builder)+4));
+	builder = resize(OBJECTIVE,builder,sizeof(char)*(strlen(" ) ")+strlen(builder)+4));
 	strcat(builder," ) ");
-    r = malloc(sizeof(Object));
+    r = new(OBJECTIVE,sizeof(Object));
     init_Object(r,builder,STRING);
 	r->value.string = builder;
 	return r;

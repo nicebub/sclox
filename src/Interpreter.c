@@ -13,6 +13,7 @@ typedef struct _exception{
 #define CEXCEPTION_USE_CONFIG_FILE
 #include "CExceptionConfig.h"
 #include "CException.h"
+#include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <sys/time.h>
@@ -34,9 +35,10 @@ typedef struct _exception{
 	typedef struct _StmtArray StmtArray;
 	extern delete_StmtArray(StmtArray* array);
 #endif
-
+static Object *NLLOBJ;
 #include "StmtArray.h"
 
+static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitCallExpr(ExprVisitor* visitor, Expr* stmt);
 static Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
@@ -65,7 +67,7 @@ static Object* global_clock_call(LoxCallable* inLoxcall,Interpreter* intprtr, Ob
     double x;
     gettimeofday(&tv,&tz);
     x =  ((double)tv.tv_sec)+ (((double)tv.tv_usec / (double)1000.0)/ (double)1000.0);
-    obj = malloc(sizeof(Object));
+    obj = new(OBJECTIVE,sizeof(Object));
     init_Object(obj,&x,NUMBER);
     return obj;
     /*    return (double)system currentime in millisceons / 1000.0  */
@@ -74,14 +76,15 @@ static char* global_toString(LoxCallable* inloxcall){
     return "<native fn>";
 }
 void init_Interpreter(Interpreter* intprtr, void* lox){
-    LoxFunction* lcall;
+    LoxCallable* lcall;
+    char* clockname;
     intprtr->lox = lox;
-    intprtr->globals = malloc(sizeof(Environment));
+    intprtr->globals = new(OBJECTIVE,sizeof(Environment));
     init_Environment(intprtr->globals);
     intprtr->environment = intprtr->globals;
-    intprtr->executeBlock = &executeBlock;
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
 	intprtr->super.vtable.visitFunctionStmt = &visitFunctionStmt;
+    intprtr->super.vtable.visitReturnStmt = &visitReturnStmt;
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
@@ -95,26 +98,36 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
     intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
     intprtr->super.vtable.visitVarStmt = &visitVarStmt;
+    intprtr->evaluate = &evaluate;
+    intprtr->executeBlock = &executeBlock;
     intprtr->checkNumberOperand = &checkNumberOperand;
     intprtr->checkNumberOperands = &checkNumberOperands;
-    intprtr->evaluate = &evaluate;
     intprtr->interpret = &interpret;
     intprtr->isEqual = &isEqual;
     intprtr->isTruthy = &isTruthy;
     intprtr->stringify = &stringify;
-    lcall = malloc(sizeof(LoxFunction));
-    init_LoxFunction(lcall,NULL);
-    init_Object(&lcall->super.super,"clock",FUN);
-    memset(&lcall->super.super.instanceOf,0,30);
-    strcpy((char*)&lcall->super.super.instanceOf,"LoxCallable");
-    lcall->super.vtable.arity = &global_clock_arity;
-    lcall->super.vtable.call = &global_clock_call;
-    lcall->super.vtable.toString = &global_toString;
-    intprtr->globals->defineEnv(intprtr->globals,"clock", (Object*)lcall);
+    NLLOBJ = new(OBJECTIVE,sizeof(Object));
+    init_Object(NLLOBJ,"",KNULL);
+    lcall = new(OBJECTIVE,sizeof(LoxCallable));
+    init_LoxCallable(lcall);
+    init_Object(&lcall->super,"clock",FUN);
+    memset(&lcall->super.instanceOf,0,30);
+    strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
+    lcall->vtable.arity = &global_clock_arity;
+    lcall->vtable.call = &global_clock_call;
+    lcall->vtable.toString = &global_toString;
+    clockname = new(RAW,sizeof(char)*(strlen("clock")+1));
+    memset(clockname,0,strlen("clock"));
+    strncpy(clockname,"clock",strlen("clock"));
+    intprtr->globals->defineEnv(intprtr->globals,clockname, (Object*)lcall);
 }
 
 void interpret(Interpreter* intprtr, StmtArray* array){
     CEXCEPTION_T e;
+    e.id = 0;
+    e.message = NULL;
+    e.sub = NULL;
+    e.token = NULL;
     Try{
         int i;
 /*	   volatile Object* value;*/
@@ -124,7 +137,9 @@ void interpret(Interpreter* intprtr, StmtArray* array){
 	   }
     }
     Catch(e){
+/*	   if(e.id != 50)*/
 	   ((Lox*)intprtr->lox)->runtimeError(intprtr->lox,e);
+/*	   Throw(e);*/
     }
     
 }
@@ -137,6 +152,10 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	CEXCEPTION_T e;
 	Environment * previous;
 	int i;
+    e.id=0;
+    e.message= NULL;
+    e.sub=NULL;
+    e.token=NULL;
 	previous = intrprtr->environment;
 	Try{
 		intrprtr->environment = newenv;
@@ -146,22 +165,51 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 		}
 	}
 	Catch(e){
-	    ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
+	    if(e.id != 50){
+			 intrprtr->environment = previous;
+			 ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
+	    }
+	    else{
+		   intrprtr->environment = previous;
+		   Throw(e);
+	    }
 /*		fprintf(stderr,"RuntimeError: caught in executeBlock.: %s\n",e.message);*/
 	}
 	intrprtr->environment = previous;
 }
+static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
+    CEXCEPTION_T e;
+	 Return_exception *re;
+	Return* ret;
+	Object* value;
+	ret = (Return*) stmt;
+	value = NULL;
+	if(ret->value != NULL)
+		value = evaluate(&visitor->expr,ret->value);
+	re = new(RAW,sizeof(Return_exception));
+	e.id = 50;
+	e.message = "";
+	e.token = NULL;
+    e.sub = re;
+	e.sub->value = copy(value);
+    Try{
+	Throw(e);
+    }
+    Catch(e){ Throw(e);}
+	return NULL;
+}
+
 static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt){
 	LoxFunction * func;
 	Environment* env;
 	Function* function;
 	Interpreter* intprtr;
-	func = malloc(sizeof(LoxFunction));
+	func = new(OBJECTIVE,sizeof(LoxFunction));
 	function = (Function*) stmt;
 	intprtr = (Interpreter*) visitor;
 	env = intprtr->environment;
-	init_LoxFunction(func,function);
-	env->defineEnv(env,function->name->lexeme,(Object*)func);
+	init_LoxFunctionWithClosure(func,function,env);
+	env->defineEnv(env,function->name->lexeme,copy(func));
 	return NULL;
 
 }
@@ -173,31 +221,39 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
     LoxFunction *function;
     Expr* argument;
     callee = evaluate(visitor,((Call*)expr)->callee);
-    arguments = malloc(sizeof(ObjectArray));
+    arguments = new(OBJECTIVE,sizeof(ObjectArray));
     init_ObjectArray(arguments);
    /* argument = ((Call*)expr)->arguments->getElementInArrayAt(arguments,0);*/
     for(i = 0;i<((Call*)expr)->arguments->used;i++){
     	argument = ((Call*)expr)->arguments->getElementInArrayAt(((Call*)expr)->arguments,i);
 
-    	r = getObjectReference(evaluate(visitor,argument));
-    	arguments->addElementToArray(arguments,r);
+    	r = getReference(evaluate(visitor,argument));
+/*	   assert(r->value.number != -1);*/
+    	arguments->addElementToArray(arguments,(r));
     }
-    if(!(strcmp(callee->instanceOf,"LoxCallable")==0)){
+    if(!(strcmp(callee->instanceOf,"LoxCallable")==0) && !(strcmp(callee->instanceOf,"LoxFunction")==0)){
 	   CEXCEPTION_T e;
 	   e.id=20;
 	   e.message = "Can only call functions and classes.";
 	   e.token = ((Call*)expr)->paren;
+	   e.sub = NULL;
 	   Throw(e);
     }
    function = ((LoxFunction*)(callee));
     if(arguments->used != function->super.vtable.arity((LoxCallable*)function)){
 	   CEXCEPTION_T e;
-	   char * new_str;
+	   char * new_str,*temp_str;
 	   new_str = NULL;
 	   e.id= 21;
 	   asprintf(&new_str,"Expected %d arguments but got %d.",function->super.vtable.arity((LoxCallable*)function),arguments->size);
-	   e.message = new_str;
+	   temp_str = new(RAW,sizeof(char)*(strlen(new_str)+1));
+	   memset(temp_str,0,strlen(new_str)+1);
+	   strncpy(temp_str,new_str,strlen(new_str));
+	   e.message = temp_str;
 	   e.token = ((Call*)expr)->paren;
+	   e.sub = NULL;
+	   free(new_str);
+	   new_str = NULL;
 	   Throw(e);
     }
     return function->super.vtable.call((LoxCallable*)function,(Interpreter*)visitor,arguments);
@@ -221,17 +277,17 @@ Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 /*  Object* r = NULL;*/
 	temp= (Block*)expr;
 	intrprtr = (Interpreter*) visitor;
-	env = malloc(sizeof(Environment));
+	env = new(OBJECTIVE,sizeof(Environment));
 	init_EnvironmentwithEnclosing(env,intrprtr->environment);
 	executeBlock(intrprtr ,temp->statements,env);
-    deleteEnvironment(env);
+/*    deleteEnvironment(env);*/
     env = NULL;
 /*	r->type = KNULL;*/
 	return NULL;
 }
 Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
     Object* r = NULL;
-    r = copyObject(((Literal*)expr)->value);
+    r = copy(((Literal*)expr)->value);
 /*    r->type = ((Literal*)expr)->value->type;
 	switch(r->type){
 	case TRUE:
@@ -254,9 +310,9 @@ Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
     Object* right,*result;
 	right = evaluate(visitor,((Unary*)expr)->right);
 	result = NULL;
-	result = malloc(sizeof(Object));
+	result = new(OBJECTIVE,sizeof(Object));
 	init_Object(result,NULL,KNULL);
-	switch(((Unary*)expr)->operator->type){
+	switch(((Unary*)expr)->operator->super.type){
 		case BANG:
 		   result->type = BOOLEAN;
 		   result->value.number = ! (double)isTruthy(right)->value.number;
@@ -277,7 +333,7 @@ Object* evaluate(ExprVisitor* visitor, Expr* expr){
 Object* isTruthy(Object* obj){
     Object* r;
     r = NULL;
-    r = malloc(sizeof(Object));
+    r = new(OBJECTIVE,sizeof(Object));
     init_Object(r,"",KNULL);
     if(obj->type == BOOLEAN || obj->type == FALSE || obj->type == TRUE || obj->type == NUMBER){
 	   r->type = BOOLEAN;
@@ -300,9 +356,9 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
     left = evaluate(visitor,((Binary*)expr)->left);
     right = evaluate(visitor,((Binary*)expr)->right);
     result = NULL;
-    result =malloc(sizeof(Object));
+    result =new(OBJECTIVE,sizeof(Object));
     init_Object(result,"",KNULL);
-    switch(((Binary*)expr)->operator->type){
+    switch(((Binary*)expr)->operator->super.type){
 	  case MINUS:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  result->type = NUMBER;
@@ -323,7 +379,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				case STRING:
 				    switch(right->type){
 					   case STRING:
-						  new_str = malloc(sizeof(char)*(strlen(left->value.string)+strlen(right->value.string)+1));
+						  new_str = new(RAW,sizeof(char)*(strlen(left->value.string)+strlen(right->value.string)+1));
 						  memset(new_str,0,strlen(left->value.string)+strlen(right->value.string)+1);
 						  strncpy(new_str,left->value.string,strlen(left->value.string));
 						  strncat(new_str,right->value.string,strlen(right->value.string));
@@ -331,24 +387,24 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 						  break;
 					   default:
 						  num_str = stringify(right);
-						  new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(left->value.string)+1));
+						  new_str = new(RAW,sizeof(char)*(strlen(num_str)+strlen(left->value.string)+1));
 						  memset(new_str,0,strlen(num_str)+strlen(left->value.string)+1);
 						  strncpy(new_str,left->value.string,strlen(left->value.string));
 						  strncat(new_str,num_str,strlen(num_str));
 						  result->value.string = new_str;
-						  free(num_str);
+/*						  delete(num_str);*/
 						  num_str = NULL;
 						  break;
 				    }
 				    break;
 				default:
 				    num_str = stringify(left);
-				    new_str = malloc(sizeof(char)*(strlen(num_str)+strlen(right->value.string)+1));
+				    new_str = new(RAW,sizeof(char)*(strlen(num_str)+strlen(right->value.string)+1));
 				    memset(new_str,0,strlen(num_str)+strlen(right->value.string)+1);
 				    strncpy(new_str,num_str,strlen(num_str));
 				    strncat(new_str,right->value.string,strlen(right->value.string));
 				    result->value.string = new_str;
-				    free(num_str);
+/*				    delete(num_str);*/
 				    num_str = NULL;
 				    break;
 			 }
@@ -357,7 +413,8 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  e.id = 4;
 		  e.token = ((Binary*)expr)->operator;
 		  e.message = "Operands must be two numbers, two strings, or one of each";
-		  delete_Object(&result);
+		  e.sub = NULL;
+/*		  delete_Object(&result);*/
 		  result = NULL;
 		  Throw(e);
 		  break;
@@ -367,7 +424,8 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 			 e.id = 5;
 			 e.token = ((Binary*)expr)->operator;
 			 e.message = "Cannot divide by Zero";
-			  delete_Object(&result);
+			  e.sub = NULL;
+/*			  delete_Object(&result);*/
 			  result = NULL;
 			 Throw(e);
 			 return result;
@@ -463,6 +521,7 @@ void checkNumberOperand(Token* operator,Object* right){
     e.id = 2;
     e.token = operator;
     e.message = "Operand must be a number";
+    e.sub = NULL;
     Throw(e);
 }
 void checkNumberOperands(Token* operator, Object* left, Object* right){
@@ -472,6 +531,7 @@ void checkNumberOperands(Token* operator, Object* left, Object* right){
     e.id = 3;
     e.token = operator;
     e.message = "Operands must be numbers";
+    e.sub = NULL;
     Throw(e);
 }
 const static char* nil = "nil";
@@ -501,7 +561,7 @@ char* stringify(Object* obj){
 	   return ((LoxFunction*)obj)->super.vtable.toString((LoxCallable*)((LoxFunction*)obj)) ;
     }
     if(obj->type == NUMBER){
-	   char* text;
+	   char* text, *temp_str;
 	   text = NULL;
 	   asprintf(&text,"%.1lf",(double)obj->value.number);
 	   if(strlen(text)>=2 && text[strlen(text)-1]== '0'
@@ -509,13 +569,22 @@ char* stringify(Object* obj){
 		  free(text);
 		  text = NULL;
 		  asprintf(&text,"%.0lf",(double)obj->value.number);
-		  return text;
+		  temp_str = new(RAW,sizeof(char)*(strlen(text)+1));
+		  memset(temp_str,0,strlen(text)+1);
+		  strncpy(temp_str,text,strlen(text));
+		  free(text);
+		  text = NULL;
+		  return temp_str;
 	   }
 	   free(text);
 	   text = NULL;
 	   asprintf(&text,"%lf",(double)obj->value.number);
-
-	   return text;
+	   temp_str = new(RAW,sizeof(char)*(strlen(text)+1));
+	   memset(temp_str,0,strlen(text)+1);
+	   strncpy(temp_str,text,strlen(text));
+	   free(text);
+	   text = NULL;
+	   return temp_str;
     }
 /*    asprintf(&text,"%lf",(double)obj.value.number);*/
 
@@ -526,7 +595,7 @@ Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
 	Logical* log;
 	log = (Logical*) expr;
 	left = evaluate(visitor,log->left);
-	if(log->operator->type == OR){
+	if(log->operator->super.type == OR){
 		if(isTruthy(left)->value.number)
 		    return left;
 	       }
@@ -539,11 +608,11 @@ Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
 }
 
 Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
-    Object* r,*a;
+    Object* a;
     If* stmt;
-    r = NULL;
-    r = malloc(sizeof(Object));
-    init_Object(r,"",KNULL);
+/*    r = NULL;
+    r = new(OBJECTIVE,sizeof(Object));
+    init_Object(r,"",KNULL);*/
     stmt = (If*) expr;
     a = evaluate(&visitor->expr,stmt->condition);
     if(isTruthy(a)->value.number ){
@@ -552,61 +621,63 @@ Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
 	else if(stmt->elseBranch != NULL){
 		execute((Interpreter*)visitor,stmt->elseBranch);
 	}
-	return r;
+	return NLLOBJ;
 }
 
 
 Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
-    Object* result = NULL;
-    result = malloc(sizeof(Object));
-    init_Object(result,"",KNULL);
 	evaluate(&visitor->expr,((Expression*)stmt)->expression);
-	return result;
+	return NLLOBJ;
 }
 
 Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
-    Object* result, *a;
+    Object* result;
     char * val;
     result = NULL;
     result = evaluate(&visitor->expr,((Print*)stmt)->expression);
     val = stringify(result);
 	printf("%s\n",val);
     if(result && result->type == NUMBER){
-		  free(val);
+		  delete(val);
 		  val = NULL;
     }
-    a = malloc(sizeof(Object));
-    init_Object(a,"",KNULL);
-	a->type = KNULL;
     if(result)
-	   return getObjectReference(result);
-    return a;
+	   return getReference(result);
+    return NLLOBJ;
 }
 
 Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
 	Interpreter* intprtr;
     Object* r,*a;
 	Var* vstmt;
+    char* new_str;
 	intprtr = (Interpreter*) visitor;
 	vstmt = (Var*)stmt;
 	a = NULL;
 	r = NULL;
-    r = malloc(sizeof(Object));
+    r = new(OBJECTIVE,sizeof(Object));
 	init_Object(r,"",KNULL);
 	if(vstmt->initializer != NULL){
 		a = evaluate(&visitor->expr,vstmt->initializer);
-		r->type = a->type;
+/*		r->type = a->type;
 		 if(r->type == NUMBER)
 			 r->value.number = a->value.number;
 		 else if(r->type == STRING){
-			r->value.string = strdup(a->value.string);
+			temp_str = new(RAW,sizeof(char)*(strlen(a->value.string)+1));
+			memset(temp_str,0,strlen(a->value.string)+1);
+			strncpy(temp_str,a->value.string,strlen(a->value.string));
+			r->value.string = temp_str;
 		 }
 		 else {
-			 r->value.callable = memcpy(malloc(sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
-		 }
+			r = resize(OBJECTIVE,r,sizeof(LoxFunction));
+			 r->value.callable = memcpy(new(OBJECTIVE,sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
+		 }*/
 	}
-    intprtr->environment->defineEnv(intprtr->environment,strdup(vstmt->name->lexeme),r);
-	a = malloc(sizeof(Object));
+    new_str = new(RAW,sizeof(char)*(strlen(vstmt->name->lexeme)+1));
+    memset(new_str,0,strlen(vstmt->name->lexeme)+1);
+    strncpy(new_str,vstmt->name->lexeme,strlen(vstmt->name->lexeme));
+    intprtr->environment->defineEnv(intprtr->environment,new_str,copy(a));
+	a = new(OBJECTIVE,sizeof(Object));
     init_Object(a,"nil",NIL);
 	a->type = NIL;
 	return a;
@@ -615,8 +686,9 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 	Assign* assign;
 	Object* r,*a;
 	Interpreter* intprtr;
+    char * new_str;
 	assign = (Assign*) expr;
-	r = malloc(sizeof(Object));
+	r = new(OBJECTIVE,sizeof(Object));
 	init_Object(r,"",KNULL);
 	intprtr= (Interpreter*)visitor;
 	a = evaluate(visitor,assign->value);
@@ -624,16 +696,19 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
     if(r->type == NUMBER)
  	   r->value.number = a->value.number;
     else if(r->type == STRING){
-	   r->value.string = strdup(a->value.string);
+	   new_str = new(RAW,sizeof(char)*(strlen(a->value.string)+1));
+	   memset(new_str,0,strlen(a->value.string)+1);
+	   strncpy(new_str,a->value.string,strlen(a->value.string));
+	   r->value.string = new_str;
 	   /*	   memcpy(&r->value.string,&a.value.string,strlen(a.value.string)+1);*/
     }
     else{
-    	r->value.callable = memcpy(malloc(sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
+    	r->value.callable = memcpy(new(OBJECTIVE,sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
     }
 
 /*	r->value = a->value;*/
-    intprtr->environment->assign(intprtr->environment,assign->name,r);
-	return getObjectReference(a);
+    intprtr->environment->assign(intprtr->environment,assign->name,copy(r));
+	return getReference(r);
 }
 
 Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
@@ -641,24 +716,45 @@ Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
     Object* r,*a;
     a = NULL;
     r = NULL;
-    a = malloc(sizeof(Object));
-    init_Object(a,"",KNULL);
+/*    a = new(OBJECTIVE,sizeof(Object));
+    init_Object(a,"",KNULL);*/
 	env = (((Interpreter*)visitor)->environment);
 	r = (env->get(env,((Variable*)expr)->name ));
-    if(r){
-	   r = getObjectReference(r);
-/*    	a->type = r->type;
-    	if(a->type == NUMBER)
+/*    if(r){*/
+/*	   r = getObjectReference(r);*/
+/*    	if(r->type == NUMBER)
     		a->value.number = r->value.number;
-    	else if(a->type == STRING){
-    		a->value.string = strdup(r->value.string);
+    	else if(r->type == STRING){
+	    a->value.string = new(RAW,sizeof(char*)*(strlen(r->value.string)+1));
+	    memset(a->value.string,0,strlen(r->value.string)+1);
+    		strncpy(a->value.string ,r->value.string,strlen(r->value.string));
     	}
     	else {
-    		a->value.callable = memcpy(malloc(sizeof(LoxCallable)),r->value.callable,sizeof(LoxCallable));
-    	}*/
-    	return r;
-    }
-    a->type = KNULL;
+	    if(strcmp(r->instanceOf,"LoxFunction")==0){
+		   a = resize(OBJECTIVE,a,sizeof(LoxFunction));
+		   init_LoxFunction((LoxFunction*)a,copy(((LoxFunction*)r)->declaration));
+		   ((LoxFunction*)a)->closure = ((LoxFunction*)r)->closure;*/
+/*
+		   ((LoxFunction*)a)->declaration->body = ((LoxFunction*)r)->declaration->body;
+		   ((LoxFunction*)a)->declaration->name = ((LoxFunction*)r)->declaration->name;
+		   ((LoxFunction*)a)->declaration->params =((LoxFunction*)r)->declaration->params;
+		   ((LoxFunction*)a)->declaration->super = ((LoxFunction*)r)->declaration->super;*/
+/*	    }
+	    else if(strcmp(r->instanceOf,"LoxCallable")==0){
+		   a = resize(OBJECTIVE,a,sizeof(LoxCallable));
+		   init_LoxCallable((LoxCallable*)a);
+		   ((LoxCallable*)a)->super = ((LoxCallable*)r)->super;
+		   ((LoxCallable*)a)->vtable = ((LoxCallable*)r)->vtable;
+	    }*/
+    	/*	a->value.callable = memcpy(malloc(sizeof(LoxCallable)),r->value.callable,sizeof(LoxCallable));*/
+/*    	}
+	   a->type = r->type;
+	   memset((char*)a->instanceOf,0,30);
+	   strncpy((char*)a->instanceOf,r->instanceOf,strlen(r->instanceOf));*/
+	   a = (r);
+    	return a;
+/*    }*/
+/*    a->type = KNULL;
     a->value.number=0;
-	return a;
+	return NLLOBJ;*/
 }
