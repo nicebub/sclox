@@ -10,6 +10,7 @@ C_SRCS += \
 ../src/Expr.c \
 ../src/ExprArray.c \
 ../src/HashMap.c \
+../src/HashMapStack.c \
 ../src/Interpreter.c \
 ../src/Lox.c \
 ../src/LoxCallable.c \
@@ -17,7 +18,9 @@ C_SRCS += \
 ../src/Object.c \
 ../src/ObjectArray.c \
 ../src/Parser.c \
+../src/Resolver.c \
 ../src/Scanner.c \
+../src/Stack.c \
 ../src/Stmt.c \
 ../src/StmtArray.c \
 ../src/Token.c \
@@ -35,6 +38,7 @@ OBJS += \
 ./src/Expr.o \
 ./src/ExprArray.o \
 ./src/HashMap.o \
+./src/HashMapStack.o \
 ./src/Interpreter.o \
 ./src/Lox.o \
 ./src/LoxCallable.o \
@@ -42,7 +46,9 @@ OBJS += \
 ./src/Object.o \
 ./src/ObjectArray.o \
 ./src/Parser.o \
+./src/Resolver.o \
 ./src/Scanner.o \
+./src/Stack.o \
 ./src/Stmt.o \
 ./src/StmtArray.o \
 ./src/Token.o \
@@ -60,6 +66,7 @@ C_DEPS += \
 ./src/Expr.d \
 ./src/ExprArray.d \
 ./src/HashMap.d \
+./src/HashMapStack.d \
 ./src/Interpreter.d \
 ./src/Lox.d \
 ./src/LoxCallable.d \
@@ -67,7 +74,9 @@ C_DEPS += \
 ./src/Object.d \
 ./src/ObjectArray.d \
 ./src/Parser.d \
+./src/Resolver.d \
 ./src/Scanner.d \
+./src/Stack.d \
 ./src/Stmt.d \
 ./src/StmtArray.d \
 ./src/Token.d \

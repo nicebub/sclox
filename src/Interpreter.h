@@ -35,6 +35,7 @@ struct _Interpreter {
     void (*checkNumberOperands)(Token* operator, Object* left, Object* right);
     char* (*stringify)(Object*);
     void (*executeBlock)(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
+    void (*resolve)(Interpreter* intrprtr, Expr* expr, int depth);
 
 };
 
@@ -42,7 +43,7 @@ void init_Interpreter(Interpreter* intprt, void* lox);
 void interpret(Interpreter* intprtr, StmtArray* array);
 void execute(Interpreter* intprtr, Stmt* stmt);
 void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
-
+void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int depth);
 
 
 int isEqual(Object* left, Object* right);

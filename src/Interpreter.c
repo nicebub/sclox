@@ -85,6 +85,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->globals = new(OBJECTIVE,sizeof(Environment));
     init_Environment(intprtr->globals);
     intprtr->environment = intprtr->globals;
+    intprtr->resolve = &resolve_Interpreter;
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
 	intprtr->super.vtable.visitFunctionStmt = &visitFunctionStmt;
     intprtr->super.vtable.visitReturnStmt = &visitReturnStmt;
@@ -185,6 +186,11 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	delete(intrprtr->environment);
 	intrprtr->environment = getReference(previous);
 }
+void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int depth){
+/*	intrprtr->locals.put(intrprtr->locals,expr,depth);*/
+}
+
+
 static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
     CEXCEPTION_T e;
 	 Return_exception *re;
