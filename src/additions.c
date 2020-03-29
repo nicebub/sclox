@@ -1,7 +1,7 @@
 #include "additions.h"
 #include "Stmt.h"
 #include "StmtArray.h"
-#include "HashMap.h"
+#include "StrObjHashMap.h"
 void initializeStmtElement(Stmt** statement, void* values){
     if(!values){
 	   statement = NULL;
@@ -29,6 +29,6 @@ void initializememoryElement(Object** objs, void * values){
 
 }
 
-void initializeHashMapElement(HashMap** maparray, void* value){
+void initializeHashMapElement(StrObjHashMap** maparray, void* value){
 
 }

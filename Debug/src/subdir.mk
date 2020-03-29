@@ -9,6 +9,7 @@ C_SRCS += \
 ../src/Environment.c \
 ../src/Expr.c \
 ../src/ExprArray.c \
+../src/ExprIntegerHashMap.c \
 ../src/HashMap.c \
 ../src/HashMapStack.c \
 ../src/Interpreter.c \
@@ -23,6 +24,9 @@ C_SRCS += \
 ../src/Stack.c \
 ../src/Stmt.c \
 ../src/StmtArray.c \
+../src/StrObjHashMap.c \
+../src/StringBooleanHashMap.c \
+../src/StringObjectHashMap.c \
 ../src/Token.c \
 ../src/TokenArray.c \
 ../src/additions.c \
@@ -37,6 +41,7 @@ OBJS += \
 ./src/Environment.o \
 ./src/Expr.o \
 ./src/ExprArray.o \
+./src/ExprIntegerHashMap.o \
 ./src/HashMap.o \
 ./src/HashMapStack.o \
 ./src/Interpreter.o \
@@ -51,6 +56,9 @@ OBJS += \
 ./src/Stack.o \
 ./src/Stmt.o \
 ./src/StmtArray.o \
+./src/StrObjHashMap.o \
+./src/StringBooleanHashMap.o \
+./src/StringObjectHashMap.o \
 ./src/Token.o \
 ./src/TokenArray.o \
 ./src/additions.o \
@@ -65,6 +73,7 @@ C_DEPS += \
 ./src/Environment.d \
 ./src/Expr.d \
 ./src/ExprArray.d \
+./src/ExprIntegerHashMap.d \
 ./src/HashMap.d \
 ./src/HashMapStack.d \
 ./src/Interpreter.d \
@@ -79,6 +88,9 @@ C_DEPS += \
 ./src/Stack.d \
 ./src/Stmt.d \
 ./src/StmtArray.d \
+./src/StrObjHashMap.d \
+./src/StringBooleanHashMap.d \
+./src/StringObjectHashMap.d \
 ./src/Token.d \
 ./src/TokenArray.d \
 ./src/additions.d \

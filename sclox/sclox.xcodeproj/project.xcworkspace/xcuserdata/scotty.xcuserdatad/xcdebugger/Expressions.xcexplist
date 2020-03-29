@@ -20,10 +20,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "initializeStmtElement:additions.c">
+         contextName = "init_LoxFunction:LoxFunction.c">
       </ContextState>
       <ContextState
-         contextName = "init_LoxFunction:LoxFunction.c">
+         contextName = "visitIfStmt:Interpreter.c">
       </ContextState>
       <ContextState
          contextName = "add_to_hashmap:HashMap.c">
@@ -37,7 +37,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "visitIfStmt:Interpreter.c">
+         contextName = "parser_match:Parser.c">
       </ContextState>
       <ContextState
          contextName = "visitLogicalExpr:Interpreter.c">
@@ -48,16 +48,24 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "compare_keys:hash.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(char*)key1">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "visitExpressionStmt:Interpreter.c">
       </ContextState>
       <ContextState
-         contextName = "run:Lox.c">
+         contextName = "visitFunctionStmt:Interpreter.c">
       </ContextState>
       <ContextState
          contextName = "getObjectinArrayAt:ObjectArray.c">
       </ContextState>
       <ContextState
-         contextName = "visitFunctionStmt:Interpreter.c">
+         contextName = "run:Lox.c">
       </ContextState>
       <ContextState
          contextName = "evaluate:Interpreter.c">
@@ -89,15 +97,15 @@
          contextName = "check:Parser.c">
       </ContextState>
       <ContextState
+         contextName = "executeBlock:Interpreter.c">
+      </ContextState>
+      <ContextState
          contextName = "identifier:Scanner.c">
          <PersistentStrings>
             <PersistentString
                value = "(mem_header*)((char*)new_str - sizeof(mem_heeader))">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "executeBlock:Interpreter.c">
       </ContextState>
       <ContextState
          contextName = "init_Interpreter:Interpreter.c">
@@ -126,10 +134,10 @@
          contextName = "init_Object:Object.c">
          <PersistentStrings>
             <PersistentString
-               value = "(memory*)((mem_block*)object - sizeof(mem_header))">
+               value = "(mem_block*)object">
             </PersistentString>
             <PersistentString
-               value = "(mem_block*)object">
+               value = "(memory*)((mem_block*)object - sizeof(mem_header))">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -209,10 +217,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "declaration:Parser.c">
+         contextName = "copyStmtArray:StmtArray.c">
       </ContextState>
       <ContextState
-         contextName = "advance:Scanner.c">
+         contextName = "declaration:Parser.c">
       </ContextState>
       <ContextState
          contextName = "initializeTokenElement:Token.c">
@@ -235,10 +243,10 @@
          contextName = "copy_Object:Object.c">
       </ContextState>
       <ContextState
-         contextName = "addTokenWithObject:Scanner.c">
+         contextName = "advance:Scanner.c">
       </ContextState>
       <ContextState
-         contextName = "copyStmtArray:StmtArray.c">
+         contextName = "addTokenWithObject:Scanner.c">
       </ContextState>
       <ContextState
          contextName = "defineEnv:Environment.c">
@@ -250,6 +258,9 @@
                value = "(char*)val">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "get_node_for_keyHashMap:HashMap.c">
       </ContextState>
       <ContextState
          contextName = "function:Parser.c">
@@ -341,13 +352,13 @@
          contextName = "visitVariableExpr:Interpreter.c">
          <PersistentStrings>
             <PersistentString
-               value = "((LoxFunction*)r)-&gt;declaration">
-            </PersistentString>
-            <PersistentString
                value = "(LoxFunction*)r">
             </PersistentString>
             <PersistentString
                value = "((Variable*)expr)">
+            </PersistentString>
+            <PersistentString
+               value = "((LoxFunction*)r)-&gt;declaration">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -377,7 +388,7 @@
          contextName = "get_node_for_keymap:HashMap.c">
       </ContextState>
       <ContextState
-         contextName = "parser_match:Parser.c">
+         contextName = "initializeStmtElement:additions.c">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

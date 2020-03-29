@@ -174,9 +174,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
-            landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
+            landmarkName = "isTruthy(obj)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -478,9 +478,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
-            landmarkName = "visitLiteralExprInterpreter(visitor, expr)"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
+            landmarkName = "visitBlockStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -494,8 +494,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -510,8 +510,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -542,8 +542,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
+            startingLineNumber = "402"
+            endingLineNumber = "402"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -606,8 +606,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
+            startingLineNumber = "186"
+            endingLineNumber = "186"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1070,9 +1070,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "compute_hash_valuemap(hashMap, key)"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "create_HashMapNode(key, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1086,9 +1086,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "compute_hash_valuemap(hashMap, key)"
+            startingLineNumber = "119"
+            endingLineNumber = "119"
+            landmarkName = "add_to_HashMap(h, key, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1102,9 +1102,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "compute_hash_valuemap(hashMap, key)"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "create_HashMapNode(key, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1118,9 +1118,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "compute_hash_valuemap(hashMap, key)"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "create_HashMapNode(key, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1134,10 +1134,10 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "add_to_hashmap(h, key, value)"
-            landmarkType = "9">
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1150,9 +1150,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "138"
-            endingLineNumber = "138"
-            landmarkName = "get_value_for_keymap(h, key)"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "create_HashMapNode(key, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1246,9 +1246,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "toStringMap(h)"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
+            landmarkName = "get_node_for_keyHashMap(h, key)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1278,25 +1278,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
-            landmarkName = "toStringMapNode(node)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E14A97FB-9B66-4A4F-B656-93F8FCC56058"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/HashMap.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
-            landmarkName = "toStringMapNode(node)"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
+            landmarkName = "get_value_for_keyHashMap(h, key)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1310,9 +1294,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "add_to_hashmap(h, key, value)"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "create_HashMap(size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1326,9 +1310,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "add_to_hashmap(h, key, value)"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
+            landmarkName = "create_HashMap(size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1374,9 +1358,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "269"
-            endingLineNumber = "269"
-            landmarkName = "delete_hashmap(h)"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "toStringHashMap(h)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1390,10 +1374,10 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
-            landmarkName = "toStringMap(h)"
-            landmarkType = "9">
+            startingLineNumber = "221"
+            endingLineNumber = "221"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1406,10 +1390,10 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "226"
-            endingLineNumber = "226"
-            landmarkName = "toStringMap(h)"
-            landmarkType = "9">
+            startingLineNumber = "220"
+            endingLineNumber = "220"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1422,9 +1406,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
-            landmarkName = "toStringMap(h)"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "get_node_for_keyHashMap(h, key)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1438,8 +1422,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "505"
-            endingLineNumber = "505"
+            startingLineNumber = "507"
+            endingLineNumber = "507"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1454,8 +1438,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "471"
-            endingLineNumber = "471"
+            startingLineNumber = "473"
+            endingLineNumber = "473"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1470,8 +1454,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "481"
-            endingLineNumber = "481"
+            startingLineNumber = "483"
+            endingLineNumber = "483"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1502,8 +1486,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "525"
-            endingLineNumber = "525"
+            startingLineNumber = "527"
+            endingLineNumber = "527"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1518,9 +1502,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "get(env, name)"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "toStringValueDefault(value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1534,8 +1518,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "490"
-            endingLineNumber = "490"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1550,8 +1534,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "526"
-            endingLineNumber = "526"
+            startingLineNumber = "528"
+            endingLineNumber = "528"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1886,8 +1870,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "507"
-            endingLineNumber = "507"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
             landmarkName = "isEqual(left, right)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1934,8 +1918,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
             <Locations>
@@ -2014,8 +1998,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "572"
-            endingLineNumber = "572"
+            startingLineNumber = "574"
+            endingLineNumber = "574"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2030,9 +2014,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "init_Environment(env)"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "defineEnv(env, name, value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2078,8 +2062,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "604"
-            endingLineNumber = "604"
+            startingLineNumber = "606"
+            endingLineNumber = "606"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2094,8 +2078,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "603"
-            endingLineNumber = "603"
+            startingLineNumber = "605"
+            endingLineNumber = "605"
             landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2110,8 +2094,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2126,9 +2110,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "213"
-            endingLineNumber = "213"
-            landmarkName = "visitFunctionStmt(visitor, stmt)"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2142,10 +2126,10 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "visitReturnStmt(visitor, stmt)"
-            landmarkType = "9">
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2158,8 +2142,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
             landmarkName = "visitFunctionStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2174,8 +2158,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2190,10 +2174,10 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "686"
-            endingLineNumber = "686"
-            landmarkName = "visitPrintStmt(visitor, stmt)"
-            landmarkType = "9">
+            startingLineNumber = "688"
+            endingLineNumber = "688"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2206,8 +2190,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "710"
-            endingLineNumber = "710"
+            startingLineNumber = "712"
+            endingLineNumber = "712"
             landmarkName = "visitVarStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2238,9 +2222,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "659"
-            endingLineNumber = "659"
-            landmarkName = "visitIfStmt(visitor, expr)"
+            startingLineNumber = "661"
+            endingLineNumber = "661"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2254,8 +2238,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "742"
-            endingLineNumber = "742"
+            startingLineNumber = "744"
+            endingLineNumber = "744"
             landmarkName = "visitAssignExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2270,8 +2254,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "273"
-            endingLineNumber = "273"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2286,8 +2270,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "673"
+            endingLineNumber = "673"
             landmarkName = "visitIfStmt(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2302,9 +2286,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "741"
-            endingLineNumber = "741"
-            landmarkName = "visitAssignExpr(visitor, expr)"
+            startingLineNumber = "743"
+            endingLineNumber = "743"
+            landmarkName = "visitVarStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2318,9 +2302,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "688"
-            endingLineNumber = "688"
-            landmarkName = "visitPrintStmt(visitor, stmt)"
+            startingLineNumber = "690"
+            endingLineNumber = "690"
+            landmarkName = "visitExpressionStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2350,8 +2334,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "assign(env, name, value)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2366,10 +2350,10 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "679"
-            endingLineNumber = "679"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "681"
+            endingLineNumber = "681"
+            landmarkName = "visitIfStmt(visitor, expr)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2382,8 +2366,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2414,8 +2398,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
+            startingLineNumber = "197"
+            endingLineNumber = "197"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2430,8 +2414,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "324"
-            endingLineNumber = "324"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "visitLiteralExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2446,8 +2430,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "650"
-            endingLineNumber = "650"
+            startingLineNumber = "652"
+            endingLineNumber = "652"
             landmarkName = "visitLogicalExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2456,22 +2440,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8F8338BD-08D3-4687-88B0-9824A21716BC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/Interpreter.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
-            landmarkName = "visitLogicalExpr(visitor, expr)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "13CB9B7E-38C1-4E95-BFCC-7D4B4CD97308"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -2487,6 +2455,22 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "13CB9B7E-38C1-4E95-BFCC-7D4B4CD97308"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Interpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "658"
+            endingLineNumber = "658"
+            landmarkName = "visitLogicalExpr(visitor, expr)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "274FD183-A10D-4496-8CC9-4F395A372BD2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -2494,8 +2478,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2510,8 +2494,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2526,8 +2510,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
+            startingLineNumber = "254"
+            endingLineNumber = "254"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2574,8 +2558,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
             landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2590,8 +2574,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "assign(env, name, value)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2766,9 +2750,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "create_hashmap(size)"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "init_HashMap(m, size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2782,9 +2766,9 @@
             filePath = "../src/HashMap.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "create_hashmap(size)"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "init_HashMap(m, size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2894,8 +2878,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
             landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2942,8 +2926,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2958,10 +2942,10 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
-            landmarkName = "visitFunctionStmt(visitor, stmt)"
-            landmarkType = "9">
+            startingLineNumber = "217"
+            endingLineNumber = "217"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2990,8 +2974,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "assign(env, name, value)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3022,8 +3006,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
             landmarkName = "visitFunctionStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3038,8 +3022,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
             landmarkName = "visitFunctionStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3102,8 +3086,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3134,9 +3118,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
-            landmarkName = "defineEnv(env, name, value)"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3150,8 +3134,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
             landmarkName = "assign(env, name, value)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3166,8 +3150,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3182,8 +3166,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
             <Locations>
@@ -3262,8 +3246,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
+            startingLineNumber = "241"
+            endingLineNumber = "241"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3278,9 +3262,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
-            landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
+            landmarkName = "isTruthy(obj)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3288,14 +3272,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "5947A546-78F2-4E2B-9712-CE8B7657D056"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
             landmarkName = "deleteEnvironment(env)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3310,9 +3294,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
-            landmarkName = "defineEnv(env, name, value)"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3326,9 +3310,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "defineEnv(env, name, value)"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3342,8 +3326,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3358,9 +3342,9 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "defineEnv(env, name, value)"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3374,8 +3358,8 @@
             filePath = "../src/Environment.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
             landmarkName = "get(env, name)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3384,6 +3368,22 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "25DEC623-5ADC-4050-914E-C71801133FE5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Environment.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "get(env, name)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "146E0542-16F1-4793-8B98-44E13F2BEF92"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -3399,22 +3399,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "146E0542-16F1-4793-8B98-44E13F2BEF92"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/Environment.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "get(env, name)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "21D2B9F3-2CDB-4A24-B1E4-031E7B1CE300"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -3422,8 +3406,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "803"
-            endingLineNumber = "803"
+            startingLineNumber = "805"
+            endingLineNumber = "805"
             landmarkName = "visitVariableExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3486,8 +3470,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3518,8 +3502,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241"
+            startingLineNumber = "243"
+            endingLineNumber = "243"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3534,8 +3518,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "709"
-            endingLineNumber = "709"
+            startingLineNumber = "711"
+            endingLineNumber = "711"
             landmarkName = "visitVarStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3550,8 +3534,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3646,8 +3630,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
+            startingLineNumber = "253"
+            endingLineNumber = "253"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3662,8 +3646,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "236"
-            endingLineNumber = "236"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
             landmarkName = "visitCallExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3694,8 +3678,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "783"
-            endingLineNumber = "783"
+            startingLineNumber = "785"
+            endingLineNumber = "785"
             landmarkName = "visitVariableExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3710,10 +3694,10 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "770"
-            endingLineNumber = "770"
-            landmarkName = "visitVariableExpr(visitor, expr)"
-            landmarkType = "9">
+            startingLineNumber = "772"
+            endingLineNumber = "772"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3726,8 +3710,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "727"
-            endingLineNumber = "727"
+            startingLineNumber = "729"
+            endingLineNumber = "729"
             landmarkName = "visitVarStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3742,8 +3726,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "init_Interpreter(intprtr, lox)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3790,8 +3774,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "visitReturnStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3806,8 +3790,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "344"
-            endingLineNumber = "344"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "visitUnaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3822,8 +3806,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "386"
-            endingLineNumber = "386"
+            startingLineNumber = "388"
+            endingLineNumber = "388"
             landmarkName = "visitBinaryExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3838,8 +3822,8 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "802"
-            endingLineNumber = "802"
+            startingLineNumber = "804"
+            endingLineNumber = "804"
             landmarkName = "visitVariableExpr(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3918,9 +3902,9 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "687"
-            endingLineNumber = "687"
-            landmarkName = "visitPrintStmt(visitor, stmt)"
+            startingLineNumber = "689"
+            endingLineNumber = "689"
+            landmarkName = "visitExpressionStmt(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3934,17 +3918,17 @@
             filePath = "../src/Interpreter.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "280"
-            endingLineNumber = "280"
-            landmarkName = "visitWhileStmt(visitor, stmt)"
-            landmarkType = "9">
+            startingLineNumber = "282"
+            endingLineNumber = "282"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "C3AA14F4-37E3-4FE3-B3FC-62133876DFB4"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/memory.c"
@@ -3960,7 +3944,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "0E9E2648-B41B-41E6-AB12-BC2793AECEDD"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/memory.c"
@@ -3969,6 +3953,118 @@
             startingLineNumber = "108"
             endingLineNumber = "108"
             landmarkName = "delete(data)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "533DFF39-B664-4C60-A5A6-CCC049D4D946"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/HashMap.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "242"
+            endingLineNumber = "242"
+            landmarkName = "toStringHashMapNode(node)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4C095450-D29C-4BEB-ADA1-29FBC0FE1E51"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../test/Test_HashMap.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "170"
+            endingLineNumber = "170"
+            landmarkName = "test_toString()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5C1470D4-04E5-4DE9-800A-AEC164804D15"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../test/Test_HashMap.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
+            landmarkName = "test_toString()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ABDCCBB2-1858-4528-8E86-1DC65192FB19"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Environment.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "defineEnv(env, name, value)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "24E9F282-6C91-44B4-8FE3-A6DE7858FEF4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Environment.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "init_Environment(env)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3530260B-4362-4751-83C3-2B7DF16CBB48"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Environment.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "assign(env, name, value)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A9F1219-B3FA-471C-807C-9F8B8260B7AA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/Environment.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "copy_Environment(inE)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

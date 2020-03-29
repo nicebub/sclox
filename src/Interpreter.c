@@ -115,7 +115,9 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     lcall = new(OBJECTIVE,sizeof(LoxCallable));
     init_LoxCallable(lcall);
     lcall->super.type = FUN;
-    lcall->super.value.string = strncpy(new(RAW,sizeof(char)*(strlen("clock")+1)),"clock",strlen("clock"));
+    lcall->super.value.string = new(RAW,sizeof(char)*(strlen("clock")+1));
+    memset(lcall->super.value.string,0,strlen("clock")+1);
+    strncpy(lcall->super.value.string,"clock",strlen("clock"));
 /*    init_Object(&lcall->super,"clock",FUN);*/
     memset(&lcall->super.instanceOf,0,30);
     strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
@@ -123,7 +125,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     lcall->vtable.call = &global_clock_call;
     lcall->vtable.toString = &global_toString;
     clockname = new(RAW,sizeof(char)*(strlen("clock")+1));
-    memset(clockname,0,strlen("clock"));
+    memset(clockname,0,strlen("clock")+1);
     strncpy(clockname,"clock",strlen("clock"));
     intprtr->globals->defineEnv(intprtr->globals,clockname, (Object*)lcall);
 }

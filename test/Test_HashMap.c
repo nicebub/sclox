@@ -10,6 +10,7 @@
 #include <string.h>
 #include "hash.h"
 #include "HashMap.h"
+#include "memory.h"
 static HashMap* m;
 int *r;
 char* print_int(void* a){
@@ -23,7 +24,7 @@ void setUp(void){
     m = NULL;
     m = (HashMap*)create_hashmap(3,&print_int);
     r = NULL;
-    r = malloc(sizeof(int));
+    r = new(RAW,sizeof(int));
 
 }
 void tearDown(void){
@@ -53,6 +54,7 @@ void test_delete_hashmap(void){
 }
 
 void test_computer_hash_value(void){
+    char* string1, *string2, *string3;
     TEST_ASSERT_EQUAL_INT(0,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
@@ -63,22 +65,28 @@ void test_computer_hash_value(void){
 }
 void test_get_value_for_key(void){
     int* x;
-    x = malloc(sizeof(int));
+    char* string1;
+    x = new(RAW,sizeof(int));
     *x = 1;
     TEST_ASSERT_EQUAL_PTR(NULL,get_value_for_key(NULL,"no"));
     TEST_ASSERT_EQUAL_PTR(NULL,get_value_for_key(NULL,NULL));
     TEST_ASSERT_EQUAL_PTR(NULL,get_value_for_key((struct _HASH*)m,NULL));
     TEST_ASSERT_EQUAL_PTR(NULL,(int*)get_value_for_keymap((struct _HASH*)m, "no"));
     TEST_ASSERT_EQUAL_PTR(NULL,(int*)get_value_for_key(&m->super, "no"));
-    add_to_hash((struct _HASH*)m,strdup("hello"),x);
+    string1 = new(RAW,sizeof(char)*(strlen("hello")+1));
+    memset(string1,0,strlen("hello")+1);
+    strcpy(string1,"hello");
+    add_to_hash((struct _HASH*)m,string1,x);
     TEST_ASSERT_EQUAL_INT(1,*(int*)get_value_for_key(&m->super,"hello"));
 }
 void test_add_to_hash(void){
     int * a,*b;
-    a = malloc(sizeof(int));
+    char* string1, *string2;
+    a = new(RAW,sizeof(int));
     *a = 2;
-    b = malloc(sizeof(int));
+    b = new(RAW,sizeof(int));
    *b = 3;
+    
     TEST_ASSERT_EQUAL_INT(0,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
@@ -90,33 +98,48 @@ void test_add_to_hash(void){
     TEST_ASSERT_EQUAL_INT(0,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    add_to_hash(NULL,strdup("a"),a);
+    string1 = new(RAW,sizeof(char)*(strlen("a")+1));
+    memset(string1,0,strlen("a")+1);
+    strcpy(string1,"a");
+    add_to_hash(NULL,string1,a);
     TEST_ASSERT_EQUAL_INT(0,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    add_to_hash((struct _HASH*)m,strdup("hello"),a);
+    string1 = new(RAW,sizeof(char)*(strlen("hello")+1));
+    memset(string1,0,strlen("hello")+1);
+    strcpy(string1,"hello");
+    add_to_hash((struct _HASH*)m,string1,a);
     TEST_ASSERT_EQUAL_INT(1,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    add_to_hash((struct _HASH*)m,strdup("hello"),b);
+    add_to_hash((struct _HASH*)m,string1,b);
     TEST_ASSERT_EQUAL_INT(1,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    b = malloc(sizeof(int));
+    b = new(RAW,sizeof(int));
     *b = 7;
-    add_to_hash((struct _HASH*)m,strdup("nothere"),b);
+    string2 = new(RAW,sizeof(char)*(strlen("nothere")+1));
+    memset(string2,0,strlen("nothere")+1);
+    strcpy(string2,"nothere");
+    add_to_hash((struct _HASH*)m,string2,b);
     TEST_ASSERT_EQUAL_INT(2,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    b = malloc(sizeof(int));
+    b = new(RAW,sizeof(int));
     *b = 4;
-    add_to_hashmap((struct _HASH*)m,strdup("nothereagain"),b);
+    string2 = new(RAW,sizeof(char)*(strlen("nothereagain")+1));
+    memset(string2,0,strlen("nothereagain")+1);
+    strcpy(string2,"nothereagain");
+    add_to_hashmap((struct _HASH*)m,string2,b);
     TEST_ASSERT_EQUAL_INT(3,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
-    b = malloc(sizeof(int));
+    b = new(RAW,sizeof(int));
     *b = 9;
-    add_to_hashmap((struct _HASH*)m,strdup("nothe  again"),b);
+    string2 = new(RAW,sizeof(char)*(strlen("nothe  again")+1));
+    memset(string2,0,strlen("nothe  again")+1);
+    strcpy(string2,"nothe  again");
+    add_to_hashmap((struct _HASH*)m,string2,b);
     TEST_ASSERT_EQUAL_INT(4,m->super.used);
     TEST_ASSERT_EQUAL_INT(3,m->super.size);
     TEST_ASSERT_EQUAL_INT(2,m->super.alpha);
@@ -124,30 +147,46 @@ void test_add_to_hash(void){
 }
 
 void test_toString(void){
-    char * temp;
+    char * temp,*string1;
 //    TEST_ASSERT_EQUAL_STRING("no",)
-    r = malloc(sizeof(int));
+    r = new(RAW,sizeof(int));
     *r = 1;
-    add_to_hash((struct _HASH*)m,strdup("no"),r);
-    r = malloc(sizeof(int));
+    string1 = new(RAW,sizeof(char)*(strlen("no")+1));
+    memset(string1,0,strlen("no")+1);
+    strcpy(string1,"no");
+    add_to_hash((struct _HASH*)m,string1,r);
+    r = new(RAW,sizeof(int));
     *r = 2;
-    add_to_hash((struct _HASH*)m,strdup("hello"),r);
-    r = malloc(sizeof(int));
+    string1 = new(RAW,sizeof(char)*(strlen("hello")+1));
+    memset(string1,0,strlen("hello")+1);
+    strcpy(string1,"hello");
+    add_to_hash((struct _HASH*)m,string1,r);
+    r = new(RAW,sizeof(int));
     *r = 3;
-    add_to_hashmap((struct _HASH*)m,strdup("good"),r);
+    string1 = new(RAW,sizeof(char)*(strlen("good")+1));
+    memset(string1,0,strlen("good")+1);
+    strcpy(string1,"good");
+    add_to_hashmap((struct _HASH*)m,string1,r);
     temp = (char*)m->super.vtable.toString((struct _HASH*)m);
     TEST_ASSERT_EQUAL_STRING("((hello,2),(good,3),(no,1))",temp);
-    free(temp);
+    delete(temp);
     temp = NULL;
 }
 
 void test_print_hash(void){
-    r = malloc(sizeof(int));
+    char* string1;
+    r = new(RAW,sizeof(int));
     *r = 14;
-    add_to_hashmap((struct _HASH*)m,strdup("onestring"),r);
-    r = malloc(sizeof(int));
+    string1 = new(RAW,sizeof(char)*(strlen("onestring")+1));
+    memset(string1,0,strlen("onestring")+1);
+    strcpy(string1,"onestring");
+    add_to_hashmap((struct _HASH*)m,string1,r);
+    r = new(RAW,sizeof(int));
     *r = 17;
-    add_to_hashmap((struct _HASH*)m,strdup("twostring"),r);
+    string1 = new(RAW,sizeof(char)*(strlen("twostring")+1));
+    memset(string1,0,strlen("twostring")+1);
+    strcpy(string1,"twostring");
+    add_to_hashmap((struct _HASH*)m,string1,r);
     print_hashmap((struct _HASH*)m);
     print_hash((struct _HASH*)m);
 }

@@ -8,12 +8,12 @@
 #ifndef ENVIRONMENT_H_
 #define ENVIRONMENT_H_
 #include "hash.h"
-#include "HashMap.h"
+#include "StrObjHashMap.h"
 #include "Object.h"
 typedef struct _Environment Environment;
 struct _Environment {
     Environment* Enclosing;
-	HashMap *hashMap;
+	StrObjHashMap *hashMap;
 	void (*defineEnv)(Environment* env,char* name, Object* value);
 	void* (*get)(Environment* env,Token* name);
 	void (*assign)(Environment* env, Token* name, Object* value);

@@ -11,9 +11,10 @@
 #include <assert.h>
 #include "Environment.h"
 #include "hash.h"
-#include "HashMap.h"
+#include "StrObjHashMap.h"
 #include "Token.h"
-char* func(void* value){
+
+char* toStringValueDefault(void* value){
 	if(value){
 	    char* num,*num2 ;
 	    Object * val = (Object*)value;
@@ -40,7 +41,7 @@ char* func(void* value){
 
 void* get(Environment* env,Token* name){
 	CEXCEPTION_T e;
-	HashMap* map;
+	StrObjHashMap* map;
 	struct _Hashnode* (*get_node)(struct _HASH*,void*);
 	HashMapNode* node;
 	char* temp;
@@ -49,7 +50,7 @@ void* get(Environment* env,Token* name){
 /*    if(strcmp(name->lexeme,"fibonacci")==0){
 	   fprintf(stderr,"found in get\n");
     }*/
-	get_node = map->super.vtable.get_node_for_key;
+	get_node = map->super.super.vtable.get_node_for_key;
 	if((node = (HashMapNode*)get_node((struct _HASH*)map,name->lexeme))){
 		return getReference(node->super.value);
 	}
@@ -75,11 +76,11 @@ void defineEnv(Environment* env,char* name, Object *value){
 /*    if(strcmp(name,"fibonacci")==0){
 	   fprintf(stderr,"found in defineEnv\n");
     }*/
-	env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
+	env->hashMap->super.super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
 }
 
 void init_Environment(Environment* env){
-	env->hashMap = (HashMap*)create_hashmap(15,&func);
+	env->hashMap = (StrObjHashMap*)create_StrObjHashMap(15);
 	env->defineEnv= &defineEnv;
 	env->assign = &assign;
     env->get = &get;
@@ -88,7 +89,7 @@ void init_Environment(Environment* env){
 }
 void deleteEnvironment(Environment* env){
     if(getReferenceCount(env) <= 1){
-	   delete_hashmap((struct _HASH*)env->hashMap);
+	   delete_HashMap((struct _HASH*)env->hashMap);
 	   env->hashMap = NULL;
 	   env->Enclosing = NULL;
 	   if(getAllocated(env)){
@@ -110,8 +111,8 @@ Environment* create_Environment(void){
 void assign(Environment* env, Token* name, Object* value){
 	CEXCEPTION_T e;
 	char * temp;
-	if(env->hashMap->super.vtable.get_node_for_key((struct _HASH*)env->hashMap,name->lexeme)){
-		env->hashMap->super.vtable.add_to_hash((struct _HASH*)env->hashMap,name->lexeme,value);
+	if(env->hashMap->super.super.vtable.get_node_for_key((struct _HASH*)env->hashMap,name->lexeme)){
+		env->hashMap->super.super.vtable.add_to_hash((struct _HASH*)env->hashMap,name->lexeme,value);
 		return;
 	}
     if(env->Enclosing != NULL){

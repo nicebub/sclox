@@ -7,7 +7,7 @@
 
 #include "Resolver.h"
 #include "Stmt.h"
-#include "HashMap.h"
+#include "StrObjHashMap.h"
 #include "Lox.h"
 #include "TokenArray.h"
 
@@ -88,8 +88,8 @@ void resolve_stmt(Resolver* resolver, Stmt* stmt){
 }
 #define INIT_SIZE 40
 void beginScope(Resolver* resolver){
-	HashMap* temp;
-	temp = (HashMap*)create_hashmap(INIT_SIZE,&toStringResolverValue);
+	StrObjHashMap* temp;
+	temp = (StrObjHashMap*)create_StrObjHashMap(INIT_SIZE);
 	resolver->scopes->super.push((Stack*)resolver->scopes,temp);
 }
 
@@ -112,31 +112,31 @@ void resolve_expr(Resolver* resolver, Expr* expr){
 
 
 void declare(Resolver* resolver, Token* name){
-	HashMap* scope;
+	StrObjHashMap* scope;
 	int  x;
 	if(resolver->scopes->super.used == 0) return;
 	scope = resolver->scopes->super.top((Stack*)resolver->scopes);
 	x = 0;
-	scope->super.vtable.add_to_hash((struct _HASH*)scope,name->lexeme,&x);
+	add_to_hash((struct _HASH*)scope,name->lexeme,&x);
 
 
 }
 void define_resolver(Resolver* resolver, Token* name){
-	HashMap* map;
+	StrObjHashMap* map;
 	int x;
 	if(resolver->scopes->super.used == 0) return;
 	x = 1;
 	map = resolver->scopes->super.top((Stack*)resolver->scopes);
-	map->super.vtable.add_to_hash((struct _HASH*)map,name->lexeme,&x);
+	add_to_hash((struct _HASH*)map,name->lexeme,&x);
 }
 
 static Object* visitVariableExprResolver(ExprVisitor* visitor, Expr* expr){
 	Resolver* resolver;
 	resolver = (Resolver*) visitor;
 	if(!(resolver->scopes->super.used == 0)){
-		HashMap* map;
-		map =(HashMap*)resolver->scopes->super.top((Stack*)resolver->scopes);
-		if(*(int*)map->super.vtable.get_value_for_key((struct _HASH*)map,((Variable*)expr)->name->lexeme) == 0){
+		StrObjHashMap* map;
+		map =(StrObjHashMap*)resolver->scopes->super.top((Stack*)resolver->scopes);
+		if(*(int*)map->super.super.vtable.get_value_for_key((struct _HASH*)map,((Variable*)expr)->name->lexeme) == 0){
 			Lox* lox;
 			lox = (Lox*)resolver->interpreter->lox;
 			lox->parse_error(lox,((Variable*)expr)->name,"Cannot read local variable in its own initializer.");
@@ -149,9 +149,9 @@ static Object* visitVariableExprResolver(ExprVisitor* visitor, Expr* expr){
 void resolveLocal(Resolver* resolver,Expr* expr, Token* name){
 	int i;
 	for(i = resolver->scopes->super.used -1; i>=0;i--){
-		HashMap* map;
-		map = ((HashMap**)resolver->scopes->super.values)[i];
-		if(map->super.vtable.get_value_for_key((struct _HASH*)map,name->lexeme)){
+		StrObjHashMap* map;
+		map = ((StrObjHashMap**)resolver->scopes->super.values)[i];
+		if(get_value_for_key((struct _HASH*)map,name->lexeme)){
 			Interpreter* interpreter;
 			interpreter = resolver->interpreter;
 			interpreter-> resolve(interpreter,expr,resolver->scopes->super.used-1-i);
@@ -262,10 +262,6 @@ static Object* visitGroupingExprResolver(ExprVisitor* visitor, Expr* expr){
 }
 
 static Object* visitLiteralExprResolver(ExprVisitor* visitor, Expr* expr){
-	Literal* lit;
-	Resolver* resolver;
-	resolver = (Resolver*) visitor;
-	lit = (Literal*)expr;
 	return NULL;
 }
 
