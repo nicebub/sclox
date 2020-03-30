@@ -68,7 +68,7 @@ static Object* visitLiteralExprPrinter(ExprVisitor* visitor,Expr* expression){
     Literal * expr = (Literal*) expression;
     r = NULL;
     inString = NULL;
-    r = copy(expr->value);
+    r = getReference(expr->value);
 /*	if(expr->value == NULL || expr->value->value.string==NULL){
 	    r = copyObject(expr->value);
 		return r;

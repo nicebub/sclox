@@ -45,7 +45,7 @@ struct _Lox {
 
 	short int hadError;
     short int hadRuntimeError;
-	Interpreter interpreter;
+	Interpreter* interpreter;
 	/*	    AstPrinter printer;*/
 	Scanner scanner;
 	Parser parser;

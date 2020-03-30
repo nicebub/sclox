@@ -4,7 +4,7 @@
  *  Created on: Mar 25, 2020
  *      Author: scotty
  */
-
+#include <stdio.h>
 #include "Resolver.h"
 #include "Stmt.h"
 #include "StrObjHashMap.h"
@@ -48,6 +48,30 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
 	r->scopes = new(OBJECTIVE,sizeof(HashMapStack));
 	init_HashMapStack(r->scopes,&size);
 	r->super.vtable.visitBlockStmt = &visitBlockStmtResolver;
+    r->super.vtable.visitExpressionStmt = &visitExpressionStmtResolver;
+    r->super.vtable.visitFunctionStmt = &visitFunctionStmtResolver;
+    r->super.vtable.visitIfStmt = &visitIfStmtResolver;
+    r->super.vtable.visitPrintStmt = &visitPrintStmtResolver;
+    r->super.vtable.visitReturnStmt = &visitReturnStmtResolver;
+    r->super.vtable.visitVarStmt = &visitVarStmtResolver;
+    r->super.vtable.visitWhileStmt = &visitWhileStmtResolver;
+    r->super.expr.vtable.visitAssignExpr = &visitAssignExprResolver;
+    r->super.expr.vtable.visitBinaryExpr = &visitBinaryExprResolver;
+    r->super.expr.vtable.visitCallExpr = &visitCallExprResolver;
+    r->super.expr.vtable.visitGroupingExpr = &visitGroupingExprResolver;
+    r->super.expr.vtable.visitLiteralExpr = &visitLiteralExprResolver;
+    r->super.expr.vtable.visitLogicalExpr = &visitLogicalExprResolver;
+    r->super.expr.vtable.visitUnaryExpr = &visitUnaryExprResolver;
+    r->super.expr.vtable.visitVariableExpr = &visitVariableExprResolver;
+    r->resolve = &resolve;
+    r->resolve_stmt = &resolve_stmt;
+    r->beginScope =&beginScope;
+    r->endScope = &endScope;
+    r->declare = &declare;
+    r->define_resolver = &define_resolver;
+    r->resolveLocal = &resolveLocal;
+    r->resolveFunction = &resolveFunction;
+    r->currentFunction = FT_NONE;
 /*	r->super.vtable = */
 /*	r->super.expr =*/
 	return r;
@@ -94,7 +118,7 @@ void beginScope(Resolver* resolver){
 }
 
 void endScope(Resolver* resolver){
-	resolver->scopes->super.pop((Stack*)resolver);
+	resolver->scopes->super.pop((Stack*)resolver->scopes);
 }
 
 static Object* visitVarStmtResolver(StmtVisitor* visitor,Stmt* stmt){
@@ -113,36 +137,45 @@ void resolve_expr(Resolver* resolver, Expr* expr){
 
 void declare(Resolver* resolver, Token* name){
 	StrObjHashMap* scope;
-	int  x;
+	int  *x;
 	if(resolver->scopes->super.used == 0) return;
 	scope = resolver->scopes->super.top((Stack*)resolver->scopes);
-	x = 0;
-	add_to_hash((struct _HASH*)scope,name->lexeme,&x);
+    x = new(RAW,sizeof(int));
+	*x = 0;
+    if(scope->super.super.vtable.get_value_for_key((struct _HASH*)scope,name->lexeme)){
+	   ((Lox*)resolver->interpreter->lox)->parse_error(resolver->interpreter->lox,name,"Variable with this name already declared in this scope.");
+    }
+	add_to_hash((struct _HASH*)scope,name->lexeme,x);
 
 
 }
 void define_resolver(Resolver* resolver, Token* name){
 	StrObjHashMap* map;
-	int x;
+	int *x;
 	if(resolver->scopes->super.used == 0) return;
-	x = 1;
+    x = new(RAW,sizeof(int));
+	*x = 1;
 	map = resolver->scopes->super.top((Stack*)resolver->scopes);
-	add_to_hash((struct _HASH*)map,name->lexeme,&x);
+	add_to_hash((struct _HASH*)map,name->lexeme,x);
 }
 
 static Object* visitVariableExprResolver(ExprVisitor* visitor, Expr* expr){
 	Resolver* resolver;
 	resolver = (Resolver*) visitor;
-	if(!(resolver->scopes->super.used == 0)){
+	if((resolver->scopes->super.used != 0)){
 		StrObjHashMap* map;
+	    int * x;
 		map =(StrObjHashMap*)resolver->scopes->super.top((Stack*)resolver->scopes);
-		if(*(int*)map->super.super.vtable.get_value_for_key((struct _HASH*)map,((Variable*)expr)->name->lexeme) == 0){
+	    x = (int*)get_value_for_key((struct _HASH*)map,((Variable*)expr)->name->lexeme);
+	    if(x){
+		if( *x == 0){
 			Lox* lox;
 			lox = (Lox*)resolver->interpreter->lox;
 			lox->parse_error(lox,((Variable*)expr)->name,"Cannot read local variable in its own initializer.");
 		}
+	   }
+	    resolveLocal(resolver,expr,((Variable*)expr)->name);
 	}
-	resolveLocal(resolver,expr,((Variable*)expr)->name);
 	return NULL;
 }
 
@@ -151,10 +184,15 @@ void resolveLocal(Resolver* resolver,Expr* expr, Token* name){
 	for(i = resolver->scopes->super.used -1; i>=0;i--){
 		StrObjHashMap* map;
 		map = ((StrObjHashMap**)resolver->scopes->super.values)[i];
-		if(get_value_for_key((struct _HASH*)map,name->lexeme)){
+	    
+	    if(get_value_for_key((struct _HASH*)map,name->lexeme)){
 			Interpreter* interpreter;
+		    int * x;
 			interpreter = resolver->interpreter;
-			interpreter-> resolve(interpreter,expr,resolver->scopes->super.used-1-i);
+		    x = new(RAW,sizeof(int));
+		    *x = resolver->scopes->super.used-1-i;
+		    interpreter-> resolve(interpreter,expr,x);
+		   return ;
 		}
 	}
 }
@@ -167,12 +205,14 @@ static Object* visitAssignExprResolver(ExprVisitor * visitor,Expr* expr){
 static Object* visitFunctionStmtResolver(StmtVisitor* visitor, Stmt* stmt){
 	declare((Resolver*)visitor,((Function*)stmt)->name);
 	define_resolver((Resolver*)visitor,((Function*)stmt)->name);
-	resolveFunction((Resolver*)visitor,(Function*)stmt);
+	resolveFunction((Resolver*)visitor,(Function*)stmt, FT_FUNCTION);
 	return NULL;
 }
 
-void resolveFunction(Resolver* resolver, Function* function){
+void resolveFunction(Resolver* resolver, Function* function, FunctionType type){
 	int i;
+	FunctionType enclosingFunction = resolver->currentFunction;
+	resolver->currentFunction = type;
 	beginScope(resolver);
 	for(i=0;i<function->params->used;i++){
 		declare(resolver,(Token*)getTokeninArrayAt(function->params,i));
@@ -180,6 +220,7 @@ void resolveFunction(Resolver* resolver, Function* function){
 	}
 	resolve(resolver,function->body);
 	endScope(resolver);
+	resolver->currentFunction = enclosingFunction;
 }
 static Object* visitExpressionStmtResolver(StmtVisitor* visitor, Stmt* stmt){
 	Expression* expr;
@@ -216,6 +257,9 @@ static Object* visitReturnStmtResolver(StmtVisitor* visitor, Stmt* stmt){
 	Resolver* resolver;
 	resolver =(Resolver*) visitor;
 	ret = (Return*) stmt;
+	if(resolver->currentFunction == FT_NONE){
+		((Lox*)resolver->interpreter->lox)->parse_error(resolver->interpreter->lox,ret->keyword,"Cannot return from top-level code.");
+	}
 	if(ret->value != NULL){
 		resolve_expr(resolver,ret->value);
 	}

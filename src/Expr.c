@@ -55,6 +55,7 @@ void* copyAssign(void* expr){
     setAllocated(temp,1);
     temp->name = getReference(temp->name);
     temp->value = getReference(temp->value);
+    temp->super.id = assign->super.id;
     return (void*)temp;
     
 }
@@ -104,6 +105,7 @@ void* copyBinary(void* expr){
     temp->left = getReference(temp->left);
     temp->operator = getReference(temp->operator);
     temp->right = getReference(temp->right);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -153,6 +155,7 @@ void* copyCall(void* expr){
     temp->callee = getReference(temp->callee);
     temp->paren = getReference(temp->paren);
     temp->arguments = getReference(temp->arguments);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -192,6 +195,7 @@ void* copyGrouping(void* expr){
     new_Grouping(temp,bin->expression);
     setAllocated(temp,1);
     temp->expression = getReference(temp->expression);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -231,6 +235,7 @@ void* copyLiteral(void* expr){
     new_Literal(temp,bin->value);
     setAllocated(temp,1);
     temp->value = getReference(temp->value);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -281,6 +286,7 @@ void* copyLogical(void* expr){
     temp->left = getReference(temp->left);
     temp->right = getReference(temp->right);
     temp->operator = getReference(temp->operator);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -326,6 +332,7 @@ void* copyUnary(void* expr){
     setAllocated(temp,1);
     temp->right = getReference(temp->right);
     temp->operator = getReference(temp->operator);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }
@@ -365,6 +372,7 @@ void* copyVariable(void* expr){
     new_Variable(temp,bin->name);
     setAllocated(temp,1);
     temp->name = getReference(temp->name);
+    temp->super.id = bin->super.id;
     return (void*)temp;
     
 }

@@ -396,7 +396,7 @@ void* copy_HashMapNode(void* iNode){
     HashMapNode* node_ptr, *node;
     node = (HashMapNode*) iNode;
     node_ptr = new(OBJECTIVE,sizeof(HashMapNode));
-    init_HashMapNode((struct _Hashnode*)node_ptr,copy(node->super.key),copy(node->super.value),node->super.vtable.toStringKey,node->super.vtable.toStringValue);
+    init_HashMapNode((struct _Hashnode*)node_ptr,(node->super.key),copy(node->super.value),node->super.vtable.toStringKey,node->super.vtable.toStringValue);
     node_ptr->super.vtable = node->super.vtable;
     node_ptr->super.next = node->super.next;
     return node_ptr;

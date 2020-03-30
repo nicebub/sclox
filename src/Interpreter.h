@@ -13,6 +13,7 @@
 #include "Stmt.h"
 #include "additions.h"
 #include "Environment.h"
+#include "ExprIntHashMap.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
@@ -25,6 +26,7 @@ typedef struct _SuperVisitor SuperVisitor;
 struct _Interpreter {
 	StmtVisitor super;
     Environment* globals;
+    ExprIntHashMap* locals;
     Environment* environment;
     void* lox;
     void (*interpret)(Interpreter*, StmtArray* );
@@ -35,7 +37,7 @@ struct _Interpreter {
     void (*checkNumberOperands)(Token* operator, Object* left, Object* right);
     char* (*stringify)(Object*);
     void (*executeBlock)(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
-    void (*resolve)(Interpreter* intrprtr, Expr* expr, int depth);
+    void (*resolve)(Interpreter* intrprtr, Expr* expr, int* depth);
 
 };
 
@@ -43,8 +45,8 @@ void init_Interpreter(Interpreter* intprt, void* lox);
 void interpret(Interpreter* intprtr, StmtArray* array);
 void execute(Interpreter* intprtr, Stmt* stmt);
 void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv);
-void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int depth);
-
+void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int* depth);
+Object* lookUpVariable(Interpreter* intprtr,Token* name, Expr* expr);
 
 int isEqual(Object* left, Object* right);
 void checkNumberOperand(Token* operator,Object* right);

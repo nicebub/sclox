@@ -20,6 +20,7 @@
 		E21A0B6E24241EFE00B80E0A /* LoxCallable.c in Sources */ = {isa = PBXBuildFile; fileRef = E21A0B6B24241EFE00B80E0A /* LoxCallable.c */; };
 		E21A0B6F24241EFE00B80E0A /* LoxFunction.c in Sources */ = {isa = PBXBuildFile; fileRef = E21A0B6D24241EFE00B80E0A /* LoxFunction.c */; };
 		E256DF8D2430282900655D07 /* StrObjHashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E256DF8B2430282900655D07 /* StrObjHashMap.c */; };
+		E256DF90243078A600655D07 /* ExprIntHashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E256DF8E243078A600655D07 /* ExprIntHashMap.c */; };
 		E26CB635241CADB50067C811 /* TokenArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB631241CADB40067C811 /* TokenArray.c */; };
 		E26CB636241CADB50067C811 /* StmtArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E26CB632241CADB40067C811 /* StmtArray.c */; };
 		E2860478241C5096001E1586 /* Stmt.c in Sources */ = {isa = PBXBuildFile; fileRef = E2860476241C5096001E1586 /* Stmt.c */; };
@@ -107,6 +108,8 @@
 		E24DC44F241B4C7600A569CA /* CExceptionConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CExceptionConfig.h; path = ../../src/CExceptionConfig.h; sourceTree = "<group>"; };
 		E256DF8B2430282900655D07 /* StrObjHashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = StrObjHashMap.c; path = ../../src/StrObjHashMap.c; sourceTree = "<group>"; };
 		E256DF8C2430282900655D07 /* StrObjHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StrObjHashMap.h; path = ../../src/StrObjHashMap.h; sourceTree = "<group>"; };
+		E256DF8E243078A600655D07 /* ExprIntHashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ExprIntHashMap.c; path = ../../src/ExprIntHashMap.c; sourceTree = "<group>"; };
+		E256DF8F243078A600655D07 /* ExprIntHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExprIntHashMap.h; path = ../../src/ExprIntHashMap.h; sourceTree = "<group>"; };
 		E26CB631241CADB40067C811 /* TokenArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TokenArray.c; path = ../../src/TokenArray.c; sourceTree = "<group>"; };
 		E26CB632241CADB40067C811 /* StmtArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = StmtArray.c; path = ../../src/StmtArray.c; sourceTree = "<group>"; };
 		E26CB633241CADB50067C811 /* StmtArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StmtArray.h; path = ../../src/StmtArray.h; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 		E213C69C2417242E00141F63 /* sclox */ = {
 			isa = PBXGroup;
 			children = (
+				E256DF8E243078A600655D07 /* ExprIntHashMap.c */,
+				E256DF8F243078A600655D07 /* ExprIntHashMap.h */,
 				E256DF8B2430282900655D07 /* StrObjHashMap.c */,
 				E256DF8C2430282900655D07 /* StrObjHashMap.h */,
 				E20F3D06242DAEE7005CD03B /* HashMapStack.c */,
@@ -359,6 +364,7 @@
 				E213C6B62417244F00141F63 /* Token.c in Sources */,
 				E256DF8D2430282900655D07 /* StrObjHashMap.c in Sources */,
 				E28A63C52425E61C00625E4C /* memory.c in Sources */,
+				E256DF90243078A600655D07 /* ExprIntHashMap.c in Sources */,
 				E20F3D0D242DAEE7005CD03B /* Stack.c in Sources */,
 				E26CB635241CADB50067C811 /* TokenArray.c in Sources */,
 				E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */,

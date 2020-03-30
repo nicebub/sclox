@@ -64,7 +64,7 @@ void*  copyExprArray(void * inArr){
     newarr = new(OBJECTIVE,sizeof(ExprArray));
     init_ExprArray(newarr);
     for(i=0;i<arr->used;i++){
-        newarr->addElementToArray(newarr, copy(getExprinArrayAt(arr,i)));
+        newarr->addElementToArray(newarr, getReference(getExprinArrayAt(arr,i)));
     }
     return newarr;
 }

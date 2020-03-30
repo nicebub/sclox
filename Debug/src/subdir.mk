@@ -9,6 +9,7 @@ C_SRCS += \
 ../src/Environment.c \
 ../src/Expr.c \
 ../src/ExprArray.c \
+../src/ExprIntHashMap.c \
 ../src/ExprIntegerHashMap.c \
 ../src/HashMap.c \
 ../src/HashMapStack.c \
@@ -41,6 +42,7 @@ OBJS += \
 ./src/Environment.o \
 ./src/Expr.o \
 ./src/ExprArray.o \
+./src/ExprIntHashMap.o \
 ./src/ExprIntegerHashMap.o \
 ./src/HashMap.o \
 ./src/HashMapStack.o \
@@ -73,6 +75,7 @@ C_DEPS += \
 ./src/Environment.d \
 ./src/Expr.d \
 ./src/ExprArray.d \
+./src/ExprIntHashMap.d \
 ./src/ExprIntegerHashMap.d \
 ./src/HashMap.d \
 ./src/HashMapStack.d \

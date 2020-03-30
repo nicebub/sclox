@@ -538,10 +538,15 @@ Expr* primary(Parser* parser){
 }
 
 Token* consume(Parser* parser, TokenType type, const char* message){
+    CEXCEPTION_T e;
     if(check(parser,type))
 		return parser->advance(parser);
-
+    Try{
     Throw(parser->error(parser,parser->peek(parser),message));
+    }
+    Catch(e) {
+	   Throw(e);
+    }
     return NULL;
 }
 

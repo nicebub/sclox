@@ -14,13 +14,14 @@ void* init_HashMapStack(void* inStk,void * arguments){
 	size_t size;
 /*	HashMap* map;*/
 	int i;
-	size = *(size_t*)arguments;
+	size = *(int*)arguments;
 	stk = (HashMapStack*) inStk;
 	init_Stack(&stk->super,arguments);
 	stk->super.values = new(OBJECTIVE,sizeof(HashMap*)*(size));
 			for(i=0;i<size;i++){
 				((HashMap**)stk->super.values)[i] = NULL;
 			}
+    stk->super.size = size;
 	stk->super.top = &topHashMapStack;
 	stk->super.pop = &popHashMapStack;
 	stk->super.push = &pushHashMapStack;
@@ -35,7 +36,7 @@ void pushHashMapStack(Stack* inStk,void* value){
 	HashMapStack* stk;
 	stk = (HashMapStack*)inStk;
 	if(stk){
-		if(stk->super.size > stk->super.used){
+		if((stk->super.size > stk->super.used) || (stk->super.used == 0)){
 			stk->super.values[stk->super.used] =getReference(value);
 			stk->super.used++;
 		}

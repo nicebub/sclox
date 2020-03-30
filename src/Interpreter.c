@@ -128,6 +128,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     memset(clockname,0,strlen("clock")+1);
     strncpy(clockname,"clock",strlen("clock"));
     intprtr->globals->defineEnv(intprtr->globals,clockname, (Object*)lcall);
+    intprtr->locals = create_ExprIntHashMap(40);
 }
 
 void interpret(Interpreter* intprtr, StmtArray* array){
@@ -174,22 +175,24 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	Catch(e){
 	    if(e.id != 50){
-		   delete(intrprtr->environment);
+/*		  if(intrprtr->environment != intrprtr->globals) delete(intrprtr->environment);*/
 			 intrprtr->environment = getReference(previous);
 			 ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
 	    }
 	    else{
-		   delete(intrprtr->environment);
+/*		   if(intrprtr->environment != intrprtr->globals) delete(intrprtr->environment);*/
 		   intrprtr->environment = getReference(previous);
 		   Throw(e);
 	    }
 /*		fprintf(stderr,"RuntimeError: caught in executeBlock.: %s\n",e.message);*/
 	}
-	delete(intrprtr->environment);
+    /*
+    if(intrprtr->environment != intrprtr->globals)
+	   delete(intrprtr->environment);*/
 	intrprtr->environment = getReference(previous);
 }
-void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int depth){
-/*	intrprtr->locals.put(intrprtr->locals,expr,depth);*/
+void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int* depth){
+	intrprtr-> locals->super.super.vtable.add_to_hash((struct _HASH*)intrprtr->locals,copy(expr),copy(depth));
 }
 
 
@@ -284,14 +287,13 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
     Object *temp;
    Object* r = NULL;
-    temp = evaluate(&visitor->expr,((While*)stmt)->condition);
+    temp = (evaluate(&visitor->expr,((While*)stmt)->condition));
     r = isTruthy(temp);
 	while(r->value.number){
-		delete(temp);
 		delete(r);
 		execute((Interpreter*)visitor,((While*)stmt)->body);
-	    temp = evaluate(&visitor->expr,((While*)stmt)->condition);
-	    r = isTruthy(evaluate(&visitor->expr,((While*)stmt)->condition));
+	    temp = (evaluate(&visitor->expr,((While*)stmt)->condition));
+	    r = isTruthy(temp);
 	}
 
 /*	r->type = KNULL;*/
@@ -308,7 +310,7 @@ Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
 	env = new(OBJECTIVE,sizeof(Environment));
 	init_EnvironmentwithEnclosing(env,intrprtr->environment);
 	executeBlock(intrprtr ,temp->statements,env);
-   deleteEnvironment(env);
+     deleteEnvironment(env);
     env = NULL;
 /*	r->type = KNULL;*/
 	return NULL;
@@ -744,6 +746,7 @@ Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
 Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 	Assign* assign;
 	Object* r,*a;
+	int *distance;
 	Interpreter* intprtr;
     char * new_str;
 	assign = (Assign*) expr;
@@ -751,6 +754,16 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 	init_Object(r,"",KNULL);
 	intprtr= (Interpreter*)visitor;
 	a = evaluate(visitor,assign->value);
+
+	distance = (int*)intprtr->locals->super.super.vtable.get_value_for_key((struct _HASH*)intprtr->locals,expr);
+	if(distance && (*distance != -1)){
+		intprtr->environment->assignAt(intprtr->environment,distance,assign->name,copy(a));
+	}
+	else {
+		intprtr->globals->assign(intprtr->globals,assign->name,copy(a));
+	}
+	return getReference(a);
+
 	r->type = a->type;
     if(r->type == NUMBER)
  	   r->value.number = a->value.number;
@@ -773,6 +786,9 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
     Object* r,*a;
+	Variable* nexpr;
+	nexpr = (Variable*)expr;
+	return lookUpVariable((Interpreter*)visitor,nexpr->name,expr);
     a = NULL;
     r = NULL;
 /*    a = new(OBJECTIVE,sizeof(Object));
@@ -817,3 +833,16 @@ Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
     a->value.number=0;
 	return NLLOBJ;*/
 }
+Object* lookUpVariable(Interpreter* intprtr,Token* name, Expr* expr){
+	int *distance;
+    void* res;
+    distance = intprtr->locals->super.super.vtable.get_value_for_key((struct _HASH*)intprtr->locals,expr);
+	if(distance != NULL){
+	    return intprtr->environment->getAt(intprtr->environment,distance,name->lexeme);
+	}
+	else {
+		return intprtr->globals->get(intprtr->globals,name);
+	}
+	return NULL;
+}
+

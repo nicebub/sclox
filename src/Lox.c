@@ -17,6 +17,7 @@
 /*#include "AstPrinter.h"*/
 #include "Interpreter.h"
 #include "Stmt.h"
+#include "Resolver.h"
 
 static void error(Lox* lox,int line, const char* message);
 static void lparse_error(Lox* lox,Token* token, const char* message);
@@ -24,7 +25,8 @@ static void runtimeError(Lox* lox, CEXCEPTION_T e);
 
 
 void init_lox(Lox* lox){
-    init_Interpreter(&lox->interpreter,lox);
+    lox->interpreter = new(OBJECTIVE,sizeof(Interpreter));
+    init_Interpreter(lox->interpreter,lox);
 	lox->hadError = 0;
     lox->hadRuntimeError = 0;
 	lox->run = &run;
@@ -36,7 +38,7 @@ void init_lox(Lox* lox){
     lox->runtimeError = &runtimeError;
 }
  void run(Lox* lox,char * source){
-
+	Resolver* resolver;
 /*	    init_printer(&printer);*/
 	    init_Scanner(&lox->scanner, source,lox);
 	    scanTokens(&lox->scanner);
@@ -46,7 +48,12 @@ void init_lox(Lox* lox){
 
 	    if(lox->hadError)
 	    	return;
-	   lox->interpreter.interpret(&lox->interpreter,lox->statements);
+	resolver = new(OBJECTIVE,sizeof(Resolver));
+	init_Resolver(resolver,lox->interpreter);
+	resolver->resolve(resolver,lox->statements);
+	if(lox->hadError)
+		return;
+	   lox->interpreter->interpret(lox->interpreter,lox->statements);
 	    /* TODO need to delete expression potentially after printing */
 /*	    delete_StmtArray(statements);
 	    statements = NULL;*/

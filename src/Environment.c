@@ -85,6 +85,9 @@ void init_Environment(Environment* env){
 	env->assign = &assign;
     env->get = &get;
     env->copy = &copy_Environment;
+    env->getAt = &getAt;
+    env->ancestor = &ancestor;
+    env->assignAt = &assignAt;
     env->Enclosing = NULL;
 }
 void deleteEnvironment(Environment* env){
@@ -139,4 +142,25 @@ void* copy_Environment(void* inE){
     out->Enclosing = getReference(in->Enclosing);
     out->hashMap = copy(in->hashMap);
     return out;
+}
+Object* getAt(Environment* env, int *distance, char* name){
+	Environment* temp;
+	temp =env->ancestor(env,distance);
+	return temp->hashMap->super.super.vtable.get_value_for_key((struct _HASH*)temp->hashMap,name);
+/*	return env->get(env->ancestor(env,distance),name);*/
+}
+Environment* ancestor(Environment* env, int *distance){
+	Environment* environ;
+	int i;
+	environ = env;
+	for(i = 0; i < *distance;i++){
+		environ = environ->Enclosing;
+	}
+	return environ;
+}
+
+void assignAt(Environment* env, int *distance, Token* name, Object* value){
+	Environment* temp;
+	temp = env->ancestor(env,distance);
+	temp->hashMap->super.super.vtable.add_to_hash((struct _HASH*)temp->hashMap,name->lexeme,value);
 }

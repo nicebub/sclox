@@ -124,7 +124,7 @@ void* copy_Object(void* ninobj){
 	newobj = new(OBJECTIVE,sizeof(Object));
     memset(&newobj->instanceOf,0,30);
     strncpy((char*)&newobj->instanceOf,inobj->instanceOf,strlen(inobj->instanceOf));
-	newobj->id = inobj->id;
+	newobj->id = getNextObjectId();
 /*    if(newobj->id == 17){
 	   printf("waiting on 17\n");
 	   scanf("%c",&c);
