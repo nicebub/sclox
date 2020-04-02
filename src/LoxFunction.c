@@ -9,6 +9,8 @@
 #include "CException.h"
 #include "LoxFunction.h"
 #include "LoxCallable.h"
+#include "LoxInstance.h"
+#include "Environment.h"
 #include <string.h>
 LoxFunction_vtable lfunc_vtable = {
 		&LoxFunctioncall,
@@ -23,13 +25,19 @@ void init_LoxFunction(LoxFunction* func, Function* declaration) {
     strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);
 	func->declaration = declaration;
     func->closure = NULL;
+    func->bind = &bind_LoxFunction;
     setAllocated(func,1);
     setCopyConstructor(func,&copy_LoxFunction);
     setDestructor(func,&delete_LoxFunction);
+    func->isInitializer =0;
 }
 void init_LoxFunctionWithClosure(LoxFunction* func, Function* declaration, Environment* closure){
     init_LoxFunction(func,declaration);
     func->closure = getReference(closure);
+}
+void init_LoxFunctionWithClosureAndInitializer(LoxFunction* func, Function* declaration, Environment* closure, short int initializer){
+    init_LoxFunctionWithClosure(func,declaration,closure);
+    func->isInitializer = initializer;
 }
 
 Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* arguments){
@@ -56,6 +64,16 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
 	intprtr->executeBlock(intprtr,function->declaration->body,env);
 	}
 	Catch(re){
+	    if(function->isInitializer){
+		   char* str;
+		   int *x;
+		   str = new(RAW,sizeof(char)*(strlen("this")+1));
+		   memset(str,0,strlen("this")+1);
+		   strcpy(str,"this");
+		   x = new(RAW,sizeof(int));
+		   *x = 0;
+		   return function->closure->getAt(function->closure,x,str);
+	    }
 	    if(re.sub)
 		   result = re.sub->value;
 	    else
@@ -63,7 +81,17 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
 	}
     if(re.sub)
 	   result = re.sub->value;
-	   return result;
+    if(function->isInitializer){
+	   char * str;
+	   int *x;
+	   str = new(RAW,sizeof(char)*(strlen("this")+1));
+	   memset(str,0,strlen("this")+1);
+	   strcpy(str,"this");
+	   x = new(RAW,sizeof(int));
+	   *x = 0;
+	   return function->closure->getAt(function->closure,x,str);
+    }
+    return result;
 }
 
 int LoxFunctionarity(LoxCallable* loxcall){
@@ -96,4 +124,18 @@ void* copy_LoxFunction(void* inFunc){
 }
 void delete_LoxFunction(void* inFunc){
     
+}
+LoxFunction* bind_LoxFunction(LoxFunction* func, LoxInstance* instance){
+	Environment* env;
+    char* str;
+	LoxFunction* function;
+	env = new(OBJECTIVE, sizeof(Environment));
+	init_EnvironmentwithEnclosing(env,func->closure);
+    str = new(RAW,sizeof(char)*(strlen("this")+1));
+    memset(str,0,strlen("this")+1);
+    strcpy(str,"this");
+	env->defineEnv(env,str,(Object*)instance);
+	function = new(OBJECTIVE,sizeof(LoxFunction));
+	init_LoxFunctionWithClosureAndInitializer(function,func->declaration,env,func->isInitializer);
+	return function;
 }

@@ -43,6 +43,8 @@ void* copy_LoxInstance(void* inIn){
     nin->super.super.id = instance->super.super.id;
     return nin;
 }
+
+
 Object* get_LoxInstance(LoxInstance* inst, Token* name){
 	CEXCEPTION_T e;
     char* temp_str;
@@ -52,7 +54,7 @@ Object* get_LoxInstance(LoxInstance* inst, Token* name){
 	}
 	method = inst->klass->findMethod((LoxFunction*)inst->klass,name->lexeme);
 	if(method != NULL)
-		return (Object*)method;
+		return (Object*)method->bind(method,inst);
 	e.id = 55;
     temp_str = new(RAW,sizeof(char)*(strlen("Undefined property ''.")+1+strlen(name->lexeme)));
     memset(temp_str,0,strlen("Undefined property ''.")+1+strlen(name->lexeme));

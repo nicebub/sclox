@@ -11,7 +11,14 @@
 #include "LoxCallable.h"
 #include "StrObjHashMap.h"
 #include "LoxFunction.h"
+#ifndef LFUNC_H
+#define LFUNC_H
+typedef struct _LoxFunction LoxFunction;
+#endif
+#ifndef LCLASS_H
+#define LCLASS_H
 typedef struct _LoxClass LoxClass;
+#endif
 struct _LoxClass {
 	LoxCallable super;
     char* name;

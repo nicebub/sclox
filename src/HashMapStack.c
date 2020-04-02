@@ -21,7 +21,7 @@ void* init_HashMapStack(void* inStk,void * arguments){
 			for(i=0;i<size;i++){
 				((HashMap**)stk->super.values)[i] = NULL;
 			}
-    stk->super.size = size;
+    stk->super.size = (int)size;
 	stk->super.top = &topHashMapStack;
 	stk->super.pop = &popHashMapStack;
 	stk->super.push = &pushHashMapStack;

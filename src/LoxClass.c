@@ -33,13 +33,31 @@ char* toString_LoxClass(LoxCallable* cl){
 
 Object* call_LoxClass(LoxCallable* lc,Interpreter* interpreter, ObjectArray* arguments){
     LoxInstance* instance;
+    LoxFunction* initializer;
+    char* str;
     instance = new(OBJECTIVE,sizeof(LoxInstance));
     init_LoxInstance(instance,(LoxClass*)lc);
+    str = new(RAW,sizeof(char)*(strlen("init")+1));
+    memset(str,0,strlen("init")+1);
+    strcpy(str,"init");
+    initializer = findMethod((LoxFunction*)lc,str);
+    if(initializer != NULL){
+	   LoxCallable* temp;
+	   temp = ((LoxCallable*)initializer->bind(initializer,instance));
+	   temp->vtable.call(temp,interpreter,arguments);
+    }
     return (Object*)instance;
 }
 
 int arity_LoxClass(LoxCallable* lc){
-    return 0;
+    LoxFunction * initializer;
+    char* str;
+    str = new(RAW,sizeof(char)*(strlen("init")+1));
+    memset(str,0,strlen("init")+1);
+    strcpy(str,"init");
+    initializer = findMethod((LoxFunction*)lc,str);
+    if(initializer == NULL) return 0;
+    return ((LoxFunction*)initializer)->super.vtable.arity((LoxCallable*)initializer);
 }
 
 void* copy_LoxClass(void* inCls){

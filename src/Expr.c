@@ -418,6 +418,49 @@ temp->value = getReference(temp->value);
     temp->super.id = setm->super.id;
     return (void*)temp;
 }
+void new_This (This* inObj,Token* keywordparam){
+    inObj->super.vtable.accept = &acceptThis;    
+    inObj->super.vtable.delete = &delete_This;
+    inObj->super.vtable.copy = &copyThis;
+    inObj->keyword = keywordparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
+    strncpy((char*)&inObj->super.instanceOf,"This",strlen("This"));
+    setAllocated(inObj,0);
+    setCopyConstructor(inObj,&copyThis);
+    setDestructor(inObj,&delete_This);
+    inObj->super.id = addtoExprCounter();
+}
+void delete_This(void* inArg){
+    This* arg, *expr;
+    arg = (This*) inArg;
+    expr = (This*) arg;
+
+if(getReferenceCount(arg) ==1){
+/*    delete(expr->keyword);*/
+    expr->keyword=NULL;
+/*    delete(expr);*/
+    expr=NULL;
+}
+    else{
+        releaseReference(arg);
+    }
+}
+Object* acceptThis(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitThisExpr(visitor,arg);
+}
+
+void* copyThis(void* expr){
+    This* temp, *thism;
+    thism = (This*)expr;
+    temp = new(OBJECTIVE, sizeof(This));
+new_This(temp,thism->keyword);
+temp->keyword = getReference(temp->keyword);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = thism->super.id;
+    return (void*)temp;
+}
 void new_Unary (Unary* inObj,Token* operatorparam,Expr* rightparam){
     inObj->super.vtable.accept = &acceptUnary;    
     inObj->super.vtable.delete = &delete_Unary;

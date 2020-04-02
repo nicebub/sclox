@@ -544,7 +544,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "430"
             endingLineNumber = "430"
-            landmarkName = "isTruthy(obj)"
+            landmarkName = "evaluate(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2064,7 +2064,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "634"
             endingLineNumber = "634"
-            landmarkName = "stringify(obj)"
+            landmarkName = "checkNumberOperands(operator, left, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2080,7 +2080,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "633"
             endingLineNumber = "633"
-            landmarkName = "stringify(obj)"
+            landmarkName = "checkNumberOperands(operator, left, right)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2096,8 +2096,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "208"
             endingLineNumber = "208"
-            landmarkName = "visitReturnStmtInterpreter(visitor, stmt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2128,7 +2128,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "202"
             endingLineNumber = "202"
-            landmarkName = "resolve_Interpreter(intrprtr, expr, depth)"
+            landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2160,8 +2160,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "258"
             endingLineNumber = "258"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "visitClassStmtInterpreter(visitor, stmt)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2206,8 +2206,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2240,8 +2240,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "772"
             endingLineNumber = "772"
-            landmarkName = "visitPrintStmtInterpreter(visitor, stmt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2288,7 +2288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "771"
             endingLineNumber = "771"
-            landmarkName = "visitPrintStmtInterpreter(visitor, stmt)"
+            landmarkName = "visitIfStmtInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2318,8 +2318,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2352,7 +2352,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "709"
             endingLineNumber = "709"
-            landmarkName = "visitLogicalExprInterpreter(visitor, expr)"
+            landmarkName = "stringify(obj)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2382,8 +2382,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2480,8 +2480,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "205"
             endingLineNumber = "205"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "resolve_Interpreter(intrprtr, expr, depth)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3230,8 +3230,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3472,7 +3472,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "203"
             endingLineNumber = "203"
-            landmarkName = "resolve_Interpreter(intrprtr, expr, depth)"
+            landmarkName = "executeBlock(intrprtr, array, newenv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3550,8 +3550,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3566,10 +3566,10 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3582,8 +3582,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "LoxFunctioncall(lfunc, intprtr, arguments)"
             landmarkType = "9">
             <Locations>
@@ -3632,8 +3632,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "278"
             endingLineNumber = "278"
-            landmarkName = "visitCallExprInterpreter(visitor, expr)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3648,8 +3648,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "262"
             endingLineNumber = "262"
-            landmarkName = "visitFunctionStmtInterpreter(visitor, stmt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3742,8 +3742,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "copy_LoxFunction(inFunc)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3886,8 +3886,8 @@
             filePath = "../src/LoxFunction.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
             landmarkName = "toStringLoxFunction(inloxcall)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4128,7 +4128,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "748"
             endingLineNumber = "748"
-            landmarkName = "visitIfStmtInterpreter(visitor, expr)"
+            landmarkName = "visitSetExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4160,7 +4160,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "107"
             endingLineNumber = "107"
-            landmarkName = "visitBlockStmtResolver(visitor, stmt)"
+            landmarkName = "toStringResolverValue(value)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4224,8 +4224,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "136"
             endingLineNumber = "136"
-            landmarkName = "visitVarStmtResolver(visitor, stmt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4240,8 +4240,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "143"
             endingLineNumber = "143"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "visitVarStmtResolver(visitor, stmt)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4352,7 +4352,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "216"
             endingLineNumber = "216"
-            landmarkName = "visitClassStmtResolver(visitor, stmt)"
+            landmarkName = "visitAssignExprResolver(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4368,8 +4368,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "227"
             endingLineNumber = "227"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "visitClassStmtResolver(visitor, stmt)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4384,7 +4384,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "237"
             endingLineNumber = "237"
-            landmarkName = "resolveFunction(resolver, function, type)"
+            landmarkName = "visitClassStmtResolver(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4398,10 +4398,10 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "resolveFunction(resolver, function, type)"
-            landmarkType = "9">
+            startingLineNumber = "253"
+            endingLineNumber = "253"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4414,10 +4414,10 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "258"
-            endingLineNumber = "258"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "resolveFunction(resolver, function, type)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4430,9 +4430,9 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "268"
-            endingLineNumber = "268"
-            landmarkName = "visitIfStmtResolver(visitor, expr)"
+            startingLineNumber = "273"
+            endingLineNumber = "273"
+            landmarkName = "resolveFunction(resolver, function, type)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4446,8 +4446,8 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "278"
-            endingLineNumber = "278"
+            startingLineNumber = "283"
+            endingLineNumber = "283"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -4462,9 +4462,9 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
-            landmarkName = "visitReturnStmtResolver(visitor, stmt)"
+            startingLineNumber = "293"
+            endingLineNumber = "293"
+            landmarkName = "visitIfStmtResolver(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4478,10 +4478,10 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "visitWhileStmtResolver(visitor, stmt)"
-            landmarkType = "9">
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4494,9 +4494,9 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "305"
-            endingLineNumber = "305"
-            landmarkName = "visitBinaryExprResolver(visitor, expr)"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
+            landmarkName = "visitReturnStmtResolver(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4510,9 +4510,9 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "312"
-            endingLineNumber = "312"
-            landmarkName = "visitCallExprResolver(visitor, stmt)"
+            startingLineNumber = "320"
+            endingLineNumber = "320"
+            landmarkName = "visitWhileStmtResolver(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4526,9 +4526,9 @@
             filePath = "../src/Resolver.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "320"
-            endingLineNumber = "320"
-            landmarkName = "visitCallExprResolver(visitor, stmt)"
+            startingLineNumber = "328"
+            endingLineNumber = "328"
+            landmarkName = "visitWhileStmtResolver(visitor, stmt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4560,7 +4560,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "173"
             endingLineNumber = "173"
-            landmarkName = "visitVariableExprResolver(visitor, expr)"
+            landmarkName = "define_resolver(resolver, name)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4576,8 +4576,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "174"
             endingLineNumber = "174"
-            landmarkName = "visitVariableExprResolver(visitor, expr)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4608,8 +4608,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "124"
             endingLineNumber = "124"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "resolve_stmt(resolver, stmt)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4688,7 +4688,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "865"
             endingLineNumber = "865"
-            landmarkName = "visitVariableExprInterpreter(visitor, expr)"
+            landmarkName = "visitAssignExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4736,8 +4736,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "150"
             endingLineNumber = "150"
-            landmarkName = "declare(resolver, name)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4768,7 +4768,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "766"
             endingLineNumber = "766"
-            landmarkName = "visitExpressionStmtInterpreter(visitor, stmt)"
+            landmarkName = "visitIfStmtInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4832,8 +4832,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "778"
             endingLineNumber = "778"
-            landmarkName = "visitPrintStmtInterpreter(visitor, stmt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5120,7 +5120,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "726"
             endingLineNumber = "726"
-            landmarkName = "visitSetExprInterpreter(visitor, expr)"
+            landmarkName = "visitLogicalExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5152,7 +5152,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "727"
             endingLineNumber = "727"
-            landmarkName = "visitSetExprInterpreter(visitor, expr)"
+            landmarkName = "visitLogicalExprInterpreter(visitor, expr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5232,8 +5232,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
             endingLineNumber = "145"
-            landmarkName = "resolve_expr(resolver, expr)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

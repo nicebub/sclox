@@ -12,7 +12,7 @@
 #include "TokenArray.h"
 
 #include <stddef.h>
-
+static Object* visitThisExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitGetExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt);
@@ -68,6 +68,7 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->super.expr.vtable.visitGroupingExpr = &visitGroupingExprResolver;
     r->super.expr.vtable.visitGetExpr = &visitGetExprResolver;
     r->super.expr.vtable.visitSetExpr = &visitSetExprResolver;
+    r->super.expr.vtable.visitThisExpr = &visitThisExprResolver;
     r->super.expr.vtable.visitLiteralExpr = &visitLiteralExprResolver;
     r->super.expr.vtable.visitLogicalExpr = &visitLogicalExprResolver;
     r->super.expr.vtable.visitUnaryExpr = &visitUnaryExprResolver;
@@ -83,6 +84,7 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->resolve_expr = &resolve_expr;
     r->resolveFunction = &resolveFunction;
     r->currentFunction = FT_NONE;
+    r->currentClass = CT_NONE;
 /*	r->super.vtable = */
 /*	r->super.expr =*/
 	return r;
@@ -214,14 +216,37 @@ static Object* visitAssignExprResolver(ExprVisitor * visitor,Expr* expr){
 }
 
 static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
-	int i;
+	int i ,*x;
+	char * this_str;
+    ClassType enclosingClass;
+	StrObjHashMap *scope;
+	HashMapStack* scope_stack;
+    enclosingClass = ((Resolver*)visitor)->currentClass;
+    ((Resolver*)visitor)->currentClass = CT_CLASS;
     declare((Resolver*)visitor,((Class*)stmt)->name);
     define_resolver((Resolver*)visitor,((Class*)stmt)->name);
+    beginScope((Resolver*)visitor);
+    scope_stack= ((Resolver*)visitor)->scopes;
+    scope = top((Stack*)scope_stack);
+    this_str = new(RAW,sizeof(char)*(strlen("this")+1));
+    memset(this_str,0,strlen("this")+1);
+    strcpy(this_str,"this");
+    x =new(RAW,sizeof(int));
+    *x = 1;
+    add_to_hash((struct _HASH*)scope,this_str,(Object*)x);
+
     for(i = 0; i<((Class*)stmt)->methods->used;i++){
     	FunctionType decl;
+	   Stmt* cur_stmt;
     	decl = FT_METHOD;
-    	resolveFunction((Resolver*)visitor,(Function*)((Class*)stmt)->methods->Stmts[i],decl);
+	   cur_stmt = getStmtinArrayAt(((Class*)stmt)->methods,i);
+	   if(strcmp(((Function*)cur_stmt)->name->lexeme,"init")==0){
+		  decl = FT_INITIALIZER;
+	   }
+    	resolveFunction((Resolver*)visitor,(Function*)cur_stmt,decl);
     }
+    endScope((Resolver*)visitor);
+    ((Resolver*)visitor)->currentClass = enclosingClass;
     return NULL;
 }
 
@@ -285,6 +310,9 @@ static Object* visitReturnStmtResolver(StmtVisitor* visitor, Stmt* stmt){
 		((Lox*)resolver->interpreter->lox)->parse_error(resolver->interpreter->lox,ret->keyword,"Cannot return from top-level code.");
 	}
 	if(ret->value != NULL){
+	    if(resolver->currentFunction == FT_INITIALIZER){
+		   ((Lox*)resolver->interpreter->lox)->parse_error((Lox*)resolver->interpreter->lox,ret->keyword,"Cannot return a value from an initializer.");
+	    }
 		resolve_expr(resolver,ret->value);
 	}
 	return NULL;
@@ -320,6 +348,17 @@ static Object* visitCallExprResolver(ExprVisitor* visitor, Expr* stmt){
 	}
 	return NULL;
 }
+
+static Object* visitThisExprResolver(ExprVisitor* visitor, Expr* expr){
+    if(((Resolver*)visitor)->currentClass == CT_NONE){
+	   ((Lox*)((Resolver*)visitor)->interpreter->lox)->parse_error(((Lox*)((Resolver*)visitor)->interpreter->lox), ((This*)expr)->keyword, "Cannot use 'this' outside of class.");
+	   return NULL;
+    }
+	resolveLocal((Resolver*)visitor,expr,((This*)expr)->keyword);
+	return NULL;
+}
+
+
 static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* stmt){
 	resolve_expr((Resolver*)visitor,((Set*)stmt)->value);
 	resolve_expr((Resolver*)visitor,((Set*)stmt)->object);

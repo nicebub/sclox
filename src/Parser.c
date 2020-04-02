@@ -561,6 +561,13 @@ Expr* primary(Parser* parser){
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
 	}
+	types[0] = THIS;
+	if(parser->match(parser,types)){
+		This* var = new(OBJECTIVE,sizeof(This));
+		new_This(var,previous(parser));
+		return (Expr*)var;
+	}
+
 	types[0] = IDENTIFIER;
 	if(parser->match(parser,types)){
 		Variable* var = new(OBJECTIVE,sizeof(Variable));

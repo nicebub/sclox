@@ -39,11 +39,13 @@ struct _ExprVisitor_vtable {
     Object* (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitSetExpr)(ExprVisitor* visitor,Expr* expr);
+    Object* (*visitThisExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
 
 };
 struct _ExprVisitor {
+    
     ExprVisitor_vtable vtable;
 };
 static short int Exprcounter=0;
@@ -151,6 +153,17 @@ void new_Set(Set*  inObj,Expr* object,Token* name,Expr* value);
 void delete_Set(void* arg);
 Object* acceptSet(Expr* arg, ExprVisitor* visitor);
 void* copySet(void*);
+
+typedef struct _This This;
+struct _This {
+    Expr super;
+    Token* keyword;
+
+};
+void new_This(This*  inObj,Token* keyword);
+void delete_This(void* arg);
+Object* acceptThis(Expr* arg, ExprVisitor* visitor);
+void* copyThis(void*);
 
 typedef struct _Unary Unary;
 struct _Unary {

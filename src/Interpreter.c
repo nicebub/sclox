@@ -35,11 +35,12 @@ typedef struct _exception{
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
-	extern delete_StmtArray(StmtArray* array);
+	extern void delete_StmtArray(StmtArray* array);
 #endif
 static Object *NLLOBJ;
 #include "StmtArray.h"
 
+static Object* visitThisExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
@@ -97,6 +98,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
     intprtr->super.expr.vtable.visitGetExpr = &visitGetExprInterpreter;
     intprtr->super.expr.vtable.visitSetExpr = &visitSetExprInterpreter;
+	intprtr->super.expr.vtable.visitThisExpr = &visitThisExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
     intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExprInterpreter;
@@ -242,10 +244,11 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     init_StrObjhm(methods,40);
     for(i=0;i <((Class*)stmt)->methods->used;i++){
     	LoxFunction* function;
+	   Stmt* cur_stmt =((Class*)stmt)->methods->Stmts[i];
     	function = new(OBJECTIVE,sizeof(LoxFunction));
-    	init_LoxFunctionWithClosure((LoxFunction*)function,(Function*)((Class*)stmt)->methods->Stmts[i],env);
+    	init_LoxFunctionWithClosureAndInitializer((LoxFunction*)function,(Function*)cur_stmt,env,strcmp(((Function*)cur_stmt)->name->lexeme,"init")==0);
     	methods->super.super.vtable.add_to_hash((struct _HASH*)methods,
-    			((Function*)((Class*)stmt)->methods->Stmts[i])->name->lexeme,function);
+    			((Function*)cur_stmt)->name->lexeme,function);
 
     }
 
@@ -266,7 +269,7 @@ static Object* visitFunctionStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	function = (Function*) stmt;
 	intprtr = (Interpreter*) visitor;
 	env = intprtr->environment;
-	init_LoxFunctionWithClosure(func,function,env);
+	init_LoxFunctionWithClosureAndInitializer(func,function,env,0);
 	env->defineEnv(env,getReference(function->name->lexeme),getReference(func));
     delete(func);
 	return NULL;
@@ -377,6 +380,11 @@ Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	}*/
 	return r;
 }
+
+Object* visitThisExprInterpreter(ExprVisitor* visitor, Expr* expr){
+	return (Object*)lookUpVariable((Interpreter*)visitor,((This*)expr)->keyword,expr);
+}
+
 Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr){
     CEXCEPTION_T e;
 	Object* obj;
@@ -823,7 +831,7 @@ Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr){
 	Object* r,*a;
 	int *distance;
 	Interpreter* intprtr;
-    char * new_str;
+/*    char * new_str;*/
 	assign = (Assign*) expr;
 	r = new(OBJECTIVE,sizeof(Object));
 	init_Object(r,"",KNULL);
@@ -839,23 +847,23 @@ Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr){
 	}
 	return getReference(a);
 
-	r->type = a->type;
+/*	r->type = a->type;
     if(r->type == NUMBER)
  	   r->value.number = a->value.number;
     else if(r->type == STRING){
 	   new_str = new(RAW,sizeof(char)*(strlen(a->value.string)+1));
 	   memset(new_str,0,strlen(a->value.string)+1);
 	   strncpy(new_str,a->value.string,strlen(a->value.string));
-	   r->value.string = new_str;
+	   r->value.string = new_str;*/
 	   /*	   memcpy(&r->value.string,&a.value.string,strlen(a.value.string)+1);*/
-    }
+/*    }
     else{
     	r->value.callable = memcpy(new(OBJECTIVE,sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
-    }
+    }*/
 
 /*	r->value = a->value;*/
-    intprtr->environment->assign(intprtr->environment,assign->name,copy(r));
-	return getReference(r);
+/*    intprtr->environment->assign(intprtr->environment,assign->name,copy(r));
+	return getReference(r);*/
 }
 
 Object* visitVariableExprInterpreter(ExprVisitor* visitor, Expr* expr){
