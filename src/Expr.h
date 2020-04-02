@@ -5,6 +5,7 @@
 #include <string.h>
 #include "Token.h"
 #include "Object.h"
+#include "TokenArray.h"
 
 #ifndef _STMTARRAY
 #define _STMTARRAY
@@ -33,9 +34,11 @@ struct _ExprVisitor_vtable {
     Object* (*visitAssignExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitBinaryExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitCallExpr)(ExprVisitor* visitor,Expr* expr);
+    Object* (*visitGetExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitGroupingExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
+    Object* (*visitSetExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
 
@@ -89,6 +92,18 @@ void delete_Call(void* arg);
 Object* acceptCall(Expr* arg, ExprVisitor* visitor);
 void* copyCall(void*);
 
+typedef struct _Get Get;
+struct _Get {
+    Expr super;
+    Expr* object;
+    Token* name;
+
+};
+void new_Get(Get*  inObj,Expr* object,Token* name);
+void delete_Get(void* arg);
+Object* acceptGet(Expr* arg, ExprVisitor* visitor);
+void* copyGet(void*);
+
 typedef struct _Grouping Grouping;
 struct _Grouping {
     Expr super;
@@ -123,6 +138,19 @@ void new_Logical(Logical*  inObj,Expr* left,Token* operator,Expr* right);
 void delete_Logical(void* arg);
 Object* acceptLogical(Expr* arg, ExprVisitor* visitor);
 void* copyLogical(void*);
+
+typedef struct _Set Set;
+struct _Set {
+    Expr super;
+    Expr* object;
+    Token* name;
+    Expr* value;
+
+};
+void new_Set(Set*  inObj,Expr* object,Token* name,Expr* value);
+void delete_Set(void* arg);
+Object* acceptSet(Expr* arg, ExprVisitor* visitor);
+void* copySet(void*);
 
 typedef struct _Unary Unary;
 struct _Unary {

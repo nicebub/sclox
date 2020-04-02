@@ -13,7 +13,7 @@
 #include "HashMapStack.h"
 
 typedef enum _FunctionType {
-	FT_NONE, FT_FUNCTION
+	FT_NONE, FT_FUNCTION, FT_METHOD
 } FunctionType;
 
 typedef struct _Resolver Resolver;
@@ -30,12 +30,14 @@ struct _Resolver {
     void (*define_resolver)(Resolver* resolver, Token* name);
     void (*resolveLocal)(Resolver* resolver,Expr* expr, Token* name);
     void (*resolveFunction)(Resolver* resolver, Function* function, FunctionType type);
+    void (*resolve_expr)(Resolver* resolver, Expr* expr);
 };
 
 
 Resolver* init_Resolver(Resolver* r, Interpreter* i);
 void resolve(Resolver* r, StmtArray* statements);
 void resolve_stmt(Resolver* r, Stmt* stmt);
+void resolve_expr(Resolver* resolver, Expr* expr);
 void beginScope(Resolver* resolver);
 void endScope(Resolver* resolver);
 void declare(Resolver* visitor,Token* name);

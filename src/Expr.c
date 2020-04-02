@@ -1,25 +1,26 @@
 
 #include <string.h>
 #include "Token.h"
+#include "TokenArray.h"
 #include "Object.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void delete_StmtArray(StmtArray* array);
+    extern void delete_StmtArray(void* array);
 #endif
 #ifndef _EXPRARRAY
 #define _EXPRARRAY
     typedef struct _ExprArray ExprArray;
-    extern void delete_ExprArray(ExprArray* array);
+    extern void delete_ExprArray(void* array);
 #endif
 #include "Expr.h"
 void new_Assign (Assign* inObj,Token* nameparam,Expr* valueparam){
-    inObj->super.vtable.accept = &acceptAssign;
+    inObj->super.vtable.accept = &acceptAssign;    
     inObj->super.vtable.delete = &delete_Assign;
     inObj->super.vtable.copy = &copyAssign;
     inObj->name = nameparam;
     inObj->value = valueparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Assign",strlen("Assign"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyAssign);
@@ -27,9 +28,10 @@ void new_Assign (Assign* inObj,Token* nameparam,Expr* valueparam){
     inObj->super.id = addtoExprCounter();
 }
 void delete_Assign(void* inArg){
-    Assign* arg,*expr;
+    Assign* arg, *expr;
     arg = (Assign*) inArg;
-    expr = (Assign*)arg;
+    expr = (Assign*) arg;
+
 if(getReferenceCount(arg) ==1){
 /*    delete(expr->name);*/
     expr->name=NULL;
@@ -40,7 +42,7 @@ if(getReferenceCount(arg) ==1){
     expr=NULL;
 }
     else{
-	   releaseReference(arg);
+        releaseReference(arg);
     }
 }
 Object* acceptAssign(Expr *arg, ExprVisitor* visitor){
@@ -48,25 +50,27 @@ Object* acceptAssign(Expr *arg, ExprVisitor* visitor){
 }
 
 void* copyAssign(void* expr){
-    Assign* temp,*assign;
-    assign = (Assign*) expr;
-    temp = new(OBJECTIVE,sizeof(Assign));
-    new_Assign(temp,assign->name,assign->value);
+    Assign* temp, *assignm;
+    assignm = (Assign*)expr;
+    temp = new(OBJECTIVE, sizeof(Assign));
+new_Assign(temp,assignm->name,assignm->value);
+temp->name = getReference(temp->name);
+        
+temp->value = getReference(temp->value);
+        
+
     setAllocated(temp,1);
-    temp->name = getReference(temp->name);
-    temp->value = getReference(temp->value);
-    temp->super.id = assign->super.id;
+    temp->super.id = assignm->super.id;
     return (void*)temp;
-    
 }
 void new_Binary (Binary* inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
-    inObj->super.vtable.accept = &acceptBinary;
+    inObj->super.vtable.accept = &acceptBinary;    
     inObj->super.vtable.delete = &delete_Binary;
     inObj->super.vtable.copy = &copyBinary;
     inObj->left = leftparam;
     inObj->operator = operatorparam;
     inObj->right = rightparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Binary",strlen("Binary"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyBinary);
@@ -74,10 +78,11 @@ void new_Binary (Binary* inObj,Expr* leftparam,Token* operatorparam,Expr* rightp
     inObj->super.id = addtoExprCounter();
 }
 void delete_Binary(void* inArg){
-    Binary* arg,*expr;
+    Binary* arg, *expr;
     arg = (Binary*) inArg;
-    expr = (Binary*)arg;
-if(getReferenceCount(inArg) ==1){
+    expr = (Binary*) arg;
+
+if(getReferenceCount(arg) ==1){
 /*    delete(expr->left);*/
     expr->left=NULL;
 
@@ -90,42 +95,47 @@ if(getReferenceCount(inArg) ==1){
     expr=NULL;
 }
     else{
-	   getReferenceCount(inArg);;
+        releaseReference(arg);
     }
 }
 Object* acceptBinary(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitBinaryExpr(visitor,arg);
 }
-void* copyBinary(void* expr){
-    Binary* temp,*bin;
-    bin = (Binary*) expr;
-    temp = new(OBJECTIVE,sizeof(Binary));
-    new_Binary(temp,bin->left,bin->operator,bin->right);
-    setAllocated(temp,1);
-    temp->left = getReference(temp->left);
-    temp->operator = getReference(temp->operator);
-    temp->right = getReference(temp->right);
-    temp->super.id = bin->super.id;
-    return (void*)temp;
-    
-}
 
+void* copyBinary(void* expr){
+    Binary* temp, *binarym;
+    binarym = (Binary*)expr;
+    temp = new(OBJECTIVE, sizeof(Binary));
+new_Binary(temp,binarym->left,binarym->operator,binarym->right);
+temp->left = getReference(temp->left);
+        
+temp->operator = getReference(temp->operator);
+        
+temp->right = getReference(temp->right);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = binarym->super.id;
+    return (void*)temp;
+}
 void new_Call (Call* inObj,Expr* calleeparam,Token* parenparam,ExprArray* argumentsparam){
-    inObj->super.vtable.accept = &acceptCall;
+    inObj->super.vtable.accept = &acceptCall;    
     inObj->super.vtable.delete = &delete_Call;
     inObj->super.vtable.copy = &copyCall;
     inObj->callee = calleeparam;
     inObj->paren = parenparam;
     inObj->arguments = argumentsparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Call",strlen("Call"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyCall);
     setDestructor(inObj,&delete_Call);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Call(void* arg){
-    Call* expr = (Call*)arg;
+void delete_Call(void* inArg){
+    Call* arg, *expr;
+    arg = (Call*) inArg;
+    expr = (Call*) arg;
 
 if(getReferenceCount(arg) ==1){
 /*    delete(expr->callee);*/
@@ -140,40 +150,94 @@ if(getReferenceCount(arg) ==1){
     expr=NULL;
 }
     else{
-	   releaseReference(arg);
+        releaseReference(arg);
     }
 }
 Object* acceptCall(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitCallExpr(visitor,arg);
 }
+
 void* copyCall(void* expr){
-    Call* temp,*bin;
-    bin = (Call*) expr;
-    temp = new(OBJECTIVE,sizeof(Call));
-    new_Call(temp,bin->callee,bin->paren,bin->arguments);
+    Call* temp, *callm;
+    callm = (Call*)expr;
+    temp = new(OBJECTIVE, sizeof(Call));
+new_Call(temp,callm->callee,callm->paren,callm->arguments);
+temp->callee = getReference(temp->callee);
+        
+temp->paren = getReference(temp->paren);
+        
+temp->arguments = getReference(temp->arguments);
+        
+
     setAllocated(temp,1);
-    temp->callee = getReference(temp->callee);
-    temp->paren = getReference(temp->paren);
-    temp->arguments = getReference(temp->arguments);
-    temp->super.id = bin->super.id;
+    temp->super.id = callm->super.id;
     return (void*)temp;
-    
+}
+void new_Get (Get* inObj,Expr* objectparam,Token* nameparam){
+    inObj->super.vtable.accept = &acceptGet;    
+    inObj->super.vtable.delete = &delete_Get;
+    inObj->super.vtable.copy = &copyGet;
+    inObj->object = objectparam;
+    inObj->name = nameparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
+    strncpy((char*)&inObj->super.instanceOf,"Get",strlen("Get"));
+    setAllocated(inObj,0);
+    setCopyConstructor(inObj,&copyGet);
+    setDestructor(inObj,&delete_Get);
+    inObj->super.id = addtoExprCounter();
+}
+void delete_Get(void* inArg){
+    Get* arg, *expr;
+    arg = (Get*) inArg;
+    expr = (Get*) arg;
+
+if(getReferenceCount(arg) ==1){
+/*    delete(expr->object);*/
+    expr->object=NULL;
+
+/*    delete(expr->name);*/
+    expr->name=NULL;
+/*    delete(expr);*/
+    expr=NULL;
+}
+    else{
+        releaseReference(arg);
+    }
+}
+Object* acceptGet(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitGetExpr(visitor,arg);
 }
 
+void* copyGet(void* expr){
+    Get* temp, *getm;
+    getm = (Get*)expr;
+    temp = new(OBJECTIVE, sizeof(Get));
+new_Get(temp,getm->object,getm->name);
+temp->object = getReference(temp->object);
+        
+temp->name = getReference(temp->name);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = getm->super.id;
+    return (void*)temp;
+}
 void new_Grouping (Grouping* inObj,Expr* expressionparam){
-    inObj->super.vtable.accept = &acceptGrouping;
+    inObj->super.vtable.accept = &acceptGrouping;    
     inObj->super.vtable.delete = &delete_Grouping;
     inObj->super.vtable.copy = &copyGrouping;
     inObj->expression = expressionparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Grouping",strlen("Grouping"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyGrouping);
     setDestructor(inObj,&delete_Grouping);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Grouping(void* arg){
-    Grouping* expr = (Grouping*)arg;
+void delete_Grouping(void* inArg){
+    Grouping* arg, *expr;
+    arg = (Grouping*) inArg;
+    expr = (Grouping*) arg;
 
 if(getReferenceCount(arg) ==1){
 /*    delete(expr->expression);*/
@@ -182,82 +246,88 @@ if(getReferenceCount(arg) ==1){
     expr=NULL;
 }
     else{
-	   releaseReference(arg);
+        releaseReference(arg);
     }
 }
 Object* acceptGrouping(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitGroupingExpr(visitor,arg);
 }
-void* copyGrouping(void* expr){
-    Grouping* temp,*bin;
-    bin = (Grouping*) expr;
-    temp = new(OBJECTIVE,sizeof(Grouping));
-    new_Grouping(temp,bin->expression);
-    setAllocated(temp,1);
-    temp->expression = getReference(temp->expression);
-    temp->super.id = bin->super.id;
-    return (void*)temp;
-    
-}
 
+void* copyGrouping(void* expr){
+    Grouping* temp, *groupingm;
+    groupingm = (Grouping*)expr;
+    temp = new(OBJECTIVE, sizeof(Grouping));
+new_Grouping(temp,groupingm->expression);
+temp->expression = getReference(temp->expression);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = groupingm->super.id;
+    return (void*)temp;
+}
 void new_Literal (Literal* inObj,Object* valueparam){
-    inObj->super.vtable.accept = &acceptLiteral;
+    inObj->super.vtable.accept = &acceptLiteral;    
     inObj->super.vtable.delete = &delete_Literal;
-    inObj->value = valueparam;
     inObj->super.vtable.copy = &copyLiteral;
-    memset((char*)&inObj->super.instanceOf,0,30);
+    inObj->value = valueparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Literal",strlen("Literal"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyLiteral);
     setDestructor(inObj,&delete_Literal);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Literal(void* arg){
-    Literal* expr = (Literal*)arg;
+void delete_Literal(void* inArg){
+    Literal* arg, *expr;
+    arg = (Literal*) inArg;
+    expr = (Literal*) arg;
 
-if(getReferenceCount(arg)==1){
+if(getReferenceCount(arg) ==1){
 /*    delete(expr->value);*/
     expr->value=NULL;
 /*    delete(expr);*/
     expr=NULL;
 }
     else{
-	   releaseReference(arg);
+        releaseReference(arg);
     }
 }
 Object* acceptLiteral(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitLiteralExpr(visitor,arg);
 }
-void* copyLiteral(void* expr){
-    Literal* temp,*bin;
-    bin = (Literal*) expr;
-    temp = new(OBJECTIVE,sizeof(Literal));
-    new_Literal(temp,bin->value);
-    setAllocated(temp,1);
-    temp->value = getReference(temp->value);
-    temp->super.id = bin->super.id;
-    return (void*)temp;
-    
-}
 
+void* copyLiteral(void* expr){
+    Literal* temp, *literalm;
+    literalm = (Literal*)expr;
+    temp = new(OBJECTIVE, sizeof(Literal));
+new_Literal(temp,literalm->value);
+temp->value = getReference(temp->value);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = literalm->super.id;
+    return (void*)temp;
+}
 void new_Logical (Logical* inObj,Expr* leftparam,Token* operatorparam,Expr* rightparam){
-    inObj->super.vtable.accept = &acceptLogical;
+    inObj->super.vtable.accept = &acceptLogical;    
     inObj->super.vtable.delete = &delete_Logical;
     inObj->super.vtable.copy = &copyLogical;
     inObj->left = leftparam;
     inObj->operator = operatorparam;
     inObj->right = rightparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Logical",strlen("Logical"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyLogical);
     setDestructor(inObj,&delete_Logical);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Logical(void* arg){
-    Logical* expr = (Logical*)arg;
+void delete_Logical(void* inArg){
+    Logical* arg, *expr;
+    arg = (Logical*) inArg;
+    expr = (Logical*) arg;
 
-if(getReferenceCount(arg)==1){
+if(getReferenceCount(arg) ==1){
 /*    delete(expr->left);*/
     expr->left=NULL;
 
@@ -270,7 +340,7 @@ if(getReferenceCount(arg)==1){
     expr=NULL;
 }
     else{
-       releaseReference(arg);
+        releaseReference(arg);
     }
 }
 Object* acceptLogical(Expr *arg, ExprVisitor* visitor){
@@ -278,34 +348,93 @@ Object* acceptLogical(Expr *arg, ExprVisitor* visitor){
 }
 
 void* copyLogical(void* expr){
-    Logical* temp,*bin;
-    bin = (Logical*) expr;
-    temp = new(OBJECTIVE,sizeof(Logical));
-    new_Logical(temp,bin->left,bin->operator,bin->right);
+    Logical* temp, *logicalm;
+    logicalm = (Logical*)expr;
+    temp = new(OBJECTIVE, sizeof(Logical));
+new_Logical(temp,logicalm->left,logicalm->operator,logicalm->right);
+temp->left = getReference(temp->left);
+        
+temp->operator = getReference(temp->operator);
+        
+temp->right = getReference(temp->right);
+        
+
     setAllocated(temp,1);
-    temp->left = getReference(temp->left);
-    temp->right = getReference(temp->right);
-    temp->operator = getReference(temp->operator);
-    temp->super.id = bin->super.id;
+    temp->super.id = logicalm->super.id;
     return (void*)temp;
-    
+}
+void new_Set (Set* inObj,Expr* objectparam,Token* nameparam,Expr* valueparam){
+    inObj->super.vtable.accept = &acceptSet;    
+    inObj->super.vtable.delete = &delete_Set;
+    inObj->super.vtable.copy = &copySet;
+    inObj->object = objectparam;
+    inObj->name = nameparam;
+    inObj->value = valueparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
+    strncpy((char*)&inObj->super.instanceOf,"Set",strlen("Set"));
+    setAllocated(inObj,0);
+    setCopyConstructor(inObj,&copySet);
+    setDestructor(inObj,&delete_Set);
+    inObj->super.id = addtoExprCounter();
+}
+void delete_Set(void* inArg){
+    Set* arg, *expr;
+    arg = (Set*) inArg;
+    expr = (Set*) arg;
+
+if(getReferenceCount(arg) ==1){
+/*    delete(expr->object);*/
+    expr->object=NULL;
+
+/*    delete(expr->name);*/
+    expr->name=NULL;
+
+/*    delete(expr->value);*/
+    expr->value=NULL;
+/*    delete(expr);*/
+    expr=NULL;
+}
+    else{
+        releaseReference(arg);
+    }
+}
+Object* acceptSet(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitSetExpr(visitor,arg);
 }
 
+void* copySet(void* expr){
+    Set* temp, *setm;
+    setm = (Set*)expr;
+    temp = new(OBJECTIVE, sizeof(Set));
+new_Set(temp,setm->object,setm->name,setm->value);
+temp->object = getReference(temp->object);
+        
+temp->name = getReference(temp->name);
+        
+temp->value = getReference(temp->value);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = setm->super.id;
+    return (void*)temp;
+}
 void new_Unary (Unary* inObj,Token* operatorparam,Expr* rightparam){
-    inObj->super.vtable.accept = &acceptUnary;
+    inObj->super.vtable.accept = &acceptUnary;    
     inObj->super.vtable.delete = &delete_Unary;
     inObj->super.vtable.copy = &copyUnary;
     inObj->operator = operatorparam;
     inObj->right = rightparam;
-    memset((char*)&inObj->super.instanceOf,0,30);
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Unary",strlen("Unary"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyUnary);
     setDestructor(inObj,&delete_Unary);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Unary(void* arg){
-    Unary* expr = (Unary*)arg;
+void delete_Unary(void* inArg){
+    Unary* arg, *expr;
+    arg = (Unary*) inArg;
+    expr = (Unary*) arg;
 
 if(getReferenceCount(arg) ==1){
 /*    delete(expr->operator);*/
@@ -325,34 +454,37 @@ Object* acceptUnary(Expr *arg, ExprVisitor* visitor){
 }
 
 void* copyUnary(void* expr){
-    Unary* temp,*bin;
-    bin = (Unary*) expr;
-    temp = new(OBJECTIVE,sizeof(Unary));
-    new_Unary(temp,bin->operator,bin->right);
-    setAllocated(temp,1);
-    temp->right = getReference(temp->right);
-    temp->operator = getReference(temp->operator);
-    temp->super.id = bin->super.id;
-    return (void*)temp;
-    
-}
+    Unary* temp, *unarym;
+    unarym = (Unary*)expr;
+    temp = new(OBJECTIVE, sizeof(Unary));
+new_Unary(temp,unarym->operator,unarym->right);
+temp->operator = getReference(temp->operator);
+        
+temp->right = getReference(temp->right);
+        
 
+    setAllocated(temp,1);
+    temp->super.id = unarym->super.id;
+    return (void*)temp;
+}
 void new_Variable (Variable* inObj,Token* nameparam){
-    inObj->super.vtable.accept = &acceptVariable;
+    inObj->super.vtable.accept = &acceptVariable;    
     inObj->super.vtable.delete = &delete_Variable;
     inObj->super.vtable.copy = &copyVariable;
-    inObj->name = getReference(nameparam);
-    memset((char*)&inObj->super.instanceOf,0,30);
+    inObj->name = nameparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Variable",strlen("Variable"));
     setAllocated(inObj,0);
     setCopyConstructor(inObj,&copyVariable);
     setDestructor(inObj,&delete_Variable);
     inObj->super.id = addtoExprCounter();
 }
-void delete_Variable(void* arg){
-    Variable* expr = (Variable*)arg;
+void delete_Variable(void* inArg){
+    Variable* arg, *expr;
+    arg = (Variable*) inArg;
+    expr = (Variable*) arg;
 
-if(getReferenceCount(arg)==1){
+if(getReferenceCount(arg) ==1){
 /*    delete(expr->name);*/
     expr->name=NULL;
 /*    delete(expr);*/
@@ -365,22 +497,22 @@ if(getReferenceCount(arg)==1){
 Object* acceptVariable(Expr *arg, ExprVisitor* visitor){
     return visitor->vtable.visitVariableExpr(visitor,arg);
 }
+
 void* copyVariable(void* expr){
-    Variable* temp,*bin;
-    bin = (Variable*) expr;
-    temp = new(OBJECTIVE,sizeof(Variable));
-    new_Variable(temp,bin->name);
+    Variable* temp, *variablem;
+    variablem = (Variable*)expr;
+    temp = new(OBJECTIVE, sizeof(Variable));
+new_Variable(temp,variablem->name);
+temp->name = getReference(temp->name);
+        
+
     setAllocated(temp,1);
-    temp->name = getReference(temp->name);
-    temp->super.id = bin->super.id;
+    temp->super.id = variablem->super.id;
     return (void*)temp;
-    
 }
 
-
 void delete_Expr(Expr* expr){
-    if(expr)
-	   expr->vtable.delete(expr);
+    if(expr)        expr->vtable.delete(expr);
 }
 short int addtoExprCounter(void){
      Exprcounter += 1;

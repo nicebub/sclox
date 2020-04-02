@@ -1,3 +1,4 @@
+#define CEXCEPTION_USE_CONFIG_FILE
 #include "CExceptionConfig.h"
 #include "CException.h"
 #include <stdio.h>

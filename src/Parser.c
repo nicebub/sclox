@@ -47,10 +47,14 @@ volatile StmtArray* parse(Parser* parser){
 Stmt* declaration(Parser* parser){
     char* fun_str;
 	CEXCEPTION_T e;
-	TokenType toks[] = { FUN, KNULL };
+	TokenType toks[] = { CLASS, KNULL };
     fun_str = new(RAW,sizeof(char)*(strlen("function") +1));
     strcpy(fun_str,"function");
 	Try {
+
+		if(parser->match(parser,toks))
+			return (classDeclaration(parser));
+		toks[0] = FUN;
 		if(parser->match(parser,toks))
 			return (function(parser,fun_str));
 		toks[0] = VAR;
@@ -63,6 +67,26 @@ Stmt* declaration(Parser* parser){
 		return NULL;
 	}
     return NULL;
+}
+
+Stmt* classDeclaration(Parser* parser){
+	Class* class;
+	StmtArray* methods;
+    char* str;
+	Token* name = consume(parser,IDENTIFIER, "Expect class name.");
+	consume(parser,LEFT_BRACE,"Expect '{' before class body.");
+	methods = new(OBJECTIVE,sizeof(StmtArray));
+    init_StmtArray(methods);
+    str = new(OBJECTIVE,sizeof(char)*(strlen("method")+1));
+    memset(str,0,strlen("method")+1);
+    strcpy(str,"method");
+	while(!check(parser,RIGHT_BRACE) && !parser->isAtEnd(parser)){
+		methods->addElementToArray(methods,function(parser,str));
+	}
+	consume(parser,RIGHT_BRACE, "Expect '}' after class body.");
+	class = new(OBJECTIVE,sizeof(Class));
+	new_Class(class, name, methods);
+	return (Stmt*)class;
 }
 
 Stmt* function(Parser* parser, char* kind){
@@ -354,6 +378,14 @@ Expr* assignment(Parser* parser){
 			new_Assign(assign,name,value);
 			return (Expr*)assign;
 		}
+		else if(strcmp(expr->instanceOf,"Get")==0){
+			Get* get;
+			Set* temp;
+			get = (Get*) expr;
+			temp = new(OBJECTIVE,sizeof(Set));
+			new_Set(temp,get->object,get->name,value);
+			return (Expr*)temp;
+		}
 		parser->error(parser,equals,"Invalid assignment target.");
 	}
 	return expr;
@@ -436,11 +468,25 @@ Expr* call(Parser* parser){
 	TokenType toks[] = { LEFT_PAREN, KNULL };
 	expr = (Expr*)primary(parser);
 	while(1){
+	    toks[0] = LEFT_PAREN;
 		if(parser->match(parser,toks)){
 			expr = finishCall(parser,expr);
 		}
 		else{
-			break;
+			toks[0] = DOT;
+			if(parser->match(parser,toks)){
+				Token* name;
+			    Get* get;
+				name = consume(parser,IDENTIFIER, "Expect property name after '.'.");
+				get = new(OBJECTIVE,sizeof(Get));
+				new_Get(get,expr,name);
+			    expr = (Expr*)get;
+			    
+			}
+			else{
+				break;
+			}
+
 		}
 	}
 	return expr;

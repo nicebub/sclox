@@ -4,6 +4,7 @@
  *  Created on: Mar 19, 2020
  *      Author: scotty
  */
+#define CEXCEPTION_USE_CONFIG_FILE
 #include "CExceptionConfig.h"
 #include "CException.h"
 #include "LoxFunction.h"

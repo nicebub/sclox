@@ -10,12 +10,12 @@
 #ifndef _STMTARRAY
 #define _STMTARRAY
     typedef struct _StmtArray StmtArray;
-    extern void delete_StmtArray(StmtArray* array);
+    extern void delete_StmtArray(void* array);
 #endif
 #ifndef _EXPRARRAY
 #define _EXPRARRAY
     typedef struct _ExprArray ExprArray;
-    extern void delete_ExprArray(ExprArray* array);
+    extern void delete_ExprArray(void* array);
 #endif
 
 
@@ -32,6 +32,7 @@ struct _Stmt_vtable {
 typedef struct _StmtVisitor_vtable StmtVisitor_vtable;
 struct _StmtVisitor_vtable {
     Object* (*visitBlockStmt)(StmtVisitor* visitor,Stmt* stmt);
+    Object* (*visitClassStmt)(StmtVisitor* visitor,Stmt* stmt);
     Object* (*visitExpressionStmt)(StmtVisitor* visitor,Stmt* stmt);
     Object* (*visitFunctionStmt)(StmtVisitor* visitor,Stmt* stmt);
     Object* (*visitIfStmt)(StmtVisitor* visitor,Stmt* stmt);
@@ -64,6 +65,18 @@ void delete_Block(void* arg);
 Object* acceptBlock(Stmt* arg, StmtVisitor* visitor);
 void* copyBlock(void*);
 
+typedef struct _Class Class;
+struct _Class {
+    Stmt super;
+    Token* name;
+    StmtArray* methods;
+
+};
+void new_Class(Class*  inObj,Token* name,StmtArray* methods);
+void delete_Class(void* arg);
+Object* acceptClass(Stmt* arg, StmtVisitor* visitor);
+void* copyClass(void*);
+
 typedef struct _Expression Expression;
 struct _Expression {
     Stmt super;
@@ -87,6 +100,7 @@ void new_Function(Function*  inObj,Token* name,TokenArray* params,StmtArray* bod
 void delete_Function(void* arg);
 Object* acceptFunction(Stmt* arg, StmtVisitor* visitor);
 void* copyFunction(void*);
+
 typedef struct _If If;
 struct _If {
     Stmt super;
@@ -147,7 +161,7 @@ void delete_While(void* arg);
 Object* acceptWhile(Stmt* arg, StmtVisitor* visitor);
 void* copyWhile(void*);
 
-void delete_Stmt(void* stmt);
+void delete_Stmt(Stmt* stmt);
 short int addtoStmtCounter(void);
 
 #endif

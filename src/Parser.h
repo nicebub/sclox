@@ -54,6 +54,7 @@ Stmt* varDeclaration(Parser* parser);
 Stmt* statement(Parser* parser);
 Stmt* expressionStatement(Parser* parser);
 Stmt* printStatement(Parser* parser);
+Stmt* classDeclaration(Parser* parser);
 
 Expr* and(Parser* parser);
 Expr* expression(Parser* parser);

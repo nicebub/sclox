@@ -16,7 +16,9 @@ C_SRCS += \
 ../src/Interpreter.c \
 ../src/Lox.c \
 ../src/LoxCallable.c \
+../src/LoxClass.c \
 ../src/LoxFunction.c \
+../src/LoxInstance.c \
 ../src/Object.c \
 ../src/ObjectArray.c \
 ../src/Parser.c \
@@ -49,7 +51,9 @@ OBJS += \
 ./src/Interpreter.o \
 ./src/Lox.o \
 ./src/LoxCallable.o \
+./src/LoxClass.o \
 ./src/LoxFunction.o \
+./src/LoxInstance.o \
 ./src/Object.o \
 ./src/ObjectArray.o \
 ./src/Parser.o \
@@ -82,7 +86,9 @@ C_DEPS += \
 ./src/Interpreter.d \
 ./src/Lox.d \
 ./src/LoxCallable.d \
+./src/LoxClass.d \
 ./src/LoxFunction.d \
+./src/LoxInstance.d \
 ./src/Object.d \
 ./src/ObjectArray.d \
 ./src/Parser.d \

@@ -30,6 +30,8 @@ typedef struct _exception{
 #include "ObjectArray.h"
 #include "LoxCallable.h"
 #include "LoxFunction.h"
+#include "LoxClass.h"
+#include "LoxInstance.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
@@ -38,22 +40,25 @@ typedef struct _exception{
 static Object *NLLOBJ;
 #include "StmtArray.h"
 
-static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt);
-static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt);
-static Object* visitCallExpr(ExprVisitor* visitor, Expr* stmt);
-static Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt);
-static Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr);
-static Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr);
-static Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr);
+static Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitReturnStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitFunctionStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* stmt);
+static Object* visitWhileStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitLogicalExprInterpreter(ExprVisitor* visitor, Expr* expr);
+static Object* visitIfStmtInterpreter(StmtVisitor * visitor, Stmt* expr);
+static Object* visitBlockStmtInterpreter(StmtVisitor * visitor, Stmt* expr);
 static Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr);
-static Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr);
-static Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt);
-static Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt);
-static Object* visitVarStmt(StmtVisitor* visitor,Stmt* stmt);
-static Object* visitVariableExpr(ExprVisitor* visitor, Expr* stmt);
+static Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr);
+static Object* visitExpressionStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitPrintStmtInterpreter(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitVarStmtInterpreter(StmtVisitor* visitor,Stmt* stmt);
+static Object* visitVariableExprInterpreter(ExprVisitor* visitor, Expr* stmt);
 Object* evaluate(ExprVisitor* visitor, Expr* expr);
 Object* isTruthy(Object* obj);
 
@@ -87,21 +92,24 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->environment = intprtr->globals;
     intprtr->resolve = &resolve_Interpreter;
 	intprtr->super.expr.vtable.visitLiteralExpr = &visitLiteralExprInterpreter;
-	intprtr->super.vtable.visitFunctionStmt = &visitFunctionStmt;
-    intprtr->super.vtable.visitReturnStmt = &visitReturnStmt;
+	intprtr->super.vtable.visitFunctionStmt = &visitFunctionStmtInterpreter;
+    intprtr->super.vtable.visitReturnStmt = &visitReturnStmtInterpreter;
 	intprtr->super.expr.vtable.visitGroupingExpr = &visitGroupingExprInterpreter;
+    intprtr->super.expr.vtable.visitGetExpr = &visitGetExprInterpreter;
+    intprtr->super.expr.vtable.visitSetExpr = &visitSetExprInterpreter;
 	intprtr->super.expr.vtable.visitUnaryExpr = &visitUnaryExprInterpreter;
     intprtr->super.expr.vtable.visitBinaryExpr = &visitBinaryExprInterpreter;
-    intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExpr;
-    intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExpr;
-    intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExpr;
-    intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmt;
-    intprtr->super.expr.vtable.visitCallExpr = &visitCallExpr;
-    intprtr->super.vtable.visitWhileStmt = &visitWhileStmt;
-    intprtr->super.vtable.visitIfStmt = &visitIfStmt;
-    intprtr->super.vtable.visitBlockStmt = &visitBlockStmt;
-    intprtr->super.vtable.visitPrintStmt = &visitPrintStmt;
-    intprtr->super.vtable.visitVarStmt = &visitVarStmt;
+    intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExprInterpreter;
+    intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExprInterpreter;
+    intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExprInterpreter;
+    intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmtInterpreter;
+    intprtr->super.expr.vtable.visitCallExpr = &visitCallExprInterpreter;
+    intprtr->super.vtable.visitWhileStmt = &visitWhileStmtInterpreter;
+    intprtr->super.vtable.visitIfStmt = &visitIfStmtInterpreter;
+    intprtr->super.vtable.visitBlockStmt = &visitBlockStmtInterpreter;
+    intprtr->super.vtable.visitPrintStmt = &visitPrintStmtInterpreter;
+    intprtr->super.vtable.visitVarStmt = &visitVarStmtInterpreter;
+    intprtr->super.vtable.visitClassStmt = &visitClassStmtInterpreter;
     intprtr->evaluate = &evaluate;
     intprtr->executeBlock = &executeBlock;
     intprtr->checkNumberOperand = &checkNumberOperand;
@@ -196,7 +204,7 @@ void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int* depth){
 }
 
 
-static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
+static Object* visitReturnStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     CEXCEPTION_T e;
 	 Return_exception *re;
 	Return* ret;
@@ -218,7 +226,38 @@ static Object* visitReturnStmt(StmtVisitor* visitor, Stmt* stmt){
 	return NULL;
 }
 
-static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt){
+static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
+    Interpreter* interpreter;
+    StrObjHashMap* methods;
+    Environment* env;
+    int *x , i ;
+    LoxClass* klass;
+    interpreter = (Interpreter*)visitor;
+    env = interpreter->environment;
+    x = new(RAW, sizeof(int));
+    *x = 0;
+    env->defineEnv(env,((Class*)stmt)->name->lexeme,(Object*)x);
+
+    methods = new(OBJECTIVE,sizeof(StrObjHashMap));
+    init_StrObjhm(methods,40);
+    for(i=0;i <((Class*)stmt)->methods->used;i++){
+    	LoxFunction* function;
+    	function = new(OBJECTIVE,sizeof(LoxFunction));
+    	init_LoxFunctionWithClosure((LoxFunction*)function,(Function*)((Class*)stmt)->methods->Stmts[i],env);
+    	methods->super.super.vtable.add_to_hash((struct _HASH*)methods,
+    			((Function*)((Class*)stmt)->methods->Stmts[i])->name->lexeme,function);
+
+    }
+
+
+    klass = new(OBJECTIVE,sizeof(LoxClass));
+    init_LoxClassWithMethods(klass,((Class*)stmt)->name->lexeme,methods);
+    env->assign(env,((Class*)stmt)->name,(Object*)klass);
+    return NULL;
+}
+
+
+static Object* visitFunctionStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	LoxFunction * func;
 	Environment* env;
 	Function* function;
@@ -234,7 +273,7 @@ static Object* visitFunctionStmt(StmtVisitor* visitor, Stmt* stmt){
 
 }
 
-static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
+static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* expr){
     ObjectArray *arguments;
     Object* r,*callee, *res;
     int i;
@@ -251,7 +290,8 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 /*	   assert(r->value.number != -1);*/
     	arguments->addElementToArray(arguments,(r));
     }
-    if(!(strcmp(callee->instanceOf,"LoxCallable")==0) && !(strcmp(callee->instanceOf,"LoxFunction")==0)){
+    if(!(strcmp(callee->instanceOf,"LoxCallable")==0) && !(strcmp(callee->instanceOf,"LoxFunction")==0)
+	  && !(strcmp(callee->instanceOf,"LoxClass")==0)&& !(strcmp(callee->instanceOf,"LoxInstance")==0)){
 	   CEXCEPTION_T e;
 	   e.id=20;
 	   e.message = "Can only call functions and classes.";
@@ -259,7 +299,10 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 	   e.sub = NULL;
 	   Throw(e);
     }
-   function = ((LoxFunction*)(callee));
+    if(strcmp(callee->instanceOf,"LoxInstance")==0)
+	   function = (LoxFunction*)((LoxInstance*)callee)->klass;
+    else
+	   function = ((LoxFunction*)(callee));
     if(arguments->used != function->super.vtable.arity((LoxCallable*)function)){
 	   CEXCEPTION_T e;
 	   char * new_str,*temp_str;
@@ -284,7 +327,7 @@ static Object* visitCallExpr(ExprVisitor* visitor, Expr* expr){
 }
 
 
-Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
+Object* visitWhileStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     Object *temp;
    Object* r = NULL;
     temp = (evaluate(&visitor->expr,((While*)stmt)->condition));
@@ -300,7 +343,7 @@ Object* visitWhileStmt(StmtVisitor* visitor, Stmt* stmt){
 	return NULL;
 }
 
-Object* visitBlockStmt(StmtVisitor * visitor, Stmt* expr){
+Object* visitBlockStmtInterpreter(StmtVisitor * visitor, Stmt* expr){
 	Block* temp;
 	Interpreter* intrprtr;
 	Environment* env;
@@ -334,6 +377,21 @@ Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	}*/
 	return r;
 }
+Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr){
+    CEXCEPTION_T e;
+	Object* obj;
+	obj = evaluate(visitor,((Get*)expr)->object);
+	if(strcmp(obj->instanceOf,"LoxInstance")==0){
+		return ((LoxInstance*)obj)->get((LoxInstance*)obj,((Get*)expr)->name);
+	}
+	e.id = 52;
+	e.message = "Only instances have properties.";
+	e.token = ((Get*)expr)->name;
+    e.sub = NULL;
+	Throw(e);
+	return NULL;
+}
+
 Object* visitGroupingExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	return evaluate(visitor,((Grouping*)expr)->expression);
 }
@@ -643,7 +701,7 @@ char* stringify(Object* obj){
 
     return copy(obj->value.string);
 }
-Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
+Object* visitLogicalExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	Object* left, *truth;
 	Logical* log;
 	log = (Logical*) expr;
@@ -665,7 +723,24 @@ Object* visitLogicalExpr(ExprVisitor* visitor, Expr* expr){
 	return evaluate(visitor,log->right);
 }
 
-Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
+Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr){
+	CEXCEPTION_T e;
+	Object* obj, *value;
+	obj = evaluate(visitor,((Set*)expr)->object);
+	if(!(strcmp(obj->instanceOf,"LoxInstance")==0)){
+		e.id = 57;
+		e.message = "Only instances have fields.";
+		e.token = ((Set*)expr)->name;
+		e.sub = NULL;
+		Throw(e);
+		return NULL;
+	}
+	value = evaluate(visitor,((Set*)expr)->value);
+	((LoxInstance*)obj)->set((LoxInstance*)obj,((Set*)expr)->name,value);
+	return value;
+}
+
+Object* visitIfStmtInterpreter(StmtVisitor * visitor, Stmt* expr){
     Object* a,*truth;
     If* stmt;
 /*    r = NULL;
@@ -688,12 +763,12 @@ Object* visitIfStmt(StmtVisitor * visitor, Stmt* expr){
 }
 
 
-Object* visitExpressionStmt(StmtVisitor* visitor, Stmt* stmt){
+Object* visitExpressionStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	evaluate(&visitor->expr,((Expression*)stmt)->expression);
 	return NLLOBJ;
 }
 
-Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
+Object* visitPrintStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     Object* result;
     char * val;
     result = NULL;
@@ -707,7 +782,7 @@ Object* visitPrintStmt(StmtVisitor* visitor, Stmt* stmt){
     return NLLOBJ;
 }
 
-Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
+Object* visitVarStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	Interpreter* intprtr;
     Object* r,*a;
 	Var* vstmt;
@@ -743,7 +818,7 @@ Object* visitVarStmt(StmtVisitor* visitor, Stmt* stmt){
 	a->type = NIL;
 	return a;
 }
-Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
+Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr){
 	Assign* assign;
 	Object* r,*a;
 	int *distance;
@@ -783,7 +858,7 @@ Object* visitAssignExpr(ExprVisitor * visitor,Expr* expr){
 	return getReference(r);
 }
 
-Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
+Object* visitVariableExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
     Object* r,*a;
 	Variable* nexpr;
@@ -835,7 +910,7 @@ Object* visitVariableExpr(ExprVisitor* visitor, Expr* expr){
 }
 Object* lookUpVariable(Interpreter* intprtr,Token* name, Expr* expr){
 	int *distance;
-    void* res;
+/*    void* res;*/
     distance = intprtr->locals->super.super.vtable.get_value_for_key((struct _HASH*)intprtr->locals,expr);
 	if(distance != NULL){
 	    return intprtr->environment->getAt(intprtr->environment,distance,name->lexeme);

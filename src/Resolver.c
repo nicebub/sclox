@@ -12,6 +12,10 @@
 #include "TokenArray.h"
 
 #include <stddef.h>
+
+static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* expr);
+static Object* visitGetExprResolver(ExprVisitor* visitor, Expr* expr);
+static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitReturnStmtResolver(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitFunctionStmtResolver(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitCallExprResolver(ExprVisitor* visitor, Expr* stmt);
@@ -25,12 +29,14 @@ static Object* visitUnaryExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitBinaryExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitAssignExprResolver(ExprVisitor * visitor,Expr* expr);
 static Object* visitExpressionStmtResolver(StmtVisitor* visitor, Stmt* stmt);
+static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitPrintStmtResolver(StmtVisitor* visitor, Stmt* stmt);
 static Object* visitVarStmtResolver(StmtVisitor* visitor,Stmt* stmt);
 static Object* visitVariableExprResolver(ExprVisitor* visitor, Expr* stmt);
 
 StmtVisitor_vtable Resolver_vtable = {
     visitBlockStmtResolver,
+    visitClassStmtResolver,
     visitExpressionStmtResolver,
     visitFunctionStmtResolver,
     visitIfStmtResolver,
@@ -48,6 +54,7 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
 	r->scopes = new(OBJECTIVE,sizeof(HashMapStack));
 	init_HashMapStack(r->scopes,&size);
 	r->super.vtable.visitBlockStmt = &visitBlockStmtResolver;
+    r->super.vtable.visitClassStmt = &visitClassStmtResolver;
     r->super.vtable.visitExpressionStmt = &visitExpressionStmtResolver;
     r->super.vtable.visitFunctionStmt = &visitFunctionStmtResolver;
     r->super.vtable.visitIfStmt = &visitIfStmtResolver;
@@ -59,6 +66,8 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->super.expr.vtable.visitBinaryExpr = &visitBinaryExprResolver;
     r->super.expr.vtable.visitCallExpr = &visitCallExprResolver;
     r->super.expr.vtable.visitGroupingExpr = &visitGroupingExprResolver;
+    r->super.expr.vtable.visitGetExpr = &visitGetExprResolver;
+    r->super.expr.vtable.visitSetExpr = &visitSetExprResolver;
     r->super.expr.vtable.visitLiteralExpr = &visitLiteralExprResolver;
     r->super.expr.vtable.visitLogicalExpr = &visitLogicalExprResolver;
     r->super.expr.vtable.visitUnaryExpr = &visitUnaryExprResolver;
@@ -70,6 +79,8 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->declare = &declare;
     r->define_resolver = &define_resolver;
     r->resolveLocal = &resolveLocal;
+    r->resolve_stmt = &resolve_stmt;
+    r->resolve_expr = &resolve_expr;
     r->resolveFunction = &resolveFunction;
     r->currentFunction = FT_NONE;
 /*	r->super.vtable = */
@@ -202,6 +213,19 @@ static Object* visitAssignExprResolver(ExprVisitor * visitor,Expr* expr){
 	return NULL;
 }
 
+static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
+	int i;
+    declare((Resolver*)visitor,((Class*)stmt)->name);
+    define_resolver((Resolver*)visitor,((Class*)stmt)->name);
+    for(i = 0; i<((Class*)stmt)->methods->used;i++){
+    	FunctionType decl;
+    	decl = FT_METHOD;
+    	resolveFunction((Resolver*)visitor,(Function*)((Class*)stmt)->methods->Stmts[i],decl);
+    }
+    return NULL;
+}
+
+
 static Object* visitFunctionStmtResolver(StmtVisitor* visitor, Stmt* stmt){
 	declare((Resolver*)visitor,((Function*)stmt)->name);
 	define_resolver((Resolver*)visitor,((Function*)stmt)->name);
@@ -296,6 +320,21 @@ static Object* visitCallExprResolver(ExprVisitor* visitor, Expr* stmt){
 	}
 	return NULL;
 }
+static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* stmt){
+	resolve_expr((Resolver*)visitor,((Set*)stmt)->value);
+	resolve_expr((Resolver*)visitor,((Set*)stmt)->object);
+	return NULL;
+}
+
+static Object* visitGetExprResolver(ExprVisitor* visitor, Expr* stmt){
+	Get* expr;
+	Resolver* resolver;
+	expr = (Get*) stmt;
+	resolver = (Resolver*) visitor;
+	resolver->resolve_expr(resolver,expr->object);
+	return NULL;
+}
+
 static Object* visitGroupingExprResolver(ExprVisitor* visitor, Expr* expr){
 	Grouping* group;
 	Resolver* resolver;

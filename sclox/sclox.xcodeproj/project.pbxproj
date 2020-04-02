@@ -28,6 +28,8 @@
 		E28A63C62425E61C00625E4C /* memoryArray.c in Sources */ = {isa = PBXBuildFile; fileRef = E28A63C32425E61C00625E4C /* memoryArray.c */; };
 		E28E714624204B5D0067DC82 /* Environment.c in Sources */ = {isa = PBXBuildFile; fileRef = E28E714424204B5D0067DC82 /* Environment.c */; };
 		E29EA637242026E200EAAAF4 /* Test_HashMap.c in Sources */ = {isa = PBXBuildFile; fileRef = E29EA636242026E200EAAAF4 /* Test_HashMap.c */; };
+		E2BB0CF12433F48800B5D47C /* LoxClass.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BB0CF02433F48800B5D47C /* LoxClass.c */; };
+		E2BB0CF42434009A00B5D47C /* LoxInstance.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BB0CF22434009900B5D47C /* LoxInstance.c */; };
 		E2BB92162428656F00F707F7 /* CExceptionConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BB92152428656E00F707F7 /* CExceptionConfig.c */; };
 		E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC490F2418CB8300F8F14C /* Interpreter.c */; };
 		E2BC49152418CB8400F8F14C /* Object.c in Sources */ = {isa = PBXBuildFile; fileRef = E2BC49102418CB8300F8F14C /* Object.c */; };
@@ -123,6 +125,10 @@
 		E28E714424204B5D0067DC82 /* Environment.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Environment.c; path = ../../src/Environment.c; sourceTree = "<group>"; };
 		E28E714524204B5D0067DC82 /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = ../../src/Environment.h; sourceTree = "<group>"; };
 		E29EA636242026E200EAAAF4 /* Test_HashMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Test_HashMap.c; path = ../../test/Test_HashMap.c; sourceTree = "<group>"; };
+		E2BB0CEF2433F48800B5D47C /* LoxClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoxClass.h; path = ../../src/LoxClass.h; sourceTree = "<group>"; };
+		E2BB0CF02433F48800B5D47C /* LoxClass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LoxClass.c; path = ../../src/LoxClass.c; sourceTree = "<group>"; };
+		E2BB0CF22434009900B5D47C /* LoxInstance.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LoxInstance.c; path = ../../src/LoxInstance.c; sourceTree = "<group>"; };
+		E2BB0CF32434009900B5D47C /* LoxInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoxInstance.h; path = ../../src/LoxInstance.h; sourceTree = "<group>"; };
 		E2BB92152428656E00F707F7 /* CExceptionConfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CExceptionConfig.c; path = ../../src/CExceptionConfig.c; sourceTree = "<group>"; };
 		E2BC490F2418CB8300F8F14C /* Interpreter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Interpreter.c; path = ../../src/Interpreter.c; sourceTree = "<group>"; };
 		E2BC49102418CB8300F8F14C /* Object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Object.c; path = ../../src/Object.c; sourceTree = "<group>"; };
@@ -192,6 +198,10 @@
 		E213C69C2417242E00141F63 /* sclox */ = {
 			isa = PBXGroup;
 			children = (
+				E2BB0CF22434009900B5D47C /* LoxInstance.c */,
+				E2BB0CF32434009900B5D47C /* LoxInstance.h */,
+				E2BB0CF02433F48800B5D47C /* LoxClass.c */,
+				E2BB0CEF2433F48800B5D47C /* LoxClass.h */,
 				E256DF8E243078A600655D07 /* ExprIntHashMap.c */,
 				E256DF8F243078A600655D07 /* ExprIntHashMap.h */,
 				E256DF8B2430282900655D07 /* StrObjHashMap.c */,
@@ -367,6 +377,7 @@
 				E256DF90243078A600655D07 /* ExprIntHashMap.c in Sources */,
 				E20F3D0D242DAEE7005CD03B /* Stack.c in Sources */,
 				E26CB635241CADB50067C811 /* TokenArray.c in Sources */,
+				E2BB0CF42434009A00B5D47C /* LoxInstance.c in Sources */,
 				E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */,
 				E21A0B6F24241EFE00B80E0A /* LoxFunction.c in Sources */,
 				E2EB41EE241F425C00A3E77B /* HashMap.c in Sources */,
@@ -379,6 +390,7 @@
 				E213C6B32417244F00141F63 /* sclox.c in Sources */,
 				E213C6B82417244F00141F63 /* Scanner.c in Sources */,
 				E2BB92162428656F00F707F7 /* CExceptionConfig.c in Sources */,
+				E2BB0CF12433F48800B5D47C /* LoxClass.c in Sources */,
 				E21A0B6E24241EFE00B80E0A /* LoxCallable.c in Sources */,
 				E2860478241C5096001E1586 /* Stmt.c in Sources */,
 				E2022369241C906900C67976 /* additions.c in Sources */,
