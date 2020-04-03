@@ -11,6 +11,7 @@
 #include "HashMap.h"
 #include "Object.h"
 #include "Expr.h"
+#include "str.h"
 
 ExprIntHashMap* init_ExprInthm(ExprIntHashMap* hm, int size){
 	init_HashMap((struct _HASH*)&hm->super,size,&toStringExprInthmNodeValue,&toStringExprInthmNodeKey,&compareKeysExprInthm);
@@ -28,19 +29,16 @@ if(value){
     Object * val = (Object*)value;
     if(val->type == NUMBER){
 	   num = NULL;
+	   num2 = NULL;
 	   asprintf(&num,"%f",val->value.number);
-	   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
-	   memset(num2,0,strlen(num)+1);
-	   strncpy(num2,num,strlen(num));
+	   num2 =strcopy(num2,num);
 	   free(num);
 	   num = NULL;
 	   return num2;
     }
     else{
 	   num = NULL;
-	   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
-	   memset(num,0,strlen(val->value.string)+1);
-	   strncpy(num,val->value.string,strlen(val->value.string));
+	   num = strcopy(num,val->value.string);
 	   return num;
     }
 }
@@ -60,7 +58,6 @@ short int compute_hash_valueExprInthm(struct _HASH * hashMap,void *key){
     char *num_str;
     int h;
     short int result;
-/*    int num;*/
     size_t leng;
     h=0;
     num_str=NULL;
@@ -86,14 +83,8 @@ short int compute_hash_valueExprInthm(struct _HASH * hashMap,void *key){
 ExprIntHashMap *create_ExprIntHashMap(int size){
 
     ExprIntHashMap *m;
-/*    int i;*/
     m = new(OBJECTIVE,sizeof(ExprIntHashMap));
     init_ExprInthm(m,size);
-/*
-    m->super.vtable.toStringValue = toStringValueArg;
-    m->super.vtable.toStringKey = toStringKeyArg;
-    m->super.vtable.compare_keys = compareKeysArg;
-*/
     return m;
 }
 void* copy_ExprIntHashMap(void* inMap){

@@ -16,8 +16,6 @@ struct _LoxCallable_vtable {
 	Object* (*call)(LoxCallable* inloxcall,Interpreter* intrprtr, ObjectArray* arguments);
     int (*arity)(LoxCallable* loxcall);
     char* (*toString)(LoxCallable* inloxcall);
-/*    void* (*copy_LoxCallable)(void*);
-    void (*delete_LoxCallable)(void*);*/
 } __attribute__((packed));
 struct _LoxCallable{
     Object super;

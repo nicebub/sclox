@@ -15,15 +15,16 @@ struct _ExprArray {
     int size;
     int used;
     void (*addElementToArray)(ExprArray* array,Expr* element);
-    void (*delete)(void* array);
     Expr* (*getElementInArrayAt)(ExprArray* array,size_t index);
-    void*  (*copy)(void * arr);
     
 };
 void init_ExprArray(ExprArray* array);
+
 void addElementToExprArray(ExprArray* array,Expr* element);
-void delete_ExprArray(void* array);
 Expr* getExprinArrayAt(ExprArray* array,size_t index);
+
 void initializeExprElement(Expr** arg, void* values);
+
 void*  copyExprArray(void * arr);
+void delete_ExprArray(void* array);
 #endif

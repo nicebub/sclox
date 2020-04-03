@@ -14,26 +14,30 @@
 #include "hash.h"
 #include "StrObjHashMap.h"
 #include "Token.h"
-
+#include "str.h"
 char* toStringValueDefault(void* value){
 	if(value){
 	    char* num,*num2 ;
-	    Object * val = (Object*)value;
+	    Object * val;
+	    num2 = NULL;
+	    val = (Object*)value;
 	    if(val->type == NUMBER){
 		   num = NULL;
 		   asprintf(&num,"%f",val->value.number);
-		   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
+		   num2 = strcopy(num2,num);
+/*		   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
 		   memset(num2,0,strlen(num)+1);
-		   strncpy(num2,num,strlen(num));
+		   strncpy(num2,num,strlen(num));*/
 		   free(num);
 		   num = NULL;
 		   return num2;
 	    }
 	    else{
 		   num = NULL;
-		   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
+		   num = strcopy(num,val->value.string);
+/*		   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
 		   memset(num,0,strlen(val->value.string)+1);
-		   strncpy(num,val->value.string,strlen(val->value.string));
+		   strncpy(num,val->value.string,strlen(val->value.string));*/
 		   return num;
 	    }
 	}
@@ -48,9 +52,6 @@ void* get(Environment* env,Token* name){
 	char* temp;
     temp = NULL;
 	map = env->hashMap;
-/*    if(strcmp(name->lexeme,"fibonacci")==0){
-	   fprintf(stderr,"found in get\n");
-    }*/
 	get_node = map->super.super.vtable.get_node_for_key;
 	if((node = (HashMapNode*)get_node((struct _HASH*)map,name->lexeme))){
 		return getReference(node->super.value);
@@ -61,22 +62,16 @@ void* get(Environment* env,Token* name){
 	   return temp;
     }
 	temp = NULL;
-    temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));
-    memset(temp,0,(strlen("Undefined variable ''.")+strlen(name->lexeme))+1);
+	temp = new_str(strlen("Undefined variable ''.")+strlen(name->lexeme));
+/*    temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));
+    memset(temp,0,(strlen("Undefined variable ''.")+strlen(name->lexeme))+1);*/
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
-    e.id = 9;
-	e.token = (name);
-	e.message = temp;
-    e.sub = NULL;
+	e = create_exception(9,name,temp,NULL);
 	Throw(e);
     return NULL;
-/*	Throw(runtimeError(name,);*/
 }
 
 void defineEnv(Environment* env,char* name, Object *value){
-/*    if(strcmp(name,"fibonacci")==0){
-	   fprintf(stderr,"found in defineEnv\n");
-    }*/
 	env->hashMap->super.super.vtable.add_to_hash((struct _HASH*)env->hashMap,name,value);
 }
 
@@ -124,12 +119,10 @@ void assign(Environment* env, Token* name, Object* value){
 	   return;
     }
 	temp = NULL;
-	temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));
+    temp = new_str(strlen("Undefined variable ''.")+strlen(name->lexeme));
+/*	temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));*/
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
-    e.id = 10;
-	e.token = getReference(name);
-	e.message = temp;
-	e.sub = NULL;
+	e = create_exception(10,getReference(name),temp,NULL);
 	Throw(e);
     return;
 }
@@ -148,7 +141,6 @@ Object* getAt(Environment* env, int *distance, char* name){
 	Environment* temp;
 	temp =env->ancestor(env,distance);
 	return temp->hashMap->super.super.vtable.get_value_for_key((struct _HASH*)temp->hashMap,name);
-/*	return env->get(env->ancestor(env,distance),name);*/
 }
 Environment* ancestor(Environment* env, int *distance){
 	Environment* environ;

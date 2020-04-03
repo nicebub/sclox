@@ -8,6 +8,7 @@
 #include "HashMap.h"
 #include "hash.h"
 #include "memory.h"
+#include "str.h"
 static struct _Hashnode_vtable HashNodeMap_vtable = {
 	     &copy_HashMapNode,
 		&delete_HashMapNodeList,
@@ -78,18 +79,11 @@ HashMap *create_HashMap(int size,char*(*toStringValueArg)(void* value),
 		short int(*compareKeysArg)(struct _HASH* h,void* key1, void* key2)){
 
     HashMap *m;
-/*    int i;*/
     m = new(OBJECTIVE,sizeof(HashMap));
     init_HashMap(&m->super,size,toStringValueArg,toStringKeyArg,compareKeysArg);
-/*
-    m->super.vtable.toStringValue = toStringValueArg;
-    m->super.vtable.toStringKey = toStringKeyArg;
-    m->super.vtable.compare_keys = compareKeysArg;
-*/
     return m;
 }
 void add_to_HashMap(struct _HASH* h, void * key,void * value){
-/*    struct _hr r;*/
     short int res;
     HashMapNode *hn;
     HashMapNode *temp;
@@ -127,17 +121,6 @@ HashMapNode* create_HashMapNode(void*key,void*value,char*(*toStringValueArg)(voi
 	HashMapNode *h;
 	    h = new(OBJECTIVE,sizeof(HashMapNode));
 	    init_HashMapNode((struct _Hashnode*)h,key,value,toStringValueArg,toStringKeyArg);
-
-    /*
-    h->super.vtable.delete_hashnodel = &delete_hashnodelmap;
-	    h->super.vtable.get_hnode_key = &get_hnode_keymap;
-	    h->super.vtable.get_hnode_key_type = &get_hnode_key_typemap;
-	    h->super.vtable.get_hnode_value = &get_hnode_valuemap;
-	    h->super.vtable.get_hnode_value_type = &get_hnode_value_typemap;
-	    h->super.vtable.set_hnode_key = &set_hnode_keymap;
-	    h->super.vtable.set_hnode_value = &set_hnode_valuemap;
-    */
-/*	    uniques++;*/
 	    return h;
 
 }
@@ -215,23 +198,19 @@ char* toStringHashMapNodeKey(void* iNode){
 	   return node->vtable.toStringKey(node->value);
     return NULL;
 }
-/*
-short int compare_keysMap(struct _Hashnode* node){
-    if(node)
-	   return node->vtable.toStringValue(node->value);
-    return NULL;
-}*/
 char* toStringHashMapNode(struct _Hashnode* node){
     char* temp;
     char * num;
     char* keystr;
     size_t str_len;
     num = NULL;
-    num = new(RAW,sizeof(char)*(strlen(toStringHashMapNodeValue(node))+1));
+    num = new_str(strlen(toStringHashMapNodeValue(node)));
+/*    num = new(RAW,sizeof(char)*(strlen(toStringHashMapNodeValue(node))+1));*/
     asprintf(&num,"%s",toStringHashMapNodeValue(node));
-    str_len = (4+strlen(num)+strlen((char*)node->key));
-    temp = new(RAW,sizeof(char)*str_len);
-    memset(temp,0,str_len);
+    str_len = (3+strlen(num)+strlen((char*)node->key));
+    temp = new_str(str_len);
+/*    temp = new(RAW,sizeof(char)*str_len);
+    memset(temp,0,str_len);*/
     strncat(temp,"(",1);
     keystr = toStringHashMapNodeKey(node);
     strncat(temp,keystr,strlen(keystr));
@@ -257,18 +236,17 @@ char* toStringHashMap(struct _HASH* h){
 	   if(node){
 		  while(node){
 			 num = toStringHashMapNodeValue((struct _Hashnode*)node);
-/*			 asprintf(&num,"%d",*(int*)node->super.value);*/
 			 fullstr_len += strlen(node->super.key);
 			 fullstr_len += strlen(num);
-/*			 delete(num);*/
 			 num= NULL;
 			 node= (HashMapNode*)node->super.next;
 		  }
 	   }
     }
-    fullstr_len= (int)fullstr_len+1+(int)strlen(extra)+((int)strlen(each)*h->used+(h->used-1));
-    temp = new(RAW,sizeof(char)*fullstr_len);
-    memset(temp,0,fullstr_len);
+    fullstr_len= (int)fullstr_len+(int)strlen(extra)+((int)strlen(each)*h->used+(h->used-1));
+    temp = new_str(fullstr_len);
+/*    temp = new(RAW,sizeof(char)*fullstr_len);
+    memset(temp,0,fullstr_len);*/
     temp[0]='(';
     count = 0;
     for(i=0;i<h->size;i++){
@@ -281,7 +259,6 @@ char* toStringHashMap(struct _HASH* h){
 				if(node->super.next !=NULL)
 				    strncat(temp,",",1);
 			 node= (HashMapNode*)node->super.next;
-/*			 delete(nstr);*/
 			 nstr = NULL;
 		  }
 		  if(count < h->used)
@@ -299,14 +276,8 @@ void delete_HashMap(struct _HASH* h){
 		  for(t=0;t<h->size;t++){
 				if(h->Buckets[t]){
 				    HashMapNode* temp;
-/*				    HashMapNode* next;*/
 				    temp = (HashMapNode*)h->Buckets[t];
-/*				    while(temp){
-					   next = (HashMapNode*)temp->super.next;*/
 					   delete_HashMapNodeList((struct _Hashnode*)temp);
-/*					   temp = NULL;
-					   temp = next;
-				    }*/
 				}
 				h->Buckets[t] = NULL;
 		  }
@@ -317,13 +288,6 @@ void delete_HashMap(struct _HASH* h){
 	   else{
 		  releaseReference(h);
 	   }
-/*	   for(a=1;a<=h->csize;a++){
-		  free(h->cache[a-1].p);
-		  h->cache[a-1].p = NULL;
-	   }*/
-/*	   free(h->cache);
-	   h->cache = NULL;*/
-/*	   delete(h);*/
 	   h = NULL;
     }
 

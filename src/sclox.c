@@ -11,11 +11,7 @@
 int main(int argc, const char* argv[] ) {
 	Lox *lox;
     lox = new(OBJECTIVE, sizeof(Lox));
-/*	char * newarray;*/
 	init_lox(lox);
-/*	newarray = new(RAW,sizeof(char)*10);*/
-/*	delete(newarray);*/
-/*	return 0;*/
 	if(argc >2){
 		printf("Usage: sclox [script]\n");
 		return EXIT_SUCCESS;

@@ -12,7 +12,6 @@
 void* init_HashMapStack(void* inStk,void * arguments){
 	HashMapStack* stk;
 	size_t size;
-/*	HashMap* map;*/
 	int i;
 	size = *(int*)arguments;
 	stk = (HashMapStack*) inStk;

@@ -12,6 +12,7 @@
 #include "LoxInstance.h"
 #include "Environment.h"
 #include <string.h>
+#include "str.h"
 LoxFunction_vtable lfunc_vtable = {
 		&LoxFunctioncall,
 		&LoxFunctionarity,
@@ -47,14 +48,10 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
     LoxFunction* function;
     TokenArray* params;
     int i;
-    re.id = 0;
-    re.message = NULL;
-    re.sub = NULL;
-    re.token = NULL;
+    re = create_exception(0,NULL,NULL,NULL);
     result = NULL;
 	function = (LoxFunction*)lfunc;
 	env = new(OBJECTIVE,sizeof(Environment));
-/*	init_EnvironmentwithEnclosing(env,intprtr->globals);*/
 	init_EnvironmentwithEnclosing(env,function->closure);
 	params = function->declaration->params;
 	for(i=0; i< function->declaration->params->used ; i++){
@@ -67,9 +64,8 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
 	    if(function->isInitializer){
 		   char* str;
 		   int *x;
-		   str = new(RAW,sizeof(char)*(strlen("this")+1));
-		   memset(str,0,strlen("this")+1);
-		   strcpy(str,"this");
+		   str = NULL;
+		   str = strcopy(str,"this");
 		   x = new(RAW,sizeof(int));
 		   *x = 0;
 		   return function->closure->getAt(function->closure,x,str);
@@ -84,9 +80,8 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
     if(function->isInitializer){
 	   char * str;
 	   int *x;
-	   str = new(RAW,sizeof(char)*(strlen("this")+1));
-	   memset(str,0,strlen("this")+1);
-	   strcpy(str,"this");
+	   str = NULL;
+	   str = strcopy(str,"this");
 	   x = new(RAW,sizeof(int));
 	   *x = 0;
 	   return function->closure->getAt(function->closure,x,str);
@@ -98,16 +93,15 @@ int LoxFunctionarity(LoxCallable* loxcall){
 	return ((LoxFunction*)loxcall)->declaration->params->used;
 }
 char* toStringLoxFunction(LoxCallable* inloxcall){
-	char * new_str,*temp;
-	new_str=NULL;
+	char * anew_str,*temp;
+	anew_str=NULL;
     temp = NULL;
-    new_str = new(RAW,sizeof(char)*(strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme)+1));
-    memset(new_str,0,1+strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
+    anew_str = new_str(strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
 	asprintf(&temp,"<fn %s>",((LoxFunction*)inloxcall)->declaration->name->lexeme);
-    strncpy(new_str,temp,strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
+    strncpy(anew_str,temp,strlen("<fn >")+strlen(((LoxFunction*)inloxcall)->declaration->name->lexeme));
     free(temp);
     temp = NULL;
-	return new_str;
+	return anew_str;
 }
 void* copy_LoxFunction(void* inFunc){
     LoxFunction* func, *infunc;
@@ -131,9 +125,8 @@ LoxFunction* bind_LoxFunction(LoxFunction* func, LoxInstance* instance){
 	LoxFunction* function;
 	env = new(OBJECTIVE, sizeof(Environment));
 	init_EnvironmentwithEnclosing(env,func->closure);
-    str = new(RAW,sizeof(char)*(strlen("this")+1));
-    memset(str,0,strlen("this")+1);
-    strcpy(str,"this");
+    str = NULL;
+    str = strcopy(str,"this");
 	env->defineEnv(env,str,(Object*)instance);
 	function = new(OBJECTIVE,sizeof(LoxFunction));
 	init_LoxFunctionWithClosureAndInitializer(function,func->declaration,env,func->isInitializer);

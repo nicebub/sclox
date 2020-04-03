@@ -39,4 +39,6 @@ void happy_try(volatile CEXCEPTION_T *Exception);
 void after_try(volatile CEXCEPTION_T *Exception);
 void start_catch(volatile CEXCEPTION_T *Exception);
 
+CEXCEPTION_T create_exception(unsigned int id, Token* token, char* message, struct _return_exception* sub);
+
 #endif /* CExceptionConfig_h */

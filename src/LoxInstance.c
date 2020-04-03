@@ -13,6 +13,7 @@
 #include "LoxClass.h"
 #include "LoxCallable.h"
 #include "LoxFunction.h"
+#include "str.h"
 void init_LoxInstance(LoxInstance* in,LoxClass* kls){
 	init_LoxCallable(&in->super);
 	in->super.vtable.toString = &toString_LoxInstance;
@@ -26,8 +27,9 @@ void init_LoxInstance(LoxInstance* in,LoxClass* kls){
 }
 char* toString_LoxInstance(LoxCallable* li){
 	char* temp,*other;
-	temp = new(RAW,sizeof(char)*(strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2));
-	memset(temp,0,strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2);
+    temp = new_str(strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+1);
+/*	temp = new(RAW,sizeof(char)*(strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2));
+	memset(temp,0,strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2);*/
     other = NULL;
 	asprintf(&other,"%s instance",((LoxInstance*)li)->klass->name);
     strcpy(temp,other);

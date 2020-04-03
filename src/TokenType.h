@@ -8,8 +8,6 @@
 #ifndef TOKENTYPE_H_
 #define TOKENTYPE_H_
 #include <stdlib.h>
-/*typedef enum _TokenType TokenType;*/
-/*typedef enum _Keywords Keywords;*/
 
 typedef struct _keywordMap keywordMap;
 
@@ -45,15 +43,6 @@ const static char * typeName[] = { "LEFT_PAREN", "RIGHT_PAREN","LEFT_BRACE","RIG
 						"PRINT","RETURN","SUPER","THIS","TRUE","VAR","WHILE",
 						"EOF" };
 
-/*enum _Keywords {
-	KAND, KCLASS, KELSE, KFALSE, KFUN, KFOR, KIF, KNIL, KOR,
-	KPRINT, KRETURN, KSUPER, KTHIS, KTRUE, KVAR, KWHILE, KNULL
-};
-*/
-/*const static char * keywords[] = {
-		"AND","CLASS","ELSE","FALSE","FUN","FOR","IF","NIL","OR",
-		"PRINT","RETURN","SUPER","THIS","TRUE","VAR","WHILE", NULL
-};*/
 
 const static keywordMap kmap[] = {
 		{ AND, "and"}, { CLASS, "class"}, { ELSE, "else" }, {FALSE, "false" } ,

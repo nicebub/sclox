@@ -14,8 +14,6 @@ void init_ExprArray(ExprArray* array){
 	   setDestructor(array,&delete_ExprArray);
         array->addElementToArray = &addElementToExprArray;
         array->getElementInArrayAt =&getExprinArrayAt;
-        array->delete = &delete_ExprArray;
-        array->copy = &copyExprArray;
     }
             
 void addElementToExprArray(ExprArray* array,Expr* element){

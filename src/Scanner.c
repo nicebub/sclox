@@ -11,7 +11,7 @@
 #include "Token.h"
 #include "TokenType.h"
 #include "Lox.h"
-
+#include "str.h"
 void init_Scanner(Scanner* scanner, const char * source, Lox* lox){
     scanner->tokens = new(OBJECTIVE,sizeof(TokenArray));
 	init_TokenArray(scanner->tokens);
@@ -57,8 +57,6 @@ void delete_scanner(Scanner* scanner){
 			free(scanner->source);
 			scanner->source = NULL;
 		}
-		/*delete_TokenArray(&scanner->tokens);*/
-/*		scanner->tokens = NULL;*/
 	}
 }
 
@@ -136,21 +134,19 @@ void scanToken(Scanner* scanner){
 }
 
 void identifier(Scanner* scanner){
-	char * new_str;
+	char * anew_str;
 	TokenType type;
-	new_str = NULL;
+	anew_str = NULL;
 	while(isAlphaNumeric(peek(scanner)))
 		advance(scanner);
-	new_str = new(RAW,((scanner->current-scanner->start)+1)*sizeof(char));
-    memset(new_str,0,(scanner->current-scanner->start)+1);
-	strncpy(new_str,&scanner->source[scanner->start],scanner->current-scanner->start);
-    new_str[scanner->current-scanner->start] = '\0';
-	type = getTokenTypeFromString(new_str);
+    anew_str = new_str(scanner->current-scanner->start);
+	strncpy(anew_str,&scanner->source[scanner->start],scanner->current-scanner->start);
+    anew_str[scanner->current-scanner->start] = '\0';
+	type = getTokenTypeFromString(anew_str);
 	if(type == KNULL)
 		type = IDENTIFIER;
-		addToken(scanner,type,(new_str));
-/*    delete(new_str);*/
-    new_str = NULL;
+		addToken(scanner,type,(anew_str));
+    anew_str = NULL;
 }
 
 int isAlpha(const char c){
@@ -171,18 +167,11 @@ void addToken(Scanner* scanner, TokenType type,char* lexeme){
 	addTokenWithObject(scanner,type,lexeme,NULL);
 }
 void addTokenWithObject(Scanner* scanner, TokenType type, char* lexeme,Object* literal){
-/*	char * text;*/
 	Token *temp_token;
-/*	text = NULL;
-	text = calloc((scanner->current-scanner->start)+1,sizeof(char));
-	strncpy(text,&scanner->source[scanner->start],scanner->current-scanner->start);
-    text[scanner->current-scanner->start] = '\0';*/
     temp_token = new(OBJECTIVE,sizeof(Token));
 	init_Token(temp_token,type,lexeme,literal,scanner->line);
 	addElementToTokenArray(scanner->tokens,temp_token);
 	lexeme = NULL;
-/*	free(text);
-	text = NULL;*/
 }
 
 int match(Scanner* scanner, const char expected){
@@ -199,7 +188,7 @@ char peek(Scanner* scanner){
 }
 
 void string(Scanner* scanner){
-	char * new_str;
+	char * anew_str;
 	Object* obj;
 	while(peek(scanner) != '"' && !isAtEnd(scanner)){
 		if(peek(scanner) == '\n') scanner->line++;
@@ -212,16 +201,14 @@ void string(Scanner* scanner){
 	}
 
 	advance(scanner);
-	new_str = NULL;
-	new_str = new(RAW,(((scanner->current-1)-(scanner->start +1))+1)*sizeof(char));
-    memset(new_str,0,sizeof(*new_str));
-	strncpy(new_str,&scanner->source[scanner->start+1],(scanner->current-1)-(scanner->start +1)+1);
-    new_str[(scanner->current-1)-(scanner->start +1)]='\0';
+	anew_str = NULL;
+    anew_str = new_str((scanner->current-1)-(scanner->start +1));
+	strncpy(anew_str,&scanner->source[scanner->start+1],(scanner->current-1)-(scanner->start +1)+1);
+    anew_str[(scanner->current-1)-(scanner->start +1)]='\0';
 	obj = new(OBJECTIVE,sizeof(Object));
-	init_Object(obj,new_str,STRING);
-	addTokenWithObject(scanner,STRING,new_str,obj);
-/*	delete(new_str);*/
-	new_str = NULL;
+	init_Object(obj,anew_str,STRING);
+	addTokenWithObject(scanner,STRING,anew_str,obj);
+	anew_str = NULL;
 
 }
 
@@ -231,7 +218,7 @@ int isDigit(const char c){
 
 void number(Scanner* scanner){
 	double *x;
-	char * new_str;
+	char * anew_str;
 	Object* obj;
 	while(isDigit(peek(scanner)))
 		advance(scanner);
@@ -240,18 +227,16 @@ void number(Scanner* scanner){
 		while(isDigit(peek(scanner)))
 			advance(scanner);
 	}
-	new_str = new(RAW,((scanner->current-scanner->start)+1)*sizeof(char));
-    memset(new_str,0,sizeof(*new_str));
-	strncpy(new_str,&scanner->source[scanner->start],scanner->current - scanner->start);
-    new_str[scanner->current-scanner->start]='\0';
+    anew_str =NULL;
+    anew_str = new_str((scanner->current-scanner->start));
+	strncpy(anew_str,&scanner->source[scanner->start],scanner->current - scanner->start);
+    anew_str[scanner->current-scanner->start]='\0';
 	x = new(RAW,sizeof(double));
-	sscanf(new_str,"%lf",x);
+	sscanf(anew_str,"%lf",x);
 	obj = new(OBJECTIVE,sizeof(Object));
 	init_Object(obj,x, NUMBER);
-	addTokenWithObject(scanner,NUMBER,new_str,obj);
-/*	delete(new_str);*/
-	new_str = NULL;
-/*	delete(x);*/
+	addTokenWithObject(scanner,NUMBER,anew_str,obj);
+	anew_str = NULL;
 	x = NULL;
 }
 

@@ -9,8 +9,6 @@ void init_TokenArray(TokenArray* array){
         array->Tokens = NULL;
         array->size = 0;
         array->used = 0;
-/*	   array->memory.allocated = 0;*/
-/*	   array->memory.new*/
     setAllocated(array,0);
     setCopyConstructor(array,&copyTokenArray);
     setDestructor(array,&delete_TokenArray);

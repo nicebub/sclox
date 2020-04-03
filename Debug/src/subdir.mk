@@ -36,7 +36,8 @@ C_SRCS += \
 ../src/hash.c \
 ../src/memory.c \
 ../src/memoryArray.c \
-../src/sclox.c 
+../src/sclox.c \
+../src/str.c 
 
 OBJS += \
 ./src/AstPrinter.o \
@@ -71,7 +72,8 @@ OBJS += \
 ./src/hash.o \
 ./src/memory.o \
 ./src/memoryArray.o \
-./src/sclox.o 
+./src/sclox.o \
+./src/str.o 
 
 C_DEPS += \
 ./src/AstPrinter.d \
@@ -106,7 +108,8 @@ C_DEPS += \
 ./src/hash.d \
 ./src/memory.d \
 ./src/memoryArray.d \
-./src/sclox.d 
+./src/sclox.d \
+./src/str.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

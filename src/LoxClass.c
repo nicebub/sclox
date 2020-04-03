@@ -7,6 +7,7 @@
 
 #include "LoxClass.h"
 #include "LoxInstance.h"
+#include "str.h"
 void init_LoxClass(LoxClass* cl,char* name){
     init_LoxCallable(&cl->super);
     cl->super.vtable.toString = &toString_LoxClass;
@@ -41,9 +42,11 @@ Object* call_LoxClass(LoxCallable* lc,Interpreter* interpreter, ObjectArray* arg
     char* str;
     instance = new(OBJECTIVE,sizeof(LoxInstance));
     init_LoxInstance(instance,(LoxClass*)lc);
-    str = new(RAW,sizeof(char)*(strlen("init")+1));
+    str = NULL;
+    str = strcopy(str,"init");
+/*    str = new(RAW,sizeof(char)*(strlen("init")+1));
     memset(str,0,strlen("init")+1);
-    strcpy(str,"init");
+    strcpy(str,"init");*/
     initializer = findMethod((LoxFunction*)lc,str);
     if(initializer != NULL){
 	   LoxCallable* temp;
@@ -56,9 +59,11 @@ Object* call_LoxClass(LoxCallable* lc,Interpreter* interpreter, ObjectArray* arg
 int arity_LoxClass(LoxCallable* lc){
     LoxFunction * initializer;
     char* str;
-    str = new(RAW,sizeof(char)*(strlen("init")+1));
+    str = NULL;
+    str = strcopy(str,"init");
+/*    str = new(RAW,sizeof(char)*(strlen("init")+1));
     memset(str,0,strlen("init")+1);
-    strcpy(str,"init");
+    strcpy(str,"init");*/
     initializer = findMethod((LoxFunction*)lc,str);
     if(initializer == NULL) return 0;
     return ((LoxFunction*)initializer)->super.vtable.arity((LoxCallable*)initializer);

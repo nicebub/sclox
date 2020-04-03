@@ -14,7 +14,6 @@
 #include "Expr.h"
 #include "Token.h"
 #include "TokenType.h"
-/*#include "AstPrinter.h"*/
 #include "Interpreter.h"
 #include "Stmt.h"
 #include "Resolver.h"
@@ -39,7 +38,6 @@ void init_lox(Lox* lox){
 }
  void run(Lox* lox,char * source){
 	Resolver* resolver;
-/*	    init_printer(&printer);*/
 	    init_Scanner(&lox->scanner, source,lox);
 	    scanTokens(&lox->scanner);
 	    init_Parser(&lox->parser,lox->scanner.tokens,lox);

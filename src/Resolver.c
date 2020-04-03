@@ -10,6 +10,7 @@
 #include "StrObjHashMap.h"
 #include "Lox.h"
 #include "TokenArray.h"
+#include "str.h"
 
 #include <stddef.h>
 static Object* visitSuperExprResolver(ExprVisitor* visitor, Expr* expr);
@@ -88,8 +89,6 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->resolveFunction = &resolveFunction;
     r->currentFunction = FT_NONE;
     r->currentClass = CT_NONE;
-/*	r->super.vtable = */
-/*	r->super.expr =*/
 	return r;
 }
 
@@ -100,9 +99,11 @@ char* toStringResolverValue(void * value){
 	val = *(int*)value;
 	if(val){
 		asprintf(&num,"%d",*(int*)value);
-		temp = new(RAW,sizeof(char)*(strlen(num)+1));
+	    temp = NULL;
+	    temp = strcopy(temp,num);
+/*		temp = new(RAW,sizeof(char)*(strlen(num)+1));
 		memset(temp,0,strlen(num)+1);
-		strncpy(temp,num,strlen(num));
+		strncpy(temp,num,strlen(num));*/
 		free(num);
 		num = NULL;
 		return temp;
@@ -159,7 +160,8 @@ void declare(Resolver* resolver, Token* name){
     x = new(RAW,sizeof(int));
 	*x = 0;
     if(scope->super.super.vtable.get_value_for_key((struct _HASH*)scope,name->lexeme)){
-	   ((Lox*)resolver->interpreter->lox)->parse_error(resolver->interpreter->lox,name,"Variable with this name already declared in this scope.");
+	   ((Lox*)resolver->interpreter->lox)->parse_error(resolver->interpreter->lox,
+		  name,"Variable with this name already declared in this scope.");
     }
 	add_to_hash((struct _HASH*)scope,name->lexeme,x);
 
@@ -245,9 +247,11 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     	char* super;
     	int *x;
     	x = new(RAW,sizeof(int));
-    	super = new(RAW,sizeof(char)*(strlen("super")+1));
+	   super = NULL;
+	   super = strcopy(super,"super");
+/*    	super = new(RAW,sizeof(char)*(strlen("super")+1));
     	memset(super,0,strlen("super")+1);
-    	strcpy(super,"super");
+    	strcpy(super,"super");*/
     	beginScope(resolver);
     	*x = 1;
     	add_to_HashMap(top((Stack*)resolver->scopes),super,x);
@@ -256,9 +260,11 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     beginScope(resolver);
     scope_stack= resolver->scopes;
     scope = top((Stack*)scope_stack);
-    this_str = new(RAW,sizeof(char)*(strlen("this")+1));
+    this_str = NULL;
+    this_str = strcopy(this_str,"this");
+/*    this_str = new(RAW,sizeof(char)*(strlen("this")+1));
     memset(this_str,0,strlen("this")+1);
-    strcpy(this_str,"this");
+    strcpy(this_str,"this");*/
     x =new(RAW,sizeof(int));
     *x = 1;
     add_to_hash((struct _HASH*)scope,this_str,(Object*)x);

@@ -19,6 +19,7 @@
 #include "StmtArray.h"
 #include "ExprArray.h"
 #include "Lox.h"
+#include "str.h"
 void init_Parser(Parser* parser, TokenArray* tokens, Lox* lox){
 	parser->lox = lox;
 	parser->match = &parser_match;
@@ -48,8 +49,8 @@ Stmt* declaration(Parser* parser){
     char* fun_str;
 	CEXCEPTION_T e;
 	TokenType toks[] = { CLASS, KNULL };
-    fun_str = new(RAW,sizeof(char)*(strlen("function") +1));
-    strcpy(fun_str,"function");
+    fun_str = NULL;
+    fun_str = strcopy(fun_str,"function");
 	Try {
 
 		if(parser->match(parser,toks))
@@ -87,9 +88,8 @@ Stmt* classDeclaration(Parser* parser){
 	consume(parser,LEFT_BRACE,"Expect '{' before class body.");
 	methods = new(OBJECTIVE,sizeof(StmtArray));
     init_StmtArray(methods);
-    str = new(OBJECTIVE,sizeof(char)*(strlen("method")+1));
-    memset(str,0,strlen("method")+1);
-    strcpy(str,"method");
+    str = NULL;
+    str = strcopy(str,"method");
 	while(!check(parser,RIGHT_BRACE) && !parser->isAtEnd(parser)){
 		methods->addElementToArray(methods,function(parser,str));
 	}
@@ -107,15 +107,13 @@ Stmt* function(Parser* parser, char* kind){
 	char* str_val;
 	TokenType comma[] = { COMMA, KNULL };
 	str_val = NULL;
-    str_val = new(RAW,sizeof(char)*(strlen("Expect  name.")+strlen(kind)+1));
+    str_val = new_str(strlen("Expect  name.")+strlen(kind));
 	asprintf(&str_val,"Expect %s name.",kind);
 	name = (consume(parser,IDENTIFIER, str_val));
-/*	delete(str_val);*/
 	str_val = NULL;
-	str_val = new(RAW,sizeof(char)*(strlen("Expect '(' after  name.")+strlen(kind)+1));
+    str_val = new_str(strlen("Expect '(' after  name.")+ strlen(kind));
 	asprintf(&str_val,"Expect '(' after %s name.",kind);
 	consume(parser,LEFT_PAREN,str_val);
-/*	delete(str_val);*/
 	str_val = NULL;
 	parameters = new(OBJECTIVE,sizeof(TokenArray));
 	init_TokenArray(parameters);
@@ -128,10 +126,10 @@ Stmt* function(Parser* parser, char* kind){
 		}while(parser->match(parser,comma));
 	}
 	consume(parser,RIGHT_PAREN,"Expect ')' after parameters.");
-    str_val = new(RAW,sizeof(char)*(strlen("Expect '{' before %s body.")+1));
+    str_val = NULL;
+    str_val = new_str(strlen("Expect '{' before %s body."));
 	asprintf(&str_val,"Expect '{' before %s body.",kind);
 	consume(parser,LEFT_BRACE, str_val);
-/*	delete(str_val);*/
 	str_val = NULL;
 	body = (block(parser));
 	func = new(OBJECTIVE,sizeof(Function));
@@ -269,7 +267,6 @@ Stmt* forStatement(Parser* parser){
 	   *num = 1;
     	init_Object(obj,num,TRUE);
     	new_Literal(lit,obj);
-/*    	delete(num);*/
     	num=NULL;
 
     	condition = (Expr*)lit;
@@ -534,7 +531,6 @@ Expr* primary(Parser* parser){
 	    *val = 0;
 		init_Object(obj,val,FALSE);
 		new_Literal(lit,obj);
-/*		delete(val);*/
 		val = NULL;
 		return (Expr*)lit;
 	}
@@ -547,7 +543,6 @@ Expr* primary(Parser* parser){
 	     *val = 1;
 	     init_Object(obj,val,TRUE);
 	     new_Literal(lit,obj);
-/*	     delete(val);*/
 	     val = NULL;
 		return (Expr*)lit;
 	}
@@ -629,8 +624,6 @@ CEXCEPTION_T parse_error(Parser* parser, Token* token, const char* message){
 	parser->lox->parse_error(parser->lox,token,message);
     e.id = 1;
 	return e;
-/*	 Lox.error(token,message);
-	 return new ParseError() exception*/
 }
 
 
@@ -695,7 +688,6 @@ Token* previous(Parser* parser){
 
 void delete_parser(Parser* parser){
 	if(parser){
-		/*delete_TokenArray(parser->tokens);*/
 		parser->tokens = NULL;
 	}
 }

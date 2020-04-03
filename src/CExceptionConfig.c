@@ -33,3 +33,11 @@ void start_catch(volatile CEXCEPTION_T *Exception){
 	if(Exception->token && Exception->token->lexeme)
 	    fprintf(stderr,"token lexeme %s\n",Exception->token->lexeme);
 }
+CEXCEPTION_T create_exception(unsigned int id, Token* token, char* message, struct _return_exception* sub){
+	CEXCEPTION_T e;
+    e.id = id;
+	e.token = token;
+	e.message = message;
+    e.sub = sub;
+    return e;
+}

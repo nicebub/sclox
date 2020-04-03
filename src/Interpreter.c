@@ -32,6 +32,7 @@ typedef struct _exception{
 #include "LoxFunction.h"
 #include "LoxClass.h"
 #include "LoxInstance.h"
+#include "str.h"
 #ifndef _STMTARRAY
 #define _STMTARRAY
 	typedef struct _StmtArray StmtArray;
@@ -80,9 +81,8 @@ static Object* global_clock_call(LoxCallable* inLoxcall,Interpreter* intprtr, Ob
 }
 static char* global_toString(LoxCallable* inloxcall){
     char * temp;
-    temp = new(RAW,sizeof(char)*(strlen("<native fn>")+1));
-    memset(temp,0,strlen("<native fn>")+1);
-    strncpy(temp,"<native fn>",strlen("<native fn>"));
+    temp = NULL;
+    temp = strcopy(temp,"<native fn>");
     return temp;
 }
 void init_Interpreter(Interpreter* intprtr, void* lox){
@@ -127,40 +127,31 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     lcall = new(OBJECTIVE,sizeof(LoxCallable));
     init_LoxCallable(lcall);
     lcall->super.type = FUN;
-    lcall->super.value.string = new(RAW,sizeof(char)*(strlen("clock")+1));
-    memset(lcall->super.value.string,0,strlen("clock")+1);
-    strncpy(lcall->super.value.string,"clock",strlen("clock"));
-/*    init_Object(&lcall->super,"clock",FUN);*/
+    lcall->super.value.string = NULL;
+    lcall->super.value.string = strcopy(lcall->super.value.string,"clock");
     memset(&lcall->super.instanceOf,0,30);
     strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
     lcall->vtable.arity = &global_clock_arity;
     lcall->vtable.call = &global_clock_call;
     lcall->vtable.toString = &global_toString;
-    clockname = new(RAW,sizeof(char)*(strlen("clock")+1));
-    memset(clockname,0,strlen("clock")+1);
-    strncpy(clockname,"clock",strlen("clock"));
+    clockname = NULL;
+    clockname = strcopy(clockname,"clock");
     intprtr->globals->defineEnv(intprtr->globals,clockname, (Object*)lcall);
     intprtr->locals = create_ExprIntHashMap(40);
 }
 
 void interpret(Interpreter* intprtr, StmtArray* array){
     CEXCEPTION_T e;
-    e.id = 0;
-    e.message = NULL;
-    e.sub = NULL;
-    e.token = NULL;
+    e = create_exception(0,NULL,NULL,NULL);
     Try{
         int i;
-/*	   volatile Object* value;*/
 	   for(i=0;i<array->used;i++){
 		  Stmt* stmt = getStmtinArrayAt(array,i);
 		   execute(intprtr,stmt);
 	   }
     }
     Catch(e){
-/*	   if(e.id != 50)*/
 	   ((Lox*)intprtr->lox)->runtimeError(intprtr->lox,e);
-/*	   Throw(e);*/
     }
     
 }
@@ -173,10 +164,7 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	CEXCEPTION_T e;
 	Environment * previous;
 	int i;
-    e.id=0;
-    e.message= NULL;
-    e.sub=NULL;
-    e.token=NULL;
+    e = create_exception(0,NULL,NULL,NULL);
 	previous = getReference(intrprtr->environment);
 	Try{
 		intrprtr->environment = getReference(newenv);
@@ -187,20 +175,14 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	}
 	Catch(e){
 	    if(e.id != 50){
-/*		  if(intrprtr->environment != intrprtr->globals) delete(intrprtr->environment);*/
 			 intrprtr->environment = getReference(previous);
 			 ((Lox*)intrprtr->lox)->runtimeError(intrprtr->lox,e);
 	    }
 	    else{
-/*		   if(intrprtr->environment != intrprtr->globals) delete(intrprtr->environment);*/
 		   intrprtr->environment = getReference(previous);
 		   Throw(e);
 	    }
-/*		fprintf(stderr,"RuntimeError: caught in executeBlock.: %s\n",e.message);*/
 	}
-    /*
-    if(intrprtr->environment != intrprtr->globals)
-	   delete(intrprtr->environment);*/
 	intrprtr->environment = getReference(previous);
 }
 void resolve_Interpreter(Interpreter* intrprtr, Expr* expr, int* depth){
@@ -218,10 +200,7 @@ static Object* visitReturnStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	if(ret->value != NULL)
 		value = evaluate(&visitor->expr,ret->value);
 	re = new(RAW,sizeof(Return_exception));
-	e.id = 50;
-	e.message = "";
-	e.token = NULL;
-    e.sub = re;
+    e = create_exception(50,NULL,"",re);
 	e.sub->value = (value);
     Try{
 	Throw(e);
@@ -246,10 +225,7 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     	superclass = evaluate((ExprVisitor*)visitor,(Expr*)cls->superclass);
     	if(!(strcmp(superclass->instanceOf,"LoxClass")==0)){
     		CEXCEPTION_T e;
-    		e.id = 60;
-    		e.sub = NULL;
-    		e.token = cls->superclass->name;
-    		e.message = "Superclass must be a class.";
+	    e = create_exception(60,cls->superclass->name,"Superclass must be a class.",NULL);
     		Throw(e);
     		return NULL;
     	}
@@ -260,9 +236,8 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     if(cls->superclass != NULL){
     	Environment* temp;
     	char* super;
-    	super = new(RAW,sizeof(char)*(strlen("super")+1));
-    	memset(super,0,strlen("super")+1);
-    	strcpy(super,"super");
+	   super = NULL;
+	   super = strcopy(super,"super");
     	temp = new(OBJECTIVE,sizeof(Environment));
     	init_EnvironmentwithEnclosing(temp,env);
     	env = temp;
@@ -316,21 +291,16 @@ static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* expr){
     callee = evaluate(visitor,((Call*)expr)->callee);
     arguments = new(OBJECTIVE,sizeof(ObjectArray));
     init_ObjectArray(arguments);
-   /* argument = ((Call*)expr)->arguments->getElementInArrayAt(arguments,0);*/
     for(i = 0;i<((Call*)expr)->arguments->used;i++){
     	argument = ((Call*)expr)->arguments->getElementInArrayAt(((Call*)expr)->arguments,i);
 
     	r = getReference(evaluate(visitor,argument));
-/*	   assert(r->value.number != -1);*/
     	arguments->addElementToArray(arguments,(r));
     }
     if(!(strcmp(callee->instanceOf,"LoxCallable")==0) && !(strcmp(callee->instanceOf,"LoxFunction")==0)
 	  && !(strcmp(callee->instanceOf,"LoxClass")==0)&& !(strcmp(callee->instanceOf,"LoxInstance")==0)){
 	   CEXCEPTION_T e;
-	   e.id=20;
-	   e.message = "Can only call functions and classes.";
-	   e.token = ((Call*)expr)->paren;
-	   e.sub = NULL;
+	   e = create_exception(20,((Call*)expr)->paren,"Can only call functions and classes.",NULL);
 	   Throw(e);
     }
     if(strcmp(callee->instanceOf,"LoxInstance")==0)
@@ -341,14 +311,10 @@ static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	   CEXCEPTION_T e;
 	   char * new_str,*temp_str;
 	   new_str = NULL;
-	   e.id= 21;
 	   asprintf(&new_str,"Expected %d arguments but got %d.",function->super.vtable.arity((LoxCallable*)function),arguments->size);
-	   temp_str = new(RAW,sizeof(char)*(strlen(new_str)+1));
-	   memset(temp_str,0,strlen(new_str)+1);
-	   strncpy(temp_str,new_str,strlen(new_str));
-	   e.message = temp_str;
-	   e.token = ((Call*)expr)->paren;
-	   e.sub = NULL;
+	   temp_str = NULL;
+	   temp_str = strcopy(temp_str,new_str);
+	   e = create_exception(21,((Call*)expr)->paren,temp_str,NULL);
 	   free(new_str);
 	   new_str = NULL;
 	   Throw(e);
@@ -372,8 +338,6 @@ Object* visitWhileStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	    temp = (evaluate(&visitor->expr,((While*)stmt)->condition));
 	    r = isTruthy(temp);
 	}
-
-/*	r->type = KNULL;*/
 	return NULL;
 }
 
@@ -381,7 +345,6 @@ Object* visitBlockStmtInterpreter(StmtVisitor * visitor, Stmt* expr){
 	Block* temp;
 	Interpreter* intrprtr;
 	Environment* env;
-/*  Object* r = NULL;*/
 	temp= (Block*)expr;
 	intrprtr = (Interpreter*) visitor;
 	env = new(OBJECTIVE,sizeof(Environment));
@@ -389,26 +352,11 @@ Object* visitBlockStmtInterpreter(StmtVisitor * visitor, Stmt* expr){
 	executeBlock(intrprtr ,temp->statements,env);
      deleteEnvironment(env);
     env = NULL;
-/*	r->type = KNULL;*/
 	return NULL;
 }
 Object* visitLiteralExprInterpreter(ExprVisitor* visitor, Expr* expr){
     Object* r = NULL;
-/*    r = copy(((Literal*)expr)->value);*/
     r = getReference(((Literal*)expr)->value);
-/*    r->type = ((Literal*)expr)->value->type;
-	switch(r->type){
-	case TRUE:
-	case FALSE:
-	case NUMBER:
-		   r->value.number = (double)((Literal*)expr)->value->value.number;
-		break;
-	case NIL:
-	case STRING:
-		r->value.string = ((Literal*)expr)->value->value.string;
-		break;
-	default: break;
-	}*/
 	return r;
 }
 
@@ -423,10 +371,7 @@ Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	if(strcmp(obj->instanceOf,"LoxInstance")==0){
 		return ((LoxInstance*)obj)->get((LoxInstance*)obj,((Get*)expr)->name);
 	}
-	e.id = 52;
-	e.message = "Only instances have properties.";
-	e.token = ((Get*)expr)->name;
-    e.sub = NULL;
+    e = create_exception(52,((Get*)expr)->name,"Only instances have properties.",NULL);
 	Throw(e);
 	return NULL;
 }
@@ -463,12 +408,10 @@ static Object* visitSuperExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	LoxFunction* method;
 	int distance,distance2;
 	char * super,*thisstr;
-	super =  new(RAW,sizeof(char)*(strlen("super")+1));
-	thisstr = new(RAW,sizeof(char)*(strlen( "this")+1));
-	memset(thisstr,0,strlen("this")+1);
-	strcpy(thisstr,"this");
-	memset(super,0,strlen("super")+1);
-	strcpy(super,"super");
+    super = NULL;
+    thisstr = NULL;
+    super = strcopy(super,"super");
+    thisstr = strcopy(thisstr,"this");
 	distance = *(int*)get_value_for_key((struct _HASH*)((Interpreter*)visitor)->locals,expr);
 	superclass = (LoxClass*) ((Interpreter*)visitor)->environment->getAt(((Interpreter*)visitor)->environment,&distance,super);
 	distance2 = distance -1;
@@ -477,13 +420,10 @@ static Object* visitSuperExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	if(method == NULL){
 		CEXCEPTION_T e;
 		char * str;
-		e.id = 70;
-		e.sub = NULL;
-		e.token = ((Super*)expr)->method;
-		str = new(RAW,sizeof(char)*(strlen("Undefined property ''.")+1+strlen(((Super*)expr)->method->lexeme)));
-		memset(str,0,strlen("Undefined property ''.")+1+strlen(((Super*)expr)->method->lexeme));
+	    str = NULL;
+	    str = new_str(strlen("Undefined property ''.")+strlen(((Super*)expr)->method->lexeme));
 		asprintf(&str,"Undefined property '%s'.",((Super*)expr)->method->lexeme);
-		e.message = str;
+	    e = create_exception(70,((Super*)expr)->method,str,NULL);
 		Throw(e);
 		return NULL;
 	}
@@ -535,26 +475,25 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  }
 		  if((left->type == STRING && right->type == STRING) ||(left->type == STRING && right->type == NUMBER) ||
 			(left->type == NUMBER && right->type == STRING)){
-			 char* new_str, *num_str;
-			 new_str = NULL;
+			 char* anew_str, *num_str;
+			 anew_str = NULL;
 			 result->type = STRING;
 			 switch(left->type){
 				case STRING:
 				    switch(right->type){
 					   case STRING:
-						  new_str = new(RAW,sizeof(char)*(strlen(left->value.string)+strlen(right->value.string)+1));
-						  memset(new_str,0,strlen(left->value.string)+strlen(right->value.string)+1);
-						  strncpy(new_str,left->value.string,strlen(left->value.string));
-						  strncat(new_str,right->value.string,strlen(right->value.string));
-						  result->value.string = new_str;
+						  anew_str = NULL;
+						  anew_str = new_str(strlen(left->value.string)+strlen(right->value.string));
+						  strncpy(anew_str,left->value.string,strlen(left->value.string));
+						  strncat(anew_str,right->value.string,strlen(right->value.string));
+						  result->value.string = anew_str;
 						  break;
 					   default:
 						  num_str = stringify(right);
-						  new_str = new(RAW,sizeof(char)*(strlen(num_str)+strlen(left->value.string)+1));
-						  memset(new_str,0,strlen(num_str)+strlen(left->value.string)+1);
-						  strncpy(new_str,left->value.string,strlen(left->value.string));
-						  strncat(new_str,num_str,strlen(num_str));
-						  result->value.string = new_str;
+						  anew_str = new_str(strlen(num_str)+strlen(left->value.string));
+						  strncpy(anew_str,left->value.string,strlen(left->value.string));
+						  strncat(anew_str,num_str,strlen(num_str));
+						  result->value.string = anew_str;
 						  delete(num_str);
 						  num_str = NULL;
 						  break;
@@ -562,21 +501,18 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 				    break;
 				default:
 				    num_str = stringify(left);
-				    new_str = new(RAW,sizeof(char)*(strlen(num_str)+strlen(right->value.string)+1));
-				    memset(new_str,0,strlen(num_str)+strlen(right->value.string)+1);
-				    strncpy(new_str,num_str,strlen(num_str));
-				    strncat(new_str,right->value.string,strlen(right->value.string));
-				    result->value.string = new_str;
+				    anew_str = NULL;
+				    anew_str = new_str(strlen(num_str)+strlen(right->value.string));
+				    strncpy(anew_str,num_str,strlen(num_str));
+				    strncat(anew_str,right->value.string,strlen(right->value.string));
+				    result->value.string = anew_str;
 				    delete(num_str);
 				    num_str = NULL;
 				    break;
 			 }
 			 return result;
 		  }
-		  e.id = 4;
-		  e.token = ((Binary*)expr)->operator;
-		  e.message = "Operands must be two numbers, two strings, or one of each";
-		  e.sub = NULL;
+		  e = create_exception(4,((Binary*)expr)->operator,"Operands must be two numbers, two strings, or one of each",NULL);
 		  delete(result);
 		  result = NULL;
 		  Throw(e);
@@ -584,10 +520,7 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	   case SLASH:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
 		  if(right->value.number == (double)0){
-			 e.id = 5;
-			 e.token = ((Binary*)expr)->operator;
-			 e.message = "Cannot divide by Zero";
-			  e.sub = NULL;
+			 e = create_exception(5,((Binary*)expr)->operator,"Cannot divide by Zero",NULL);
 			  delete(result);
 			  result = NULL;
 			 Throw(e);
@@ -643,8 +576,6 @@ int isEqual(Object* left, Object* right){
 	   return 0;
     if(right->type == KNULL || right->type == NIL)
 	   return 0;
-/*    if((left.type == FALSE || left.type==TRUE) && (right.type == FALSE || right.type==TRUE))
-	   return strncmp(left.value.string,right.value.string,strlen(left.value.string)) == 0;*/
     switch(left->type){
 	   case NUMBER:
 	   case BOOLEAN:
@@ -681,20 +612,14 @@ int isEqual(Object* left, Object* right){
 void checkNumberOperand(Token* operator,Object* right){
     CEXCEPTION_T e;
     if(right->type == NUMBER) return;
-    e.id = 2;
-    e.token = operator;
-    e.message = "Operand must be a number";
-    e.sub = NULL;
+    e = create_exception(2,operator,"Operand must be a number",NULL);
     Throw(e);
 }
 void checkNumberOperands(Token* operator, Object* left, Object* right){
     CEXCEPTION_T e;
     if(left->type == NUMBER && right->type == NUMBER)
 		  return;
-    e.id = 3;
-    e.token = operator;
-    e.message = "Operands must be numbers";
-    e.sub = NULL;
+    e = create_exception(3,operator,"Operand must be a number",NULL);
     Throw(e);
 }
 const static char* nil = "nil";
@@ -703,41 +628,24 @@ char* stringify(Object* obj){
     char* text;
     char* temp;
     text = NULL;
+    temp = NULL;
     if(obj == NULL || obj->type == KNULL){
-	   temp = new(RAW,sizeof(char)*(strlen(nil)+1));
-	   memset(temp,0,strlen(nil)+1);
-	   strncpy(temp,nil,strlen(nil));
-	   return (char*)temp;
+	   return strcopy(temp,nil);
     }
     if(obj->type == FALSE){
-	   temp = new(RAW,sizeof(char)*(strlen("false")+1));
-	   memset(temp,0,strlen("false")+1);
-	   strncpy(temp,"false",strlen("false"));
-	   return (char*)temp;
+	   return strcopy(temp,"false");
     }
     if(obj->type == TRUE){
-	   temp = new(RAW,sizeof(char)*(strlen("true")+1));
-	   memset(temp,0,strlen("true")+1);
-	   strncpy(temp,"true",strlen("true"));
-	   return (char*)temp;
+	   return strcopy(temp,"true");
     }
     if(obj->type == BOOLEAN){
 	   switch((int)obj->value.number){
 		  case 1:
-			 temp = new(RAW,sizeof(char)*(strlen("true")+1));
-				memset(temp,0,strlen("true")+1);
-				strncpy(temp,"true",strlen("true"));
-				return (char*)temp;
+			 return strcopy(temp,"true");
 		  case 0:
-			 temp = new(RAW,sizeof(char)*(strlen("false")+1));
-			 memset(temp,0,strlen("false")+1);
-			 strncpy(temp,"false",strlen("false"));
-			 return (char*)temp;
+			 return strcopy(temp,"false");
 		  default:
-			 temp = new(RAW,sizeof(char)*(strlen("boolean error")+1));
-			 memset(temp,0,strlen("boolean error")+1);
-			 strncpy(temp,"boolean error",strlen("boolean error"));
-			 return (char*)temp;
+			 return strcopy(temp,"boolean error");
 	   }
     }
     if(obj->type == FUN){
@@ -752,9 +660,8 @@ char* stringify(Object* obj){
 		  free(text);
 		  text = NULL;
 		  asprintf(&text,"%.0lf",(double)obj->value.number);
-		  temp_str = new(RAW,sizeof(char)*(strlen(text)+1));
-		  memset(temp_str,0,strlen(text)+1);
-		  strncpy(temp_str,text,strlen(text));
+		  temp_str = NULL;
+		  temp_str = strcopy(temp_str,text);
 		  free(text);
 		  text = NULL;
 		  return temp_str;
@@ -762,14 +669,12 @@ char* stringify(Object* obj){
 	   free(text);
 	   text = NULL;
 	   asprintf(&text,"%lf",(double)obj->value.number);
-	   temp_str = new(RAW,sizeof(char)*(strlen(text)+1));
-	   memset(temp_str,0,strlen(text)+1);
-	   strncpy(temp_str,text,strlen(text));
+	   temp_str = NULL;
+	   temp_str = strcopy(temp_str,text);
 	   free(text);
 	   text = NULL;
 	   return temp_str;
     }
-/*    asprintf(&text,"%lf",(double)obj.value.number);*/
 
     return copy(obj->value.string);
 }
@@ -800,10 +705,7 @@ Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	Object* obj, *value;
 	obj = evaluate(visitor,((Set*)expr)->object);
 	if(!(strcmp(obj->instanceOf,"LoxInstance")==0)){
-		e.id = 57;
-		e.message = "Only instances have fields.";
-		e.token = ((Set*)expr)->name;
-		e.sub = NULL;
+	    e = create_exception(57,((Set*)expr)->name,"Only instances have fields.",NULL);
 		Throw(e);
 		return NULL;
 	}
@@ -815,9 +717,6 @@ Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr){
 Object* visitIfStmtInterpreter(StmtVisitor * visitor, Stmt* expr){
     Object* a,*truth;
     If* stmt;
-/*    r = NULL;
-    r = new(OBJECTIVE,sizeof(Object));
-    init_Object(r,"",KNULL);*/
     stmt = (If*) expr;
     a = evaluate(&visitor->expr,stmt->condition);
     truth = isTruthy(a);
@@ -867,38 +766,21 @@ Object* visitVarStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	init_Object(r,"",KNULL);
 	if(vstmt->initializer != NULL){
 		a = evaluate(&visitor->expr,vstmt->initializer);
-/*		r->type = a->type;
-		 if(r->type == NUMBER)
-			 r->value.number = a->value.number;
-		 else if(r->type == STRING){
-			temp_str = new(RAW,sizeof(char)*(strlen(a->value.string)+1));
-			memset(temp_str,0,strlen(a->value.string)+1);
-			strncpy(temp_str,a->value.string,strlen(a->value.string));
-			r->value.string = temp_str;
-		 }
-		 else {
-			r = resize(OBJECTIVE,r,sizeof(LoxFunction));
-			 r->value.callable = memcpy(new(OBJECTIVE,sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
-		 }*/
 	}
-    new_str = new(RAW,sizeof(char)*(strlen(vstmt->name->lexeme)+1));
-    memset(new_str,0,strlen(vstmt->name->lexeme)+1);
-    strncpy(new_str,vstmt->name->lexeme,strlen(vstmt->name->lexeme));
+    new_str = NULL;
+    new_str = strcopy(new_str,vstmt->name->lexeme);
     intprtr->environment->defineEnv(intprtr->environment,new_str,copy(a));
-	a = new(OBJECTIVE,sizeof(Object));
+/*	a = new(OBJECTIVE,sizeof(Object));
     init_Object(a,"nil",NIL);
-	a->type = NIL;
-	return a;
+	a->type = NIL*/;
+	return NLLOBJ;
 }
 Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr){
 	Assign* assign;
-	Object* r,*a;
+	Object *a;
 	int *distance;
 	Interpreter* intprtr;
-/*    char * new_str;*/
 	assign = (Assign*) expr;
-	r = new(OBJECTIVE,sizeof(Object));
-	init_Object(r,"",KNULL);
 	intprtr= (Interpreter*)visitor;
 	a = evaluate(visitor,assign->value);
 
@@ -910,79 +792,21 @@ Object* visitAssignExprInterpreter(ExprVisitor * visitor,Expr* expr){
 		intprtr->globals->assign(intprtr->globals,assign->name,copy(a));
 	}
 	return getReference(a);
-
-/*	r->type = a->type;
-    if(r->type == NUMBER)
- 	   r->value.number = a->value.number;
-    else if(r->type == STRING){
-	   new_str = new(RAW,sizeof(char)*(strlen(a->value.string)+1));
-	   memset(new_str,0,strlen(a->value.string)+1);
-	   strncpy(new_str,a->value.string,strlen(a->value.string));
-	   r->value.string = new_str;*/
-	   /*	   memcpy(&r->value.string,&a.value.string,strlen(a.value.string)+1);*/
-/*    }
-    else{
-    	r->value.callable = memcpy(new(OBJECTIVE,sizeof(LoxCallable)),a->value.callable,sizeof(LoxCallable));
-    }*/
-
-/*	r->value = a->value;*/
-/*    intprtr->environment->assign(intprtr->environment,assign->name,copy(r));
-	return getReference(r);*/
 }
 
 Object* visitVariableExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	Environment* env;
-    Object* r,*a;
+    Object* r;
 	Variable* nexpr;
 	nexpr = (Variable*)expr;
 	return lookUpVariable((Interpreter*)visitor,nexpr->name,expr);
-    a = NULL;
     r = NULL;
-/*    a = new(OBJECTIVE,sizeof(Object));
-    init_Object(a,"",KNULL);*/
 	env = (((Interpreter*)visitor)->environment);
 	r = (env->get(env,((Variable*)expr)->name ));
-/*    if(r){*/
-/*	   r = getObjectReference(r);*/
-/*    	if(r->type == NUMBER)
-    		a->value.number = r->value.number;
-    	else if(r->type == STRING){
-	    a->value.string = new(RAW,sizeof(char*)*(strlen(r->value.string)+1));
-	    memset(a->value.string,0,strlen(r->value.string)+1);
-    		strncpy(a->value.string ,r->value.string,strlen(r->value.string));
-    	}
-    	else {
-	    if(strcmp(r->instanceOf,"LoxFunction")==0){
-		   a = resize(OBJECTIVE,a,sizeof(LoxFunction));
-		   init_LoxFunction((LoxFunction*)a,copy(((LoxFunction*)r)->declaration));
-		   ((LoxFunction*)a)->closure = ((LoxFunction*)r)->closure;*/
-/*
-		   ((LoxFunction*)a)->declaration->body = ((LoxFunction*)r)->declaration->body;
-		   ((LoxFunction*)a)->declaration->name = ((LoxFunction*)r)->declaration->name;
-		   ((LoxFunction*)a)->declaration->params =((LoxFunction*)r)->declaration->params;
-		   ((LoxFunction*)a)->declaration->super = ((LoxFunction*)r)->declaration->super;*/
-/*	    }
-	    else if(strcmp(r->instanceOf,"LoxCallable")==0){
-		   a = resize(OBJECTIVE,a,sizeof(LoxCallable));
-		   init_LoxCallable((LoxCallable*)a);
-		   ((LoxCallable*)a)->super = ((LoxCallable*)r)->super;
-		   ((LoxCallable*)a)->vtable = ((LoxCallable*)r)->vtable;
-	    }*/
-    	/*	a->value.callable = memcpy(malloc(sizeof(LoxCallable)),r->value.callable,sizeof(LoxCallable));*/
-/*    	}
-	   a->type = r->type;
-	   memset((char*)a->instanceOf,0,30);
-	   strncpy((char*)a->instanceOf,r->instanceOf,strlen(r->instanceOf));*/
-	   a = (r);
-    	return a;
-/*    }*/
-/*    a->type = KNULL;
-    a->value.number=0;
-	return NLLOBJ;*/
+   	return r;
 }
 Object* lookUpVariable(Interpreter* intprtr,Token* name, Expr* expr){
 	int *distance;
-/*    void* res;*/
     distance = intprtr->locals->super.super.vtable.get_value_for_key((struct _HASH*)intprtr->locals,expr);
 	if(distance != NULL){
 	    return intprtr->environment->getAt(intprtr->environment,distance,name->lexeme);

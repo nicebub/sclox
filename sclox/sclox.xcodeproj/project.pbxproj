@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E2022369241C906900C67976 /* additions.c in Sources */ = {isa = PBXBuildFile; fileRef = E2022368241C906900C67976 /* additions.c */; };
+		E20C89E02437D661005C1F6F /* str.c in Sources */ = {isa = PBXBuildFile; fileRef = E20C89DF2437D660005C1F6F /* str.c */; };
 		E20F3D0C242DAEE7005CD03B /* HashMapStack.c in Sources */ = {isa = PBXBuildFile; fileRef = E20F3D06242DAEE7005CD03B /* HashMapStack.c */; };
 		E20F3D0D242DAEE7005CD03B /* Stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E20F3D08242DAEE7005CD03B /* Stack.c */; };
 		E20F3D0E242DAEE7005CD03B /* Resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = E20F3D0B242DAEE7005CD03B /* Resolver.c */; };
@@ -83,6 +84,8 @@
 /* Begin PBXFileReference section */
 		E2022367241C906900C67976 /* additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = additions.h; path = ../../src/additions.h; sourceTree = "<group>"; };
 		E2022368241C906900C67976 /* additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = additions.c; path = ../../src/additions.c; sourceTree = "<group>"; };
+		E20C89DE2437D660005C1F6F /* str.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = str.h; path = ../../src/str.h; sourceTree = "<group>"; };
+		E20C89DF2437D660005C1F6F /* str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = str.c; path = ../../src/str.c; sourceTree = "<group>"; };
 		E20F3D06242DAEE7005CD03B /* HashMapStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = HashMapStack.c; path = ../../src/HashMapStack.c; sourceTree = "<group>"; };
 		E20F3D07242DAEE7005CD03B /* Resolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resolver.h; path = ../../src/Resolver.h; sourceTree = "<group>"; };
 		E20F3D08242DAEE7005CD03B /* Stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Stack.c; path = ../../src/Stack.c; sourceTree = "<group>"; };
@@ -198,6 +201,8 @@
 		E213C69C2417242E00141F63 /* sclox */ = {
 			isa = PBXGroup;
 			children = (
+				E20C89DF2437D660005C1F6F /* str.c */,
+				E20C89DE2437D660005C1F6F /* str.h */,
 				E2BB0CF22434009900B5D47C /* LoxInstance.c */,
 				E2BB0CF32434009900B5D47C /* LoxInstance.h */,
 				E2BB0CF02433F48800B5D47C /* LoxClass.c */,
@@ -378,6 +383,7 @@
 				E20F3D0D242DAEE7005CD03B /* Stack.c in Sources */,
 				E26CB635241CADB50067C811 /* TokenArray.c in Sources */,
 				E2BB0CF42434009A00B5D47C /* LoxInstance.c in Sources */,
+				E20C89E02437D661005C1F6F /* str.c in Sources */,
 				E2BC49142418CB8400F8F14C /* Interpreter.c in Sources */,
 				E21A0B6F24241EFE00B80E0A /* LoxFunction.c in Sources */,
 				E2EB41EE241F425C00A3E77B /* HashMap.c in Sources */,

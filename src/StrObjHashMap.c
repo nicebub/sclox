@@ -9,6 +9,7 @@
 #include "HashMap.h"
 #include "StrObjHashMap.h"
 #include "Object.h"
+#include "str.h"
 StrObjHashMap* init_StrObjhm(StrObjHashMap* hm, int size){
 	init_HashMap((struct _HASH*)&hm->super,size,&toStringStrObjhmNodeValue,&toStringStrObjhmNodeKey,&compareKeysStrObjhm);
 	hm->super.super.vtable.compare_keys = &compareKeysStrObjhm;
@@ -26,18 +27,21 @@ if(value){
     if(val->type == NUMBER){
 	   num = NULL;
 	   asprintf(&num,"%f",val->value.number);
-	   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
+	   num2 = NULL;
+	   num2 = strcopy(num2,num);
+/*	   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
 	   memset(num2,0,strlen(num)+1);
-	   strncpy(num2,num,strlen(num));
+	   strncpy(num2,num,strlen(num));*/
 	   free(num);
 	   num = NULL;
 	   return num2;
     }
     else{
 	   num = NULL;
-	   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
+	   num = strcopy(num,val->value.string);
+/*	   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
 	   memset(num,0,strlen(val->value.string)+1);
-	   strncpy(num,val->value.string,strlen(val->value.string));
+	   strncpy(num,val->value.string,strlen(val->value.string));*/
 	   return num;
     }
 }
@@ -73,14 +77,8 @@ short int compute_hash_valueStrObjhm(struct _HASH * hashMap,void *key){
 StrObjHashMap *create_StrObjHashMap(int size){
 
     StrObjHashMap *m;
-/*    int i;*/
     m = new(OBJECTIVE,sizeof(StrObjHashMap));
     init_StrObjhm(m,size);
-/*
-    m->super.vtable.toStringValue = toStringValueArg;
-    m->super.vtable.toStringKey = toStringKeyArg;
-    m->super.vtable.compare_keys = compareKeysArg;
-*/
     return m;
 }
 void* copy_StrObjHashMap(void* inMap){
