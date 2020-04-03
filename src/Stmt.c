@@ -57,11 +57,12 @@ temp->statements = getReference(temp->statements);
     temp->super.id = blockm->super.id;
     return (void*)temp;
 }
-void new_Class (Class* inObj,Token* nameparam,StmtArray* methodsparam){
+void new_Class (Class* inObj,Token* nameparam,Variable* superclassparam,StmtArray* methodsparam){
     inObj->super.vtable.accept = &acceptClass;    
     inObj->super.vtable.delete = &delete_Class;
     inObj->super.vtable.copy = &copyClass;
     inObj->name = nameparam;
+    inObj->superclass = superclassparam;
     inObj->methods = methodsparam;
         memset((char*)&inObj->super.instanceOf,0,30);
     strncpy((char*)&inObj->super.instanceOf,"Class",strlen("Class"));
@@ -78,6 +79,9 @@ void delete_Class(void* inArg){
 if(getReferenceCount(arg) ==1){
 /*    delete(stmt->name);*/
     stmt->name=NULL;
+
+/*    delete(stmt->superclass);*/
+    stmt->superclass=NULL;
 
 /*    delete(stmt->methods);*/
     stmt->methods=NULL;
@@ -96,8 +100,10 @@ void* copyClass(void* expr){
     Class* temp, *classm;
     classm = (Class*)expr;
     temp = new(OBJECTIVE, sizeof(Class));
-new_Class(temp,classm->name,classm->methods);
+new_Class(temp,classm->name,classm->superclass,classm->methods);
 temp->name = getReference(temp->name);
+        
+temp->superclass = getReference(temp->superclass);
         
 temp->methods = getReference(temp->methods);
         

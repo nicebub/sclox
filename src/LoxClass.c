@@ -22,6 +22,10 @@ void init_LoxClassWithMethods(LoxClass* cl,char* name,StrObjHashMap* methods){
 	init_LoxClass(cl,name);
 	cl->methods = methods;
 }
+void init_LoxClassWithMethodsAndSuper(LoxClass* cl,char* name,LoxClass* superclass,StrObjHashMap* methods){
+	init_LoxClassWithMethods(cl,name,methods);
+	cl->superclass = superclass;
+}
 
 char* toString_LoxClass(LoxCallable* cl){
     LoxClass* class;
@@ -71,6 +75,9 @@ void* copy_LoxClass(void* inCls){
 LoxFunction* findMethod(LoxFunction* func, char* name){
 	if(((LoxClass*)func)->methods->super.super.vtable.get_value_for_key((struct _HASH*)((LoxClass*)func)->methods,name)){
 		return ((LoxClass*)func)->methods->super.super.vtable.get_value_for_key((struct _HASH*)((LoxClass*)func)->methods,name);
+	}
+	if(((LoxClass*)func)->superclass != NULL){
+		return ((LoxClass*)func)->superclass->findMethod((LoxFunction*)((LoxClass*)func)->superclass,name);
 	}
 	return NULL;
 }

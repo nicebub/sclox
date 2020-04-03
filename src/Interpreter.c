@@ -40,6 +40,7 @@ typedef struct _exception{
 static Object *NLLOBJ;
 #include "StmtArray.h"
 
+static Object* visitSuperExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitThisExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr);
 static Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr);
@@ -104,6 +105,7 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     intprtr->super.expr.vtable.visitVariableExpr = &visitVariableExprInterpreter;
     intprtr->super.expr.vtable.visitAssignExpr = &visitAssignExprInterpreter;
     intprtr->super.expr.vtable.visitLogicalExpr = &visitLogicalExprInterpreter;
+    intprtr->super.expr.vtable.visitSuperExpr = &visitSuperExprInterpreter;
     intprtr->super.vtable.visitExpressionStmt =&visitExpressionStmtInterpreter;
     intprtr->super.expr.vtable.visitCallExpr = &visitCallExprInterpreter;
     intprtr->super.vtable.visitWhileStmt = &visitWhileStmtInterpreter;
@@ -229,17 +231,43 @@ static Object* visitReturnStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 }
 
 static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
-    Interpreter* interpreter;
+	Object* superclass;
+	Class* cls;
+	Interpreter* interpreter;
     StrObjHashMap* methods;
     Environment* env;
     int *x , i ;
     LoxClass* klass;
+    superclass = NULL;
+    cls = (Class*) stmt;
     interpreter = (Interpreter*)visitor;
     env = interpreter->environment;
+    if(cls->superclass != NULL){
+    	superclass = evaluate((ExprVisitor*)visitor,(Expr*)cls->superclass);
+    	if(!(strcmp(superclass->instanceOf,"LoxClass")==0)){
+    		CEXCEPTION_T e;
+    		e.id = 60;
+    		e.sub = NULL;
+    		e.token = cls->superclass->name;
+    		e.message = "Superclass must be a class.";
+    		Throw(e);
+    		return NULL;
+    	}
+    }
     x = new(RAW, sizeof(int));
     *x = 0;
-    env->defineEnv(env,((Class*)stmt)->name->lexeme,(Object*)x);
-
+    env->defineEnv(env,cls->name->lexeme,(Object*)x);
+    if(cls->superclass != NULL){
+    	Environment* temp;
+    	char* super;
+    	super = new(RAW,sizeof(char)*(strlen("super")+1));
+    	memset(super,0,strlen("super")+1);
+    	strcpy(super,"super");
+    	temp = new(OBJECTIVE,sizeof(Environment));
+    	init_EnvironmentwithEnclosing(temp,env);
+    	env = temp;
+    	env->defineEnv(env,super,superclass);
+    }
     methods = new(OBJECTIVE,sizeof(StrObjHashMap));
     init_StrObjhm(methods,40);
     for(i=0;i <((Class*)stmt)->methods->used;i++){
@@ -254,7 +282,10 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 
 
     klass = new(OBJECTIVE,sizeof(LoxClass));
-    init_LoxClassWithMethods(klass,((Class*)stmt)->name->lexeme,methods);
+    init_LoxClassWithMethodsAndSuper(klass,((Class*)stmt)->name->lexeme,(LoxClass*)superclass,methods);
+    if(superclass != NULL){
+    	env = env->Enclosing;
+    }
     env->assign(env,((Class*)stmt)->name,(Object*)klass);
     return NULL;
 }
@@ -424,6 +455,39 @@ Object* visitUnaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	    default: break;
 	}
 	return result;
+}
+
+static Object* visitSuperExprInterpreter(ExprVisitor* visitor, Expr* expr){
+	LoxClass* superclass;
+	LoxInstance* object;
+	LoxFunction* method;
+	int distance,distance2;
+	char * super,*thisstr;
+	super =  new(RAW,sizeof(char)*(strlen("super")+1));
+	thisstr = new(RAW,sizeof(char)*(strlen( "this")+1));
+	memset(thisstr,0,strlen("this")+1);
+	strcpy(thisstr,"this");
+	memset(super,0,strlen("super")+1);
+	strcpy(super,"super");
+	distance = *(int*)get_value_for_key((struct _HASH*)((Interpreter*)visitor)->locals,expr);
+	superclass = (LoxClass*) ((Interpreter*)visitor)->environment->getAt(((Interpreter*)visitor)->environment,&distance,super);
+	distance2 = distance -1;
+	object = (LoxInstance*) ((Interpreter*)visitor)->environment->getAt(((Interpreter*)visitor)->environment, &distance2,thisstr);
+	method = superclass->findMethod((LoxFunction*)superclass,((Super*)expr)->method->lexeme);
+	if(method == NULL){
+		CEXCEPTION_T e;
+		char * str;
+		e.id = 70;
+		e.sub = NULL;
+		e.token = ((Super*)expr)->method;
+		str = new(RAW,sizeof(char)*(strlen("Undefined property ''.")+1+strlen(((Super*)expr)->method->lexeme)));
+		memset(str,0,strlen("Undefined property ''.")+1+strlen(((Super*)expr)->method->lexeme));
+		asprintf(&str,"Undefined property '%s'.",((Super*)expr)->method->lexeme);
+		e.message = str;
+		Throw(e);
+		return NULL;
+	}
+	return (Object*)method->bind(method,object);
 }
 
 Object* evaluate(ExprVisitor* visitor, Expr* expr){

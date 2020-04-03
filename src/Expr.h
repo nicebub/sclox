@@ -39,6 +39,7 @@ struct _ExprVisitor_vtable {
     Object* (*visitLiteralExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitLogicalExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitSetExpr)(ExprVisitor* visitor,Expr* expr);
+    Object* (*visitSuperExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitThisExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitUnaryExpr)(ExprVisitor* visitor,Expr* expr);
     Object* (*visitVariableExpr)(ExprVisitor* visitor,Expr* expr);
@@ -153,6 +154,18 @@ void new_Set(Set*  inObj,Expr* object,Token* name,Expr* value);
 void delete_Set(void* arg);
 Object* acceptSet(Expr* arg, ExprVisitor* visitor);
 void* copySet(void*);
+
+typedef struct _Super Super;
+struct _Super {
+    Expr super;
+    Token* keyword;
+    Token* method;
+
+};
+void new_Super(Super*  inObj,Token* keyword,Token* method);
+void delete_Super(void* arg);
+Object* acceptSuper(Expr* arg, ExprVisitor* visitor);
+void* copySuper(void*);
 
 typedef struct _This This;
 struct _This {

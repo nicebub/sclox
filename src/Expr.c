@@ -418,6 +418,55 @@ temp->value = getReference(temp->value);
     temp->super.id = setm->super.id;
     return (void*)temp;
 }
+void new_Super (Super* inObj,Token* keywordparam,Token* methodparam){
+    inObj->super.vtable.accept = &acceptSuper;    
+    inObj->super.vtable.delete = &delete_Super;
+    inObj->super.vtable.copy = &copySuper;
+    inObj->keyword = keywordparam;
+    inObj->method = methodparam;
+        memset((char*)&inObj->super.instanceOf,0,30);
+    strncpy((char*)&inObj->super.instanceOf,"Super",strlen("Super"));
+    setAllocated(inObj,0);
+    setCopyConstructor(inObj,&copySuper);
+    setDestructor(inObj,&delete_Super);
+    inObj->super.id = addtoExprCounter();
+}
+void delete_Super(void* inArg){
+    Super* arg, *expr;
+    arg = (Super*) inArg;
+    expr = (Super*) arg;
+
+if(getReferenceCount(arg) ==1){
+/*    delete(expr->keyword);*/
+    expr->keyword=NULL;
+
+/*    delete(expr->method);*/
+    expr->method=NULL;
+/*    delete(expr);*/
+    expr=NULL;
+}
+    else{
+        releaseReference(arg);
+    }
+}
+Object* acceptSuper(Expr *arg, ExprVisitor* visitor){
+    return visitor->vtable.visitSuperExpr(visitor,arg);
+}
+
+void* copySuper(void* expr){
+    Super* temp, *superm;
+    superm = (Super*)expr;
+    temp = new(OBJECTIVE, sizeof(Super));
+new_Super(temp,superm->keyword,superm->method);
+temp->keyword = getReference(temp->keyword);
+        
+temp->method = getReference(temp->method);
+        
+
+    setAllocated(temp,1);
+    temp->super.id = superm->super.id;
+    return (void*)temp;
+}
 void new_This (This* inObj,Token* keywordparam){
     inObj->super.vtable.accept = &acceptThis;    
     inObj->super.vtable.delete = &delete_This;

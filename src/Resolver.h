@@ -16,7 +16,7 @@ typedef enum _FunctionType {
 	FT_NONE, FT_FUNCTION, FT_METHOD, FT_INITIALIZER
 } FunctionType;
 typedef enum _ClassType {
-    CT_NONE, CT_CLASS
+    CT_NONE, CT_CLASS, CT_SUBCLASS
 } ClassType;
 typedef struct _Resolver Resolver;
 struct _Resolver {

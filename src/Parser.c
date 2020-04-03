@@ -73,7 +73,17 @@ Stmt* classDeclaration(Parser* parser){
 	Class* class;
 	StmtArray* methods;
     char* str;
+    Variable* superclass;
+    TokenType toks[2];
 	Token* name = consume(parser,IDENTIFIER, "Expect class name.");
+	superclass = NULL;
+	toks[0] = LESS;
+	toks[1] = KNULL;
+	if(parser->match(parser,toks)){
+		consume(parser,IDENTIFIER,"Expect superclass name.");
+		superclass = new(OBJECTIVE,sizeof(Variable));
+		new_Variable(superclass,previous(parser));
+	}
 	consume(parser,LEFT_BRACE,"Expect '{' before class body.");
 	methods = new(OBJECTIVE,sizeof(StmtArray));
     init_StmtArray(methods);
@@ -85,7 +95,7 @@ Stmt* classDeclaration(Parser* parser){
 	}
 	consume(parser,RIGHT_BRACE, "Expect '}' after class body.");
 	class = new(OBJECTIVE,sizeof(Class));
-	new_Class(class, name, methods);
+	new_Class(class, name, superclass,methods);
 	return (Stmt*)class;
 }
 
@@ -560,6 +570,17 @@ Expr* primary(Parser* parser){
 		Literal* lit = new(OBJECTIVE,sizeof(Literal));
 		new_Literal(lit,previous(parser)->literal);
 		return (Expr*)lit;
+	}
+	types[0] = SUPER;
+	if(parser->match(parser,types)){
+		Token* keyword,*method;
+		Super* var;
+		keyword = previous(parser);
+		consume(parser,DOT,"Expect '.' after 'super'.");
+		method = consume(parser,IDENTIFIER, "Expect suerpclass method name.");
+		var = new(OBJECTIVE,sizeof(Super));
+		new_Super(var,keyword,method);
+		return (Expr*)var;
 	}
 	types[0] = THIS;
 	if(parser->match(parser,types)){

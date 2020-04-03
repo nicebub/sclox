@@ -23,11 +23,13 @@ struct _LoxClass {
 	LoxCallable super;
     char* name;
     StrObjHashMap* methods;
+    LoxClass* superclass;
     LoxFunction* (*findMethod)(LoxFunction* func, char* name);
 };
 
 void init_LoxClass(LoxClass* cl,char* name);
 void init_LoxClassWithMethods(LoxClass* cl,char* name,StrObjHashMap* methods);
+void init_LoxClassWithMethodsAndSuper(LoxClass* cl,char* name,LoxClass* superclass,StrObjHashMap* methods);
 char* toString_LoxClass(LoxCallable* cl);
 Object* call_LoxClass(LoxCallable* lc,Interpreter* interpreter, ObjectArray* arguments);
 int arity_LoxClass(LoxCallable* lc);

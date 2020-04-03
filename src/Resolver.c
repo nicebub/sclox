@@ -12,6 +12,7 @@
 #include "TokenArray.h"
 
 #include <stddef.h>
+static Object* visitSuperExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitThisExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* expr);
 static Object* visitGetExprResolver(ExprVisitor* visitor, Expr* expr);
@@ -62,6 +63,8 @@ Resolver* init_Resolver(Resolver* r, Interpreter* i){
     r->super.vtable.visitReturnStmt = &visitReturnStmtResolver;
     r->super.vtable.visitVarStmt = &visitVarStmtResolver;
     r->super.vtable.visitWhileStmt = &visitWhileStmtResolver;
+
+    r->super.expr.vtable.visitSuperExpr = &visitSuperExprResolver;
     r->super.expr.vtable.visitAssignExpr = &visitAssignExprResolver;
     r->super.expr.vtable.visitBinaryExpr = &visitBinaryExprResolver;
     r->super.expr.vtable.visitCallExpr = &visitCallExprResolver;
@@ -221,12 +224,37 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     ClassType enclosingClass;
 	StrObjHashMap *scope;
 	HashMapStack* scope_stack;
+	Resolver* resolver;
+	Class* cls;
     enclosingClass = ((Resolver*)visitor)->currentClass;
-    ((Resolver*)visitor)->currentClass = CT_CLASS;
-    declare((Resolver*)visitor,((Class*)stmt)->name);
-    define_resolver((Resolver*)visitor,((Class*)stmt)->name);
-    beginScope((Resolver*)visitor);
-    scope_stack= ((Resolver*)visitor)->scopes;
+    cls = (Class*) stmt;
+    resolver = (Resolver*)visitor;
+    resolver->currentClass = CT_CLASS;
+    declare(resolver,cls->name);
+    define_resolver(resolver,cls->name);
+    if(cls->superclass != NULL &&
+    		strcmp(cls->name->lexeme,cls->superclass->name->lexeme)==0){
+    	((Lox*)resolver->interpreter->lox)->parse_error((Lox*)resolver->interpreter->lox,
+    			cls->superclass->name,"A class cannot inherit from itself.");
+    }
+    if(cls->superclass != NULL){
+    	resolver->currentClass = CT_SUBCLASS;
+    	resolve_stmt(resolver,(Stmt*)cls->superclass);
+    }
+    if(cls->superclass != NULL){
+    	char* super;
+    	int *x;
+    	x = new(RAW,sizeof(int));
+    	super = new(RAW,sizeof(char)*(strlen("super")+1));
+    	memset(super,0,strlen("super")+1);
+    	strcpy(super,"super");
+    	beginScope(resolver);
+    	*x = 1;
+    	add_to_HashMap(top((Stack*)resolver->scopes),super,x);
+
+    }
+    beginScope(resolver);
+    scope_stack= resolver->scopes;
     scope = top((Stack*)scope_stack);
     this_str = new(RAW,sizeof(char)*(strlen("this")+1));
     memset(this_str,0,strlen("this")+1);
@@ -235,18 +263,20 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     *x = 1;
     add_to_hash((struct _HASH*)scope,this_str,(Object*)x);
 
-    for(i = 0; i<((Class*)stmt)->methods->used;i++){
+    for(i = 0; i<cls-> methods->used;i++){
     	FunctionType decl;
 	   Stmt* cur_stmt;
     	decl = FT_METHOD;
-	   cur_stmt = getStmtinArrayAt(((Class*)stmt)->methods,i);
+	   cur_stmt = getStmtinArrayAt(cls->methods,i);
 	   if(strcmp(((Function*)cur_stmt)->name->lexeme,"init")==0){
 		  decl = FT_INITIALIZER;
 	   }
-    	resolveFunction((Resolver*)visitor,(Function*)cur_stmt,decl);
+    	resolveFunction(resolver,(Function*)cur_stmt,decl);
     }
     endScope((Resolver*)visitor);
-    ((Resolver*)visitor)->currentClass = enclosingClass;
+
+    if(cls->superclass != NULL) endScope(resolver);
+    resolver->currentClass = enclosingClass;
     return NULL;
 }
 
@@ -358,6 +388,16 @@ static Object* visitThisExprResolver(ExprVisitor* visitor, Expr* expr){
 	return NULL;
 }
 
+static Object* visitSuperExprResolver(ExprVisitor* visitor, Expr* expr){
+	if(((Resolver*)visitor)->currentClass == CT_NONE){
+		((Lox*)((Resolver*)visitor)->interpreter->lox)->parse_error(((Lox*)((Resolver*)visitor)->interpreter->lox),((Super*)expr)->keyword,"Cannot use 'super' outside of a class.");
+	}
+	else if(((Resolver*)visitor)->currentClass == CT_SUBCLASS){
+		((Lox*)((Resolver*)visitor)->interpreter->lox)->parse_error(((Lox*)((Resolver*)visitor)->interpreter->lox),((Super*)expr)->keyword,"Cannot use 'super' in a class with no superclass.");
+	}
+	resolveLocal((Resolver*)visitor,expr,((Super*)expr)->keyword);
+	return NULL;
+}
 
 static Object* visitSetExprResolver(ExprVisitor* visitor, Expr* stmt){
 	resolve_expr((Resolver*)visitor,((Set*)stmt)->value);

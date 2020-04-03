@@ -69,10 +69,11 @@ typedef struct _Class Class;
 struct _Class {
     Stmt super;
     Token* name;
+    Variable* superclass;
     StmtArray* methods;
 
 };
-void new_Class(Class*  inObj,Token* name,StmtArray* methods);
+void new_Class(Class*  inObj,Token* name,Variable* superclass,StmtArray* methods);
 void delete_Class(void* arg);
 Object* acceptClass(Stmt* arg, StmtVisitor* visitor);
 void* copyClass(void*);
