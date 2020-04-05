@@ -10,7 +10,6 @@
 #include "TokenType.h"
 #include "Token.h"
 #include "TokenArray.h"
-/*#include "Lox.h"*/
 #ifndef _LOX
 #define _LOX
 typedef struct _Lox Lox;
@@ -24,7 +23,7 @@ struct _Scanner {
 	int current;
 	int line;
 	TokenArray * (*scanTokens)(Scanner* scanner);
-	void (*delete_scanner)(Scanner* scanner);
+	void (*delete)(Scanner* scanner);
 	int (*isAtEnd)(Scanner* scanner);
 	void (*scanToken)(Scanner* scanner);
 	char (*advance)(Scanner* scanner);

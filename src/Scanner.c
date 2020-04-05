@@ -20,7 +20,7 @@ void init_Scanner(Scanner* scanner, const char * source, Lox* lox){
 	scanner->start = scanner->current = 0;
 	scanner->line=1;
 	scanner->scanTokens = &scanTokens;
-	scanner->delete_scanner = &delete_scanner;
+	scanner->delete = &delete_scanner;
 	scanner->isAtEnd = &isAtEnd;
 	scanner->scanToken = &scanToken;
 	scanner->advance = &advance;
@@ -273,8 +273,10 @@ void cComment(Scanner* scanner){
     	   advance(scanner);
        }
        advance(scanner);
-       if(isAtEnd(scanner))
-    		   return;
+	    if(isAtEnd(scanner)){
+		   scanner->lox->error(scanner->lox,scanner->line, "Unterminated C-Style Comment /* '*/'.");
+		   return;
+	    }
     	if(peek(scanner) == '/'){
            advance(scanner);
            nested--;

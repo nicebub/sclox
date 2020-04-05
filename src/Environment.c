@@ -21,23 +21,16 @@ char* toStringValueDefault(void* value){
 	    Object * val;
 	    num2 = NULL;
 	    val = (Object*)value;
+	    num = NULL;
 	    if(val->type == NUMBER){
-		   num = NULL;
 		   asprintf(&num,"%f",val->value.number);
 		   num2 = strcopy(num2,num);
-/*		   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
-		   memset(num2,0,strlen(num)+1);
-		   strncpy(num2,num,strlen(num));*/
 		   free(num);
 		   num = NULL;
 		   return num2;
 	    }
 	    else{
-		   num = NULL;
 		   num = strcopy(num,val->value.string);
-/*		   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
-		   memset(num,0,strlen(val->value.string)+1);
-		   strncpy(num,val->value.string,strlen(val->value.string));*/
 		   return num;
 	    }
 	}
@@ -63,11 +56,12 @@ void* get(Environment* env,Token* name){
     }
 	temp = NULL;
 	temp = new_str(strlen("Undefined variable ''.")+strlen(name->lexeme));
-/*    temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));
-    memset(temp,0,(strlen("Undefined variable ''.")+strlen(name->lexeme))+1);*/
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
 	e = create_exception(9,name,temp,NULL);
-	Throw(e);
+	Try{
+	 Throw(e);
+	}
+	Catch(e){ Throw(e);}
     return NULL;
 }
 
@@ -120,10 +114,12 @@ void assign(Environment* env, Token* name, Object* value){
     }
 	temp = NULL;
     temp = new_str(strlen("Undefined variable ''.")+strlen(name->lexeme));
-/*	temp = new(RAW,sizeof(char)*(strlen("Undefined variable ''.")+strlen(name->lexeme)+1));*/
 	asprintf(&temp,"Undefined variable '%s'.",name->lexeme);
 	e = create_exception(10,getReference(name),temp,NULL);
-	Throw(e);
+	Try{
+	 Throw(e);
+	}
+	Catch(e){ Throw(e);}
     return;
 }
 

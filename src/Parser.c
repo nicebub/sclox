@@ -522,6 +522,7 @@ Expr* finishCall(Parser* parser, Expr* callee){
 
 Expr* primary(Parser* parser){
 	Object * obj;
+    CEXCEPTION_T e;
 	TokenType types[] = { FALSE, KNULL };
 	if(parser->match(parser,types)){
 		double* val;
@@ -572,7 +573,7 @@ Expr* primary(Parser* parser){
 		Super* var;
 		keyword = previous(parser);
 		consume(parser,DOT,"Expect '.' after 'super'.");
-		method = consume(parser,IDENTIFIER, "Expect suerpclass method name.");
+		method = consume(parser,IDENTIFIER, "Expect superclass method name.");
 		var = new(OBJECTIVE,sizeof(Super));
 		new_Super(var,keyword,method);
 		return (Expr*)var;
@@ -600,7 +601,12 @@ Expr* primary(Parser* parser){
 		new_Grouping(group,expr);
 		return (Expr*)group;
 	}
+    Try{
 	Throw(parser->error(parser,parser->peek(parser),"Expect expression."));
+    }
+    Catch(e){
+	   Throw(e);
+    }
 	/* shouldn't reach this return statement */
     return NULL;
 
@@ -611,7 +617,7 @@ Token* consume(Parser* parser, TokenType type, const char* message){
     if(check(parser,type))
 		return parser->advance(parser);
     Try{
-    Throw(parser->error(parser,parser->peek(parser),message));
+		  Throw(parser->error(parser,parser->peek(parser),message));
     }
     Catch(e) {
 	   Throw(e);

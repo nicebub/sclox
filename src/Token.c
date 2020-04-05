@@ -16,7 +16,7 @@
 #include "str.h"
 #define TOKEN_INIT_SIZE 5
 
-void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line){
+Token* init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line){
 	init_Object(&token->super,NULL,type);
 	token->lexeme = NULL;
 	if(lexeme){
@@ -36,6 +36,7 @@ void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int
     setAllocated(token,0);
     setCopyConstructor(token,&copy_Token);
     setDestructor(token,&delete_Token);
+    return token;
 }
 
 
@@ -68,58 +69,53 @@ char * token_toString(Token* token){
 }
 
 void delete_Token(void* ntoken){
-	Token* token = (Token*) ntoken;
-	if(token){
-		if(getReferenceCount(token) <= 1){
-			if(token->lexeme){
-				delete(token->lexeme);
-				token->lexeme = NULL;
+	if((Token*)ntoken){
+		if(getReferenceCount(ntoken) <= 1){
+			if(((Token*)ntoken)->lexeme){
+				delete(((Token*)ntoken)->lexeme);
+				((Token*)ntoken)->lexeme = NULL;
 			}
-		delete(&token->literal);
-		token->literal = NULL;
-			if(token->inString){
-				delete(token->inString);
-				token->inString = NULL;
+		delete(&((Token*)ntoken)->literal);
+		((Token*)ntoken)->literal = NULL;
+			if(((Token*)ntoken)->inString){
+				delete(((Token*)ntoken)->inString);
+				((Token*)ntoken)->inString = NULL;
 			}
-			token = NULL;
+			ntoken = NULL;
 		}
 
 		else {
-			releaseReference(token);
+			releaseReference(ntoken);
 		}
 	}
 }
 void initializeTokenElement(Token** tok, void* value){
-	Token* newtok = (Token*)value;
     if(!value){
 	   *tok = NULL;
     }
 	else{
 		*tok = new(OBJECTIVE,sizeof(Token));
-		init_Token(*tok,newtok->super.type,newtok->lexeme,newtok->literal,newtok->line);
+		init_Token(*tok,((Token*)value)->super.type,
+			 ((Token*)value)->lexeme,
+				 ((Token*)value)->literal,((Token*)value)->line);
 	    setAllocated(*tok,1);
 	}
 }
 
 void* copy_Token(void* inToken){
-	Token *newtok, *intok;
-    char* lexeme;
-    Object* lit;
+    Token *newtok;
     newtok = new(OBJECTIVE,sizeof(Token));
-    intok = (Token*) inToken;
-    lexeme = NULL;
-    lit = NULL;
-    if(intok->lexeme){
-	   lexeme = strcopy(lexeme,intok->lexeme);
-	   newtok->lexeme = lexeme;
+    newtok->lexeme = NULL;
+    if(((Token*)inToken)->lexeme){
+	   newtok->lexeme =strcopy(newtok->lexeme,((Token*)inToken)->lexeme);
     }
-    if(intok->literal){
-	   lit = copy(intok->literal);
+    if(((Token*)inToken)->literal){
+	   newtok->literal = copy(((Token*)inToken)->literal);
     }
-    init_Token(newtok,intok->super.type,lexeme,lit,intok->line);
-    if(intok->inString){
+    init_Token(newtok,((Token*)inToken)->super.type,newtok->lexeme,newtok->literal,((Token*)inToken)->line);
+    if(((Token*)inToken)->inString){
 	   newtok->inString = NULL;
-	   newtok->inString = strcopy(newtok->inString,intok->inString);
+	   newtok->inString = strcopy(newtok->inString,((Token*)inToken)->inString);
     }
 	return newtok;
 }

@@ -43,4 +43,6 @@ void* copy_Object(void* inobj);
 void init_Object(Object* Object, void* value, TokenType type);
 void delete_Object(void* Object);
 short int getNextObjectId(void);
+char * getInstanceOf(Object* obj);
+void setInstanceOf(Object* obj, char*);
 #endif /* OBJECT_H_ */

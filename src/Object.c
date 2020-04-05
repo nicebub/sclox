@@ -67,8 +67,9 @@ void init_Object(Object* object, void* value, TokenType type){
 	else object->value.string = NULL;
 	object->type = type;
 	object->isBool = type==FALSE||type==TRUE||type==NIL?1:0;
-    memset((char*)&object->instanceOf,0,30);
-    strncpy((char*)&object->instanceOf,"Object",strlen("Object"));
+    setInstanceOf(object,"Object");
+/*    memset((char*)&object->instanceOf,0,30);
+    strncpy((char*)&object->instanceOf,"Object",strlen("Object"));*/
     object->vtable = ovtable;
     setCopyConstructor(object,&copy_Object);
     setDestructor(object,&delete_Object);
@@ -109,8 +110,9 @@ void* copy_Object(void* ninobj){
 	Object* newobj,*inobj;
 	inobj = (Object*)ninobj;
 	newobj = new(OBJECTIVE,sizeof(Object));
-    memset(&newobj->instanceOf,0,30);
-    strncpy((char*)&newobj->instanceOf,inobj->instanceOf,strlen(inobj->instanceOf));
+    setInstanceOf(newobj,inobj->instanceOf);
+/*    memset(&newobj->instanceOf,0,30);
+    strncpy((char*)&newobj->instanceOf,inobj->instanceOf,strlen(inobj->instanceOf));*/
 	newobj->id = getNextObjectId();
     init_Object(newobj,NULL,inobj->type);
 	switch(inobj->type){
@@ -129,4 +131,11 @@ void* copy_Object(void* ninobj){
 	}
     setAllocated(newobj,1);
 	return newobj;
+}
+char * getInstanceOf(Object* obj){
+    return obj->instanceOf;
+}
+void setInstanceOf(Object* obj, char* instanceof){
+    memset(obj->instanceOf,0,30);
+    strncpy((char*)obj->instanceOf,instanceof,strlen(instanceof));
 }

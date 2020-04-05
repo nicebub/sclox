@@ -24,24 +24,17 @@ char *toStringStrObjhmNodeValue(void* value){
 if(value){
     char* num,*num2 ;
     Object * val = (Object*)value;
+    num = NULL;
+    num2 = NULL;
     if(val->type == NUMBER){
-	   num = NULL;
 	   asprintf(&num,"%f",val->value.number);
-	   num2 = NULL;
 	   num2 = strcopy(num2,num);
-/*	   num2 = (char*)new(RAW,sizeof(char)*(strlen(num)+1));
-	   memset(num2,0,strlen(num)+1);
-	   strncpy(num2,num,strlen(num));*/
 	   free(num);
 	   num = NULL;
 	   return num2;
     }
     else{
-	   num = NULL;
 	   num = strcopy(num,val->value.string);
-/*	   num =new(RAW,sizeof(char)*(strlen(val->value.string)+1));
-	   memset(num,0,strlen(val->value.string)+1);
-	   strncpy(num,val->value.string,strlen(val->value.string));*/
 	   return num;
     }
 }

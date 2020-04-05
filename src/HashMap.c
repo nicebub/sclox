@@ -205,12 +205,9 @@ char* toStringHashMapNode(struct _Hashnode* node){
     size_t str_len;
     num = NULL;
     num = new_str(strlen(toStringHashMapNodeValue(node)));
-/*    num = new(RAW,sizeof(char)*(strlen(toStringHashMapNodeValue(node))+1));*/
     asprintf(&num,"%s",toStringHashMapNodeValue(node));
     str_len = (3+strlen(num)+strlen((char*)node->key));
     temp = new_str(str_len);
-/*    temp = new(RAW,sizeof(char)*str_len);
-    memset(temp,0,str_len);*/
     strncat(temp,"(",1);
     keystr = toStringHashMapNodeKey(node);
     strncat(temp,keystr,strlen(keystr));
@@ -245,8 +242,6 @@ char* toStringHashMap(struct _HASH* h){
     }
     fullstr_len= (int)fullstr_len+(int)strlen(extra)+((int)strlen(each)*h->used+(h->used-1));
     temp = new_str(fullstr_len);
-/*    temp = new(RAW,sizeof(char)*fullstr_len);
-    memset(temp,0,fullstr_len);*/
     temp[0]='(';
     count = 0;
     for(i=0;i<h->size;i++){

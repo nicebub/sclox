@@ -7,8 +7,9 @@ LoxCallable_vtable lcall_vtable = {
 };
 void init_LoxCallable(LoxCallable* lcall){
 	init_Object(&lcall->super,lcall,FUN);
-    memset(&lcall->super.instanceOf,0,30);
-    strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
+    setInstanceOf(&lcall->super,"LoxCallable");
+/*    memset(&lcall->super.instanceOf,0,30);
+    strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));*/
 	lcall->vtable = lcall_vtable;
     setAllocated(lcall,0);
     setCopyConstructor(lcall,&copy_LoxCallable);
@@ -32,8 +33,9 @@ void* copy_LoxCallable(void* inCall){
     incall = (LoxCallable*)inCall;
     lcall = new(OBJECTIVE,sizeof(LoxCallable));
     init_Object(&lcall->super,lcall,FUN);
-   memset(&lcall->super.instanceOf,0,30);
-   strncpy((char*)&lcall->super.instanceOf,incall->super.instanceOf,strlen(incall->super.instanceOf));
+    setInstanceOf(&lcall->super,incall->super.instanceOf);
+/*   memset(&lcall->super.instanceOf,0,30);
+   strncpy((char*)&lcall->super.instanceOf,incall->super.instanceOf,strlen(incall->super.instanceOf));*/
     lcall->vtable = lcall_vtable;
     init_LoxCallable(lcall);
     setAllocated(lcall,1);

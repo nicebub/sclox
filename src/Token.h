@@ -18,7 +18,7 @@ typedef struct _Token_vtable Token_vtable;
 struct _Token_vtable {
 	char * (*toString)(Token* token);
 	void (*delete)(void* token);
-	void (*init)(Token* token, TokenType type, char * lexeme, Object* literal, int line);
+	Token* (*init)(Token* token, TokenType type, char * lexeme, Object* literal, int line);
 	void* (*copy)(void* tok1);
 	short int (*getNextID)(void);
 }__attribute__((packed));
@@ -34,7 +34,7 @@ struct _Token {
 }__attribute__((packed));
 
 
-void init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line);
+Token* init_Token(Token* token, TokenType type, char* lexeme, Object* literal, int line);
 
 char * token_toString(Token* token);
 void delete_Token(void* token);

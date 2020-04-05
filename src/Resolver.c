@@ -101,9 +101,6 @@ char* toStringResolverValue(void * value){
 		asprintf(&num,"%d",*(int*)value);
 	    temp = NULL;
 	    temp = strcopy(temp,num);
-/*		temp = new(RAW,sizeof(char)*(strlen(num)+1));
-		memset(temp,0,strlen(num)+1);
-		strncpy(temp,num,strlen(num));*/
 		free(num);
 		num = NULL;
 		return temp;
@@ -249,9 +246,6 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     	x = new(RAW,sizeof(int));
 	   super = NULL;
 	   super = strcopy(super,"super");
-/*    	super = new(RAW,sizeof(char)*(strlen("super")+1));
-    	memset(super,0,strlen("super")+1);
-    	strcpy(super,"super");*/
     	beginScope(resolver);
     	*x = 1;
     	add_to_HashMap(top((Stack*)resolver->scopes),super,x);
@@ -262,9 +256,6 @@ static Object* visitClassStmtResolver(StmtVisitor* visitor, Stmt* stmt){
     scope = top((Stack*)scope_stack);
     this_str = NULL;
     this_str = strcopy(this_str,"this");
-/*    this_str = new(RAW,sizeof(char)*(strlen("this")+1));
-    memset(this_str,0,strlen("this")+1);
-    strcpy(this_str,"this");*/
     x =new(RAW,sizeof(int));
     *x = 1;
     add_to_hash((struct _HASH*)scope,this_str,(Object*)x);
@@ -398,7 +389,7 @@ static Object* visitSuperExprResolver(ExprVisitor* visitor, Expr* expr){
 	if(((Resolver*)visitor)->currentClass == CT_NONE){
 		((Lox*)((Resolver*)visitor)->interpreter->lox)->parse_error(((Lox*)((Resolver*)visitor)->interpreter->lox),((Super*)expr)->keyword,"Cannot use 'super' outside of a class.");
 	}
-	else if(((Resolver*)visitor)->currentClass == CT_SUBCLASS){
+	else if(((Resolver*)visitor)->currentClass != CT_SUBCLASS){
 		((Lox*)((Resolver*)visitor)->interpreter->lox)->parse_error(((Lox*)((Resolver*)visitor)->interpreter->lox),((Super*)expr)->keyword,"Cannot use 'super' in a class with no superclass.");
 	}
 	resolveLocal((Resolver*)visitor,expr,((Super*)expr)->keyword);

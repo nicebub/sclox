@@ -18,8 +18,9 @@ void init_LoxInstance(LoxInstance* in,LoxClass* kls){
 	init_LoxCallable(&in->super);
 	in->super.vtable.toString = &toString_LoxInstance;
 	in->klass = kls;
-    memset(&in->super.super.instanceOf,0,30);
-    strncpy((char*)&in->super.super.instanceOf,"LoxInstance",strlen("LoxInstance")+1);
+    setInstanceOf(&in->super.super,"LoxInstance");
+/*    memset(&in->super.super.instanceOf,0,30);
+    strncpy((char*)&in->super.super.instanceOf,"LoxInstance",strlen("LoxInstance")+1);*/
     setCopyConstructor(in,&copy_LoxInstance);
     in->get = &get_LoxInstance;
     in->set = &set_LoxInstance;
@@ -28,8 +29,6 @@ void init_LoxInstance(LoxInstance* in,LoxClass* kls){
 char* toString_LoxInstance(LoxCallable* li){
 	char* temp,*other;
     temp = new_str(strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+1);
-/*	temp = new(RAW,sizeof(char)*(strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2));
-	memset(temp,0,strlen(((LoxInstance*)li)->klass->name) + strlen("instance")+2);*/
     other = NULL;
 	asprintf(&other,"%s instance",((LoxInstance*)li)->klass->name);
     strcpy(temp,other);
@@ -43,6 +42,7 @@ void* copy_LoxInstance(void* inIn){
     nin = new(OBJECTIVE,sizeof(LoxInstance));
     init_LoxInstance(nin,instance->klass);
     nin->super.super.id = instance->super.super.id;
+    nin->fields = getReference(instance->fields);
     return nin;
 }
 
@@ -57,14 +57,13 @@ Object* get_LoxInstance(LoxInstance* inst, Token* name){
 	method = inst->klass->findMethod((LoxFunction*)inst->klass,name->lexeme);
 	if(method != NULL)
 		return (Object*)method->bind(method,inst);
-	e.id = 55;
-    temp_str = new(RAW,sizeof(char)*(strlen("Undefined property ''.")+1+strlen(name->lexeme)));
-    memset(temp_str,0,strlen("Undefined property ''.")+1+strlen(name->lexeme));
+    temp_str = new_str((strlen("Undefined property ''.")+strlen(name->lexeme)));
     asprintf(&temp_str,"Undefined property '%s'.",name->lexeme);
-	e.message = temp_str;
-	e.token = name;
-    e.sub = NULL;
-	Throw(e);
+    e = create_exception(55,name,temp_str,NULL);
+	Try{
+	 Throw(e);
+	}
+	Catch(e){ Throw(e);}
 	return NULL;
 }
 

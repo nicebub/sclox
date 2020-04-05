@@ -129,8 +129,9 @@ void init_Interpreter(Interpreter* intprtr, void* lox){
     lcall->super.type = FUN;
     lcall->super.value.string = NULL;
     lcall->super.value.string = strcopy(lcall->super.value.string,"clock");
-    memset(&lcall->super.instanceOf,0,30);
-    strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));
+    setInstanceOf(&lcall->super,"LoxCallable");
+/*    memset(&lcall->super.instanceOf,0,30);
+    strncpy((char*)&lcall->super.instanceOf,"LoxCallable",strlen("LoxCallable"));*/
     lcall->vtable.arity = &global_clock_arity;
     lcall->vtable.call = &global_clock_call;
     lcall->vtable.toString = &global_toString;
@@ -180,7 +181,10 @@ void executeBlock(Interpreter* intrprtr ,StmtArray* array,Environment* newenv){
 	    }
 	    else{
 		   intrprtr->environment = getReference(previous);
-		   Throw(e);
+		   Try{
+		    Throw(e);
+		   }
+		   Catch(e){ Throw(e);}
 	    }
 	}
 	intrprtr->environment = getReference(previous);
@@ -226,7 +230,10 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     	if(!(strcmp(superclass->instanceOf,"LoxClass")==0)){
     		CEXCEPTION_T e;
 	    e = create_exception(60,cls->superclass->name,"Superclass must be a class.",NULL);
-    		Throw(e);
+		Try{
+		 Throw(e);
+		}
+		Catch(e){ Throw(e);}
     		return NULL;
     	}
     }
@@ -247,7 +254,7 @@ static Object* visitClassStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
     init_StrObjhm(methods,40);
     for(i=0;i <((Class*)stmt)->methods->used;i++){
     	LoxFunction* function;
-	   Stmt* cur_stmt =((Class*)stmt)->methods->Stmts[i];
+	   Stmt* cur_stmt = getStmtinArrayAt(((Class*)stmt)->methods,i);
     	function = new(OBJECTIVE,sizeof(LoxFunction));
     	init_LoxFunctionWithClosureAndInitializer((LoxFunction*)function,(Function*)cur_stmt,env,strcmp(((Function*)cur_stmt)->name->lexeme,"init")==0);
     	methods->super.super.vtable.add_to_hash((struct _HASH*)methods,
@@ -301,7 +308,10 @@ static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	  && !(strcmp(callee->instanceOf,"LoxClass")==0)&& !(strcmp(callee->instanceOf,"LoxInstance")==0)){
 	   CEXCEPTION_T e;
 	   e = create_exception(20,((Call*)expr)->paren,"Can only call functions and classes.",NULL);
-	   Throw(e);
+	   Try{
+	    Throw(e);
+	   }
+	   Catch(e){ Throw(e);}
     }
     if(strcmp(callee->instanceOf,"LoxInstance")==0)
 	   function = (LoxFunction*)((LoxInstance*)callee)->klass;
@@ -317,7 +327,10 @@ static Object* visitCallExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	   e = create_exception(21,((Call*)expr)->paren,temp_str,NULL);
 	   free(new_str);
 	   new_str = NULL;
-	   Throw(e);
+	   Try{
+	    Throw(e);
+	   }
+	   Catch(e){ Throw(e);}
     }
     res = function->super.vtable.call((LoxCallable*)function,(Interpreter*)visitor,getReference(arguments));
     delete(function);
@@ -372,7 +385,10 @@ Object* visitGetExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		return ((LoxInstance*)obj)->get((LoxInstance*)obj,((Get*)expr)->name);
 	}
     e = create_exception(52,((Get*)expr)->name,"Only instances have properties.",NULL);
-	Throw(e);
+	Try{
+	 Throw(e);
+	}
+	Catch(e){ Throw(e);}
 	return NULL;
 }
 
@@ -424,7 +440,10 @@ static Object* visitSuperExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	    str = new_str(strlen("Undefined property ''.")+strlen(((Super*)expr)->method->lexeme));
 		asprintf(&str,"Undefined property '%s'.",((Super*)expr)->method->lexeme);
 	    e = create_exception(70,((Super*)expr)->method,str,NULL);
-		Throw(e);
+		Try{
+		 Throw(e);
+		}
+		Catch(e){ Throw(e);}
 		return NULL;
 	}
 	return (Object*)method->bind(method,object);
@@ -515,7 +534,10 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 		  e = create_exception(4,((Binary*)expr)->operator,"Operands must be two numbers, two strings, or one of each",NULL);
 		  delete(result);
 		  result = NULL;
-		  Throw(e);
+		  Try{
+		   Throw(e);
+		  }
+		  Catch(e){ Throw(e);}
 		  break;
 	   case SLASH:
 		  checkNumberOperands(((Binary*)expr)->operator,left,right);
@@ -523,7 +545,10 @@ Object* visitBinaryExprInterpreter(ExprVisitor* visitor, Expr* expr){
 			 e = create_exception(5,((Binary*)expr)->operator,"Cannot divide by Zero",NULL);
 			  delete(result);
 			  result = NULL;
-			 Throw(e);
+			 Try{
+			  Throw(e);
+			 }
+			 Catch(e){ Throw(e);}
 			 return result;
 		  }
 		  result->type = NUMBER;
@@ -613,14 +638,20 @@ void checkNumberOperand(Token* operator,Object* right){
     CEXCEPTION_T e;
     if(right->type == NUMBER) return;
     e = create_exception(2,operator,"Operand must be a number",NULL);
-    Throw(e);
+    Try{
+	Throw(e);
+    }
+    Catch(e){ Throw(e);}
 }
 void checkNumberOperands(Token* operator, Object* left, Object* right){
     CEXCEPTION_T e;
     if(left->type == NUMBER && right->type == NUMBER)
 		  return;
     e = create_exception(3,operator,"Operand must be a number",NULL);
-    Throw(e);
+    Try{
+	Throw(e);
+    }
+    Catch(e){ Throw(e);}
 }
 const static char* nil = "nil";
 
@@ -706,7 +737,10 @@ Object* visitSetExprInterpreter(ExprVisitor* visitor, Expr* expr){
 	obj = evaluate(visitor,((Set*)expr)->object);
 	if(!(strcmp(obj->instanceOf,"LoxInstance")==0)){
 	    e = create_exception(57,((Set*)expr)->name,"Only instances have fields.",NULL);
-		Throw(e);
+		Try{
+		 Throw(e);
+		}
+		Catch(e){ Throw(e);}
 		return NULL;
 	}
 	value = evaluate(visitor,((Set*)expr)->value);
@@ -762,8 +796,8 @@ Object* visitVarStmtInterpreter(StmtVisitor* visitor, Stmt* stmt){
 	vstmt = (Var*)stmt;
 	a = NULL;
 	r = NULL;
-    r = new(OBJECTIVE,sizeof(Object));
-	init_Object(r,"",KNULL);
+/*    r = new(OBJECTIVE,sizeof(Object));
+	init_Object(r,"",KNULL);*/
 	if(vstmt->initializer != NULL){
 		a = evaluate(&visitor->expr,vstmt->initializer);
 	}

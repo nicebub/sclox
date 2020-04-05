@@ -16,8 +16,9 @@ void init_LoxClass(LoxClass* cl,char* name){
     cl->findMethod = &findMethod;
     setCopyConstructor(cl,&copy_LoxClass);
     cl->name = name;
-    memset(&cl->super.super.instanceOf,0,30);
-    strncpy((char*)&cl->super.super.instanceOf,"LoxClass",strlen("LoxClass")+1);
+    setInstanceOf(&cl->super.super,"LoxClass");
+/*    memset(&cl->super.super.instanceOf,0,30);
+    strncpy((char*)&cl->super.super.instanceOf,"LoxClass",strlen("LoxClass")+1);*/
 }
 void init_LoxClassWithMethods(LoxClass* cl,char* name,StrObjHashMap* methods){
 	init_LoxClass(cl,name);
@@ -44,9 +45,6 @@ Object* call_LoxClass(LoxCallable* lc,Interpreter* interpreter, ObjectArray* arg
     init_LoxInstance(instance,(LoxClass*)lc);
     str = NULL;
     str = strcopy(str,"init");
-/*    str = new(RAW,sizeof(char)*(strlen("init")+1));
-    memset(str,0,strlen("init")+1);
-    strcpy(str,"init");*/
     initializer = findMethod((LoxFunction*)lc,str);
     if(initializer != NULL){
 	   LoxCallable* temp;
@@ -61,9 +59,6 @@ int arity_LoxClass(LoxCallable* lc){
     char* str;
     str = NULL;
     str = strcopy(str,"init");
-/*    str = new(RAW,sizeof(char)*(strlen("init")+1));
-    memset(str,0,strlen("init")+1);
-    strcpy(str,"init");*/
     initializer = findMethod((LoxFunction*)lc,str);
     if(initializer == NULL) return 0;
     return ((LoxFunction*)initializer)->super.vtable.arity((LoxCallable*)initializer);

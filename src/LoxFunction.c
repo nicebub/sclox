@@ -22,8 +22,9 @@ LoxFunction_vtable lfunc_vtable = {
 void init_LoxFunction(LoxFunction* func, Function* declaration) {
 	init_LoxCallable(&func->super);
     func->super.vtable = lfunc_vtable;
-    memset(&func->super.super.instanceOf,0,30);
-    strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);
+    setInstanceOf(&func->super.super,"LoxFunction");
+/*    memset(&func->super.super.instanceOf,0,30);
+    strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);*/
 	func->declaration = declaration;
     func->closure = NULL;
     func->bind = &bind_LoxFunction;
@@ -61,7 +62,7 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
 	intprtr->executeBlock(intprtr,function->declaration->body,env);
 	}
 	Catch(re){
-	    if(function->isInitializer){
+/*	    if(function->isInitializer){
 		   char* str;
 		   int *x;
 		   str = NULL;
@@ -69,11 +70,16 @@ Object* LoxFunctioncall(LoxCallable* lfunc, Interpreter* intprtr, ObjectArray* a
 		   x = new(RAW,sizeof(int));
 		   *x = 0;
 		   return function->closure->getAt(function->closure,x,str);
-	    }
+	    }*/
 	    if(re.sub)
 		   result = re.sub->value;
-	    else
-		  Throw(re);
+	    else{
+		   CEXCEPTION_T e;
+		  Try{
+		   Throw(e);
+		  }
+		  Catch(e){ Throw(e);}
+	    }
 	}
     if(re.sub)
 	   result = re.sub->value;
@@ -109,8 +115,9 @@ void* copy_LoxFunction(void* inFunc){
     func = new(OBJECTIVE,sizeof(LoxFunction));
 	init_LoxCallable(&func->super);
     func->super.vtable = lfunc_vtable;
-    memset(&func->super.super.instanceOf,0,30);
-    strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);
+    setInstanceOf(&func->super.super,"LoxFunction");
+/*    memset(&func->super.super.instanceOf,0,30);
+    strncpy((char*)&func->super.super.instanceOf,"LoxFunction",strlen("LoxFunction")+1);*/
     init_LoxFunctionWithClosure(func,copy(infunc->declaration),infunc->closure);
     setAllocated(func,1);
     return func;
